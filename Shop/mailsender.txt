@@ -1,0 +1,4 @@
+{
+"mail":"multishopannounce@gmail.com",
+"code":"fneokbpmgcwiuupt"
+}
