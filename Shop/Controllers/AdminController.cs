@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Shop.Controllers
 {
-    //[Authorize]
+    [Authorize(Roles="Admin")]
     public class AdminController : Controller
     {
         
@@ -19,7 +19,7 @@ namespace Shop.Controllers
 
         public void CreateCategory()
         {
-            
+            var forms = HttpContext.Request.Form;
         }
     }
 }

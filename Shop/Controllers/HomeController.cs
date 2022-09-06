@@ -10,10 +10,23 @@ namespace Shop.Controllers
         {
             _sender = sender;
         }
+
         public async Task<IActionResult> IndexAsync()
         {
             await SendEmail();
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetWelcomePage()
+        {
+            return View("WelcomePage");
+        }
+        
+        [HttpGet]
+        public IActionResult GetItem(Guid id)
+        {
+            return View("ItemPage");
         }
 
         private async Task SendEmail()
