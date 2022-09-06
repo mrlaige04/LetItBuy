@@ -3,7 +3,8 @@ namespace Shop.Models
 {
     public class User : IdentityUser<Guid>
     {       
-        public List<Item> Items { get; set; } = new();
+        public ICollection<Item>? Items { get; set; }
         public Cart Cart { get; set; }
+        
     }    
 }

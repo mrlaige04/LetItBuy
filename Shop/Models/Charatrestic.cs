@@ -1,5 +1,8 @@
-﻿namespace Shop.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Shop.Models
 {
+    
     public class Charatrestic
     {
         public string Name { get; set; }

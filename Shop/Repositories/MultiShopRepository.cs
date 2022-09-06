@@ -33,5 +33,11 @@ namespace Shop.Repositories
             var user = _db.Users.FirstOrDefault(x => x.Id == id);
             return user;
         }
+
+        public void AddUser(User user)
+        {
+            _db.Users.Add(user);
+            _db.SaveChanges();
+        }
     }
 }

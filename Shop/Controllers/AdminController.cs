@@ -19,7 +19,7 @@ namespace Shop.Controllers
 
         public void CreateCategory()
         {
-            var forms = HttpContext.Request.Form;
+            //var forms = HttpContext.Request.Form;
         }
     }
 }

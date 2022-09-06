@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Shop.Data;
+using Shop.Repositories;
 using Shop.Services;
 
 namespace Shop.Controllers
@@ -6,9 +8,11 @@ namespace Shop.Controllers
     public class HomeController : Controller
     {
         private readonly IEmailSender _sender;
-        public HomeController(IEmailSender sender)
+        private readonly IRepository _repository;
+        public HomeController(IEmailSender sender, ApplicationDBContext db)
         {
             _sender = sender;
+            _repository = new MultiShopRepository(db);
         }
 
         public async Task<IActionResult> IndexAsync()
@@ -20,6 +24,7 @@ namespace Shop.Controllers
         [HttpGet]
         public IActionResult GetWelcomePage()
         {
+            
             return View("WelcomePage");
         }
         
@@ -31,6 +36,7 @@ namespace Shop.Controllers
 
         private async Task SendEmail()
         {
+            _repository.AddUser(new Models.User() { });
             await _sender.SendEmailAsync("illia.rudiakov11@gmail.com", "NEW ITEM", "NEW PHONE: https://google.com/");
         }
     }

@@ -8,6 +8,7 @@ namespace Shop.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public Catalog? Parent { get; set; }
-        public List<Charatrestic> Charatrestics { get; set; } = new();
+        public ICollection<Charatrestic>? Charatrestics { get; set; }
+        
     }
 }
