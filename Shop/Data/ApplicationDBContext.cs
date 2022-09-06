@@ -10,5 +10,6 @@ namespace Shop.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Catalog> Catalogs { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<Cart> Carts { get; set; }
     }
 }
