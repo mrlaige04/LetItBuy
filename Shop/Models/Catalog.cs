@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Shop.Models
 {
@@ -8,7 +9,7 @@ namespace Shop.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public Catalog? Parent { get; set; }
-        public ICollection<Charatrestic>? Charatrestics { get; set; }
+        public ICollection<Charatrestic>? Characteristics { get; set; }
         
     }
 }

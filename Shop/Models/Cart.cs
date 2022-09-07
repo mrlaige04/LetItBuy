@@ -10,7 +10,7 @@ namespace Shop.Models
         [Key]
         public Guid UserID { get; set; }
         public User UserOwner { get; set; }
-        public  ICollection<Item>? ItemsInCart { get; set; }
+        public  ICollection<CartItem>? ItemsInCart { get; set; }
         
     }
 }
