@@ -49,32 +49,9 @@ namespace Shop.Data
                 .OnDelete(DeleteBehavior.Restrict)
                 ;
 
-            // TODO : EXCEPTION 
-            /*
-             SqlException: The INSERT statement conflicted with the FOREIGN KEY constraint "FK_Items_Catalogs_ItemCatalogId". The conflict occurred in database "SHOPDB", table "dbo.Catalogs", column 'Id'.
- The statement has been terminated.
-             */
 
 
-
-
-
-
-            //builder.Entity<User>()
-            //    .HasMany(x => x.Items)
-            //    .WithOne(x => x.OwnerUser);
-
-            //builder.Entity<Cart>()
-            //    .HasMany(x => x.ItemsInCart);
-
-
-
-
-
-
-            //builder.Entity<Cart>().HasMany(x => x.ItemsInCart);
-            //builder.Entity<Charatrestic>().HasKey(x=>x.Name);
-            //builder.Entity<Catalog>().HasMany(x => x.Charatrestics);
+            
         }
     }
 }

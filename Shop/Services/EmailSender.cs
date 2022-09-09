@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace Shop.Services
 {
-    public class EmailSender : IEmailSender
+    public class EmailSender : ICustomEmailSender
     {
         public async Task SendEmailAsync(string to, string subject, string message)
         {

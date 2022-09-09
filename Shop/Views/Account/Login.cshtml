@@ -25,9 +25,11 @@
                     <label class="form-check-label" asp-for="RememberMe">Remember me</label>
                 </div>
                 <br />
-                <a class="w-100" asp-controller="Account" asp-action="Register">Dont have an account?</a>
+                <a class="w-100" asp-controller="Account" asp-action="Register">Dont have an account?</a> <br />
+                <a asp-controller="Account" asp-action="ForgotPassword">Forgot Password?</a>
                 <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
             </fieldset>
+            
         </form>
     </div>
 </div>

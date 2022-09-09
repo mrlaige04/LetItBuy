@@ -9,33 +9,18 @@ namespace Shop.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IEmailSender _sender;
+        private readonly ICustomEmailSender _sender;
         private readonly IRepository _repository;
-        public HomeController(IEmailSender sender, ApplicationDBContext db)
+        public HomeController(ICustomEmailSender sender, ApplicationDBContext db)
         {
             _sender = sender;
             _repository = new MultiShopRepository(db);
         }
-
-        public async Task<IActionResult> IndexAsync()
-        {
-            
-            return View();
-        }
-
+        
         [HttpGet]
-        public async Task<IActionResult> GetWelcomePage()
-        {
-            
+        public IActionResult GetWelcomePage()
+        {           
             return View("WelcomePage");
-        }
-        
-        [HttpGet]
-        public IActionResult GetItem(Guid id)
-        {
-            return View("ItemPage");
-        }
-
-        
+        }      
     }
 }

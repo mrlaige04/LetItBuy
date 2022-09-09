@@ -8,5 +8,6 @@ namespace Shop.Models
         public Cart? Cart { get; set; }
         public Guid CartID { get; set; }
 
+        public ICollection<IdentityRole> Roles { get; set; }
     }    
 }

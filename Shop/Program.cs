@@ -7,19 +7,21 @@ using Shop.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IEmailSender, EmailSender>();
+builder.Services.AddSingleton<ICustomEmailSender, EmailSender>();
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ApplicationDBContext>(options=>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Logging.AddConsole();
 
 builder.Services.AddIdentity<User, IdentityRole>(options => {
-    options.SignIn.RequireConfirmedAccount = false;
+    options.SignIn.RequireConfirmedEmail = true;   
     options.Password.RequiredLength = 7;
     options.Password.RequireDigit = true;
     options.User.RequireUniqueEmail = true;
     options.Password.RequireNonAlphanumeric = false;
     })
-    .AddEntityFrameworkStores<ApplicationDBContext>();
+.AddEntityFrameworkStores<ApplicationDBContext>()
+.AddDefaultTokenProviders();
 
 
 var app = builder.Build();

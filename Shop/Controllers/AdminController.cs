@@ -23,12 +23,30 @@ namespace Shop.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult CreateCategory()
+        {
+            return View();
+        }
+        
+        [HttpPost]
         public void CreateCategory(CreateCatalogViewModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                var catalog = new Catalog();
+                var catalog = new Catalog()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = model.Name,
+                    Parent = model.Parent,
+                    Characteristics = model.Charatrestics
+                };
                 _db.Catalogs.Add(catalog);
+                _db.SaveChanges();
+            }
+            else
+            {
+                ModelState.AddModelError("", "");
             }
         }
 

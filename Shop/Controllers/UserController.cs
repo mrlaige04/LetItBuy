@@ -5,7 +5,7 @@ using Shop.Models;
 
 namespace Shop.Controllers
 {
-    [Authorize]
+    [Authorize(Roles="simpleUser")]
     public class UserController : Controller
     {
         public UserController()
