@@ -8,30 +8,27 @@ namespace Shop.Repositories
         private ApplicationDBContext _db { get; }
         public MultiShopRepository(ApplicationDBContext db)
         {
-            _db = db;  
-        }
-        public IEnumerable<Item> GetAllItems()
-        {
-            var items = _db.Items.AsEnumerable();
-            return items;
+            _db = db;
         }
 
         public IEnumerable<User> GetAllUser()
         {
-            var users = _db.Users.AsEnumerable();
-            return users;
+            return _db.Users.ToList();
+        }
+
+        public IEnumerable<Item> GetAllItems()
+        {
+            return _db.Items.ToList();
         }
 
         public Item GetItemByID(Guid ItemId)
         {
-            var item = _db.Items.FirstOrDefault(x => x.ItemId == ItemId);
-            return item;
+            return _db.Items.AsEnumerable().FirstOrDefault(i => i.ItemId == ItemId);
         }
 
-        public User GetUser(Guid id)
+        public User GetUser(string id)
         {
-            var user = _db.Users.FirstOrDefault(x => x.Id == id);
-            return user;
+            return _db.Users.AsEnumerable().FirstOrDefault(i => i.Id == id);
         }
 
         public void AddUser(User user)

@@ -8,12 +8,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
-
+builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ApplicationDBContext>(options=>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-//    .AddEntityFrameworkStores<ApplicationDBContext>();
+builder.Services.AddIdentity<User, IdentityRole>(options => {
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequiredLength = 7;
+    options.Password.RequireDigit = true;
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequireNonAlphanumeric = false;
+    })
+    .AddEntityFrameworkStores<ApplicationDBContext>();
 
 
 var app = builder.Build();
@@ -28,5 +34,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=GetWelcomePage}/{id?}");
 
+app.MapRazorPages();
 
 app.Run();

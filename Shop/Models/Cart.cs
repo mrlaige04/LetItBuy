@@ -8,8 +8,9 @@ namespace Shop.Models
     public class Cart
     {
         [Key]
-        public Guid UserID { get; set; }
-        public User UserOwner { get; set; }
+        public Guid CartID { get; set; }
+        public string UserID { get; set; }
+        public User? UserOwner { get; set; }
         public  ICollection<CartItem>? ItemsInCart { get; set; }
         
     }

@@ -26,11 +26,7 @@ namespace Shop.Controllers
         [HttpGet]
         public async Task<IActionResult> GetWelcomePage()
         {
-            var guid = Guid.NewGuid();
-            var user = await SendEmail(guid);
-            Console.WriteLine(user is null);
-            Console.WriteLine(user.Email);
-            Console.WriteLine(JsonSerializer.Serialize(user));
+            
             return View("WelcomePage");
         }
         
@@ -40,24 +36,6 @@ namespace Shop.Controllers
             return View("ItemPage");
         }
 
-        private async Task<User> SendEmail(Guid guid)
-        {
-            
-            _repository.AddUser(new Models.User()
-            {
-                Email = "someemail3@gmail.com",
-                Id = guid,
-                Items = new List<Item>() {
-                    new Item() {
-                        Description = "New tovar",
-                        ItemId = Guid.NewGuid(),
-                        ItemName = "New phone"
-                    }
-                }
-                });
-            var user = _repository.GetUser(guid);
-            return user;
-            //await _sender.SendEmailAsync("illia.rudiakov11@gmail.com", "NEW ITEM", "NEW PHONE: https://google.com/");
-        }
+        
     }
 }

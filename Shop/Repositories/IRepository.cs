@@ -7,7 +7,7 @@ namespace Shop.Repositories
         IEnumerable<User> GetAllUser();
         IEnumerable<Item> GetAllItems();
         Item GetItemByID(Guid ItemId);
-        User GetUser(Guid id);
+        User GetUser(string id);
         void AddUser(User user);
     }
 }

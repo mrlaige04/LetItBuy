@@ -6,7 +6,7 @@ namespace Shop.Models
     public class CartItem
     {
         public Cart? Cart { get; set; }
-        [ForeignKey("CartItemID")]
+
         public Guid CartItemID { get; set; }
         public Item Item { get; set; }
     }
