@@ -26,15 +26,9 @@ namespace Shop.Repositories
             return _db.Items.AsEnumerable().FirstOrDefault(i => i.ItemId == ItemId);
         }
 
-        public User GetUser(string id)
+        public IEnumerable<Item> GetItemsByName(string name)
         {
-            return _db.Users.AsEnumerable().FirstOrDefault(i => i.Id == id);
-        }
-
-        public void AddUser(User user)
-        {
-            _db.Users.Add(user);
-            _db.SaveChanges();
+            return _db.Items.Where(i => i.ItemName == name).ToList();
         }
     }
 }

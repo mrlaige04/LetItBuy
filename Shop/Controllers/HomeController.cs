@@ -21,6 +21,26 @@ namespace Shop.Controllers
         public IActionResult GetWelcomePage()
         {           
             return View("WelcomePage");
-        }      
+        }  
+        
+        [HttpGet]
+        public IActionResult GetItem(Guid ItemId)
+        {
+            var item = _repository.GetItemByID(ItemId);
+            if (item != null)
+                return View("Item", item);
+            else
+                return NotFound();
+        }
+
+        [HttpGet]
+        public IActionResult GetItem(string name)
+        {
+            var items = _repository.GetItemsByName(name);
+            if (items != null)
+                return View("ManyItems", items);
+            else
+                return NotFound();
+        }
     }
 }

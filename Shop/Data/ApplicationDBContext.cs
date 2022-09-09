@@ -18,16 +18,14 @@ namespace Shop.Data
         public DbSet<Cart> Carts { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
-        {
-            
+        {          
             base.OnModelCreating(builder);
             builder.Entity<User>().HasKey(x => x.Id);
             builder.Entity<User>()
                 .HasMany(x => x.Items)
                 .WithOne(x => x.OwnerUser)
-                .HasForeignKey(x => x.OwnerID)
-                
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(x => x.OwnerID)               
+                .OnDelete(DeleteBehavior.ClientCascade);
             
             builder.Entity<Catalog>()
                 .HasMany(x => x.Characteristics)
@@ -46,12 +44,8 @@ namespace Shop.Data
                 .HasMany(x => x.ItemsInCart)
                 .WithOne(x => x.Cart)
                 .HasForeignKey(x => x.CartItemID)
-                .OnDelete(DeleteBehavior.Restrict)
-                ;
-
-
-
-            
+                .OnDelete(DeleteBehavior.ClientCascade)
+                ;      
         }
     }
 }

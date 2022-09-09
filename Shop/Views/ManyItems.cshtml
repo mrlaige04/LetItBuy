@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Item>
+
+@{
+    ViewData["Title"] = "Search results";
+}
+
+@if(Model != null) {
+    @foreach (var item in Model)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.ItemName</h5>
+                        <p class="card-text">@item.Description</p>
+                        <a asp-controller="Home" asp-action="GetItem" asp-route-ItemId="@item.ItemId" class="btn btn-primary">Go to item</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
