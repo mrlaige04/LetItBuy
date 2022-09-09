@@ -8,22 +8,20 @@ using System.Text.Json;
 
 namespace Shop.Services
 {
-    public class EmailSender : ICustomEmailSender
+    public class GmailSmtpSender : ICustomEmailSender
     {
-        public async Task SendEmailAsync(string to, string subject, string message)
+        private readonly string _mail;
+        private readonly string _code;
+        public GmailSmtpSender(IConfiguration configuration)
         {
-            string from = string.Empty;
-            string code_auth = string.Empty;
-            using (StreamReader sr = new StreamReader("mailsender.txt"))
-            {
-                var file = JsonSerializer.Deserialize<maildata>(sr.ReadToEnd());
-                from = file?.mail;
-                code_auth = file?.code;
-            }
-
+            _mail = configuration["emailhost:email"];
+            _code = configuration["emailhost:code"];
+        }
+        public async Task SendEmailAsync(string to, string subject, string message)
+        {           
             var emailMessage = new MimeMessage();
 
-            emailMessage.From.Add(new MailboxAddress("NEW ITEM", from));
+            emailMessage.From.Add(new MailboxAddress("LetItBuy", _mail));
             emailMessage.To.Add(new MailboxAddress("", to));
             emailMessage.Subject = subject;
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
@@ -34,7 +32,7 @@ namespace Shop.Services
             using (var client = new SmtpClient())
             {
                 await client.ConnectAsync("smtp.gmail.com", 465, true);
-                await client.AuthenticateAsync("multishopannounce@gmail.com", code_auth);
+                await client.AuthenticateAsync(_mail, _code);
                 await client.SendAsync(emailMessage);               
                 await client.DisconnectAsync(true);
             }

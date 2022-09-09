@@ -3,4 +3,10 @@
 
 - Type `git clone https://github.com/mrlaige04/MultiShop.git`
 - Create SQL Server and write connection string to `appsettings.json`
-- Run as dotNet app.
+- Configure your Google SMTP Host to Send Emails in `emailsmtpconfig.json`
+- Configure email type, subject, topic and etc.
+- Run.
+
+
+## About
+![alt](https://cdn.pixabay.com/photo/2017/03/29/04/09/shopping-icon-2184065_1280.png)

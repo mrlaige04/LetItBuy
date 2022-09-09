@@ -240,5 +240,9 @@ namespace Shop.Controllers
                 ErrorMessage = "Your account was not deleted... Try again later."
             });
         }
+
+
+        [HttpGet]
+        public IActionResult AccessDenied() => View();
     }
 }
