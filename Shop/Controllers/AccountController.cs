@@ -3,12 +3,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Shop.Clients;
 using Shop.Models;
+using Shop.Models.ClientsModels;
+using Shop.Models.DTO;
 using Shop.Models.Identity;
 using Shop.Services;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Text.RegularExpressions;
 
 namespace Shop.Controllers
 {
@@ -18,15 +22,27 @@ namespace Shop.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ICustomEmailSender _emailSender;
-        private readonly ILogger<AccountController> _logger;
+        private readonly ILogger<AccountController> _acc_contr_logger;
+        private readonly ILogger<IdentityAccountClient> _acc_client_logger;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager, ICustomEmailSender emailSender, ILogger<AccountController> logger)
+
+
+        private readonly IdentityAccountClient accountClient;
+        private readonly RoleClient roleClient;
+        public AccountController(IServiceProvider provider)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _roleManager = roleManager;
-            _emailSender = emailSender;
-            _logger = logger;
+
+            _userManager = provider.GetRequiredService<UserManager<User>>();
+            _signInManager = provider.GetRequiredService<SignInManager<User>>();
+            _roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
+            _emailSender = provider.GetRequiredService<ICustomEmailSender>();
+            _acc_contr_logger = provider.GetRequiredService<ILogger<AccountController>>();
+            _acc_client_logger = provider.GetRequiredService<ILogger<IdentityAccountClient>>();
+
+            
+            roleClient = new RoleClient(_userManager, _roleManager);
+            accountClient = new IdentityAccountClient(_userManager, _signInManager, _acc_client_logger, _emailSender, roleClient);
+            
         }
 
         [HttpGet]
@@ -38,58 +54,20 @@ namespace Shop.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+            
             if (ModelState.IsValid)
-            {
-                var cartId = Guid.NewGuid();
-                var userId = Guid.NewGuid().ToString();
-                User user = new User {
-                    Email = model.Email, 
-                    UserName = model.Email,
-                    Cart = new Cart()
-                    {
-                        CartID = cartId,
-                        UserID = userId,
-                        ItemsInCart = new List<CartItem>()
-                    },
-                    CartID = cartId,
-                    Items = new List<Item>(),
-                    Id = userId                    
-                };
-                if (!await _roleManager.RoleExistsAsync("simpleUser"))
+            {              
+                var register_result = await accountClient.RegisterAsync(new RegisterDTOModel { Email = model.Email, Password = model.Password, Username = model.UserName, HostUrl = Request.Host.Value });
+                if (register_result.ResultCode == ResultCodes.Failed)
                 {
-                    await _roleManager.CreateAsync(new IdentityRole("simpleUser"));
-                }
-                
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    var addRoleResult = await _userManager.AddToRoleAsync(user, "simpleUser");
-                    if (!addRoleResult.Succeeded)
+                    foreach (var item in register_result.Errors)
                     {
-                        foreach (var item in addRoleResult.Errors)
-                        {
-                            _logger.LogError(item.Description);
-                        }
+                        _acc_contr_logger.LogError(item);
+                        ModelState.AddModelError("", item);
                     }
-                    
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action(
-                        "ConfirmEmail",
-                        "Account",
-                        new { userId = user.Id, code = code },
-                        protocol: HttpContext.Request.Scheme);   
-                    
-                    await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-                        $"Confirm Registration, follow the: <h2><a href='{callbackUrl}'>link</a></h2>");
-                    return View("ConfirmEmail");
+                    return View(model);
                 }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
+                return View("ConfirmEmail");
             }
             return View(model);
         }
@@ -98,20 +76,21 @@ namespace Shop.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
+            code = Regex.Replace(code, " ", "+");
             if (userId == null || code == null)
             {
-                return View("Error");
+                return View("Error", new ErrorViewModel { ErrorMessage = "UserID or Code is Null"});
             }
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return View("Error");
+                return View("Error", new ErrorViewModel { ErrorMessage = "User not found" });
             }
             var result = await _userManager.ConfirmEmailAsync(user, code);
             if (result.Succeeded)
                 return RedirectToAction("Login", "Account");
             else
-                return View("Error");
+                return View("Error", new ErrorViewModel { ErrorMessage = "Invalid Token" });
         }
 
 
@@ -120,6 +99,8 @@ namespace Shop.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
+            if (User.Identity.IsAuthenticated)
+                return View("Error", new ErrorViewModel { ErrorMessage = "You are already logged in" });
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
@@ -130,7 +111,11 @@ namespace Shop.Controllers
             if (ModelState.IsValid)
             {
                 
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+                
+
+                
                 if (result.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
@@ -146,7 +131,6 @@ namespace Shop.Controllers
 
         [HttpGet]
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();

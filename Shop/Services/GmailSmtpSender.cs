@@ -17,7 +17,7 @@ namespace Shop.Services
             _mail = configuration["emailhost:email"];
             _code = configuration["emailhost:code"];
         }
-        public async Task SendEmailAsync(string to, string subject, string message)
+        public async Task<bool> SendEmailAsync(string to, string subject, string message)
         {           
             var emailMessage = new MimeMessage();
 
@@ -31,10 +31,15 @@ namespace Shop.Services
 
             using (var client = new SmtpClient())
             {
-                await client.ConnectAsync("smtp.gmail.com", 465, true);
-                await client.AuthenticateAsync(_mail, _code);
-                await client.SendAsync(emailMessage);               
-                await client.DisconnectAsync(true);
+                try
+                {
+                    await client.ConnectAsync("smtp.gmail.com", 465, true);
+                    await client.AuthenticateAsync(_mail, _code);
+                    await client.SendAsync(emailMessage);
+                    await client.DisconnectAsync(true);
+                    return true;
+                }
+                catch { return false; }
             }
         }      
     }

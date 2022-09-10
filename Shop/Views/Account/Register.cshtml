@@ -9,6 +9,13 @@
         <form id="registerForm" asp-controller="Account" asp-action="Register" method="post">
             <fieldset>
                 <hr />
+                <div class="container-sm">
+                    <ul>
+                        <li>Password must have at least 1 capital letter</li>
+                        <li>Password must have digits</li>
+                        <li>Password must more than 7 symbols</li>
+                    </ul>
+                </div>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Email"></label>
@@ -31,7 +38,9 @@
                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
                 <br />
-                <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+                <div class="d-grid gap-2">
+                  <button class="btn btn-lg btn-primary" type="submit">Register</button>                  
+                </div>
             </fieldset>
         </form>
     </div>

@@ -3,7 +3,7 @@ using Shop.Data;
 using Shop.Services;
 using Microsoft.AspNetCore.Identity;
 using Shop.Models;
-using Microsoft.Extensions.DependencyInjection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

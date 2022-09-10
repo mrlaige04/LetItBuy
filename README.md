@@ -12,10 +12,14 @@
 ![alt](https://cdn.pixabay.com/photo/2017/03/29/04/09/shopping-icon-2184065_1280.png)
 
 ### Features
-- Roles (SimpleUser, Admin)
+For simple user:
 - Create, Sell, Buy, Manage your sells
 - Add products into your cart
 - Track your orders while delivery
+For admins:
+- Manage catalogs, Characteristics
+- Manage Roles, Users
+
 
 
 
