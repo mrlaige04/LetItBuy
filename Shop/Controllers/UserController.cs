@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Models;
+using System.Security.Claims;
 
 namespace Shop.Controllers
 {
@@ -14,7 +15,12 @@ namespace Shop.Controllers
             _userManager = userManager;
         }
 
-        
+        [HttpGet]
+        public async Task<IActionResult> GetProfile()
+        {
+            return View("Profile");
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddItem(string email, Item item)
         {

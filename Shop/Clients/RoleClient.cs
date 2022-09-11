@@ -13,36 +13,34 @@ namespace Shop.Clients
             _userManager = userManager;
             _roleManager = roleManager;
         }
-
-        //public async Task<ClientsResultModel> CreateRole(string roleName)
-        //{
-            
-        //}
-
-        //public async Task<ClientsResultModel> DeleteRole(string roleName)
-        //{
-
-        //}
+        
+        public async Task<ClientsResultModel> DeleteRole(string roleName)
+        {
+            var delRes = await _roleManager.DeleteAsync(new IdentityRole(roleName));
+            if (delRes.Succeeded)
+                return new ClientsResultModel { ResultCode = ResultCodes.Successed };
+            return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = delRes.Errors.Select(x => x.Description).ToList() };
+        }
 
         public async Task<ClientsResultModel> AddUserToRoles(User user, params string[] roles)
         {
-            foreach (var rol in roles)
+            foreach (var item in roles)
             {
-                var res = await AddUserToRole(user, rol);
-                if (res.ResultCode == ResultCodes.Failed) continue;
+                if (!await _roleManager.RoleExistsAsync(item)) await _roleManager.CreateAsync(new IdentityRole(item));
             }
-            return new ClientsResultModel { ResultCode = ResultCodes.Successed };
+            var res = await _userManager.AddToRolesAsync(user, roles);
+            if (res.Succeeded)
+                return new ClientsResultModel { ResultCode = ResultCodes.Successed };
+            return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = res.Errors.Select(x => x.Description) };
         }
-        private async Task<ClientsResultModel> AddUserToRole(User user, string role)
+        
+
+        public async Task<ClientsResultModel> DeleteUserFromRoles(User user, params string[] roles)
         {
-            if (!await _roleManager.RoleExistsAsync(role))
-            {
-                var cr_rol_res = await _roleManager.CreateAsync(new IdentityRole(role));
-                if (!cr_rol_res.Succeeded) return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = cr_rol_res.Errors.Select(x => x.Description) };
-            }
-            var add_rol_res = await _userManager.AddToRoleAsync(user, role);
-            if (!add_rol_res.Succeeded) return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = add_rol_res.Errors.Select(x => x.Description) };
-            return new ClientsResultModel { ResultCode = ResultCodes.Successed };
-        }
+            var res = await _userManager.RemoveFromRolesAsync(user, roles);
+            if (res.Succeeded)
+                return new ClientsResultModel { ResultCode = ResultCodes.Successed };
+            return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = res.Errors.Select(x => x.Description) };
+        }       
     }
 }

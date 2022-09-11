@@ -4,4 +4,13 @@
     ViewData["Title"] = "Error";
 }
 
-The website generated an error. Error message: <i>@Model.ErrorMessage</i>
+The website generated an error. Error messages: 
+@if (Model != null)
+{
+    <ul>
+        @foreach (var error in Model.ErrorMessages)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}

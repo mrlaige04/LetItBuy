@@ -2,6 +2,6 @@
 {
     public class ErrorViewModel
     {
-        public string ErrorMessage { get; set; }
+        public IEnumerable<string> ErrorMessages { get; set; }
     }
 }

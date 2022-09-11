@@ -14,6 +14,27 @@
     <None Include="wwwroot\favicon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\Logos\logo %281%29.png" />
+    <None Include="wwwroot\Logos\Logo Zip File.zip" />
+    <None Include="wwwroot\Logos\Logo Zip File\eps\logo-black.eps" />
+    <None Include="wwwroot\Logos\Logo Zip File\eps\logo-color.eps" />
+    <None Include="wwwroot\Logos\Logo Zip File\eps\logo-no-background.eps" />
+    <None Include="wwwroot\Logos\Logo Zip File\eps\logo-white.eps" />
+    <None Include="wwwroot\Logos\Logo Zip File\pdf\logo-black.pdf" />
+    <None Include="wwwroot\Logos\Logo Zip File\pdf\logo-color.pdf" />
+    <None Include="wwwroot\Logos\Logo Zip File\pdf\logo-no-background.pdf" />
+    <None Include="wwwroot\Logos\Logo Zip File\pdf\logo-white.pdf" />
+    <None Include="wwwroot\Logos\Logo Zip File\png\logo-black.png" />
+    <None Include="wwwroot\Logos\Logo Zip File\png\logo-color.png" />
+    <None Include="wwwroot\Logos\Logo Zip File\png\logo-no-background.png" />
+    <None Include="wwwroot\Logos\Logo Zip File\png\logo-white.png" />
+    <None Include="wwwroot\Logos\Logo Zip File\svg\logo-black.svg" />
+    <None Include="wwwroot\Logos\Logo Zip File\svg\logo-color.svg" />
+    <None Include="wwwroot\Logos\Logo Zip File\svg\logo-no-background.svg" />
+    <None Include="wwwroot\Logos\Logo Zip File\svg\logo-white.svg" />
+    <None Include="wwwroot\Logos\logoblackbg.png" />
+    <None Include="wwwroot\Logos\logohighhd.png" />
+    <None Include="wwwroot\Logos\logowhitebg.png" />
   </ItemGroup>
 
   <ItemGroup>
