@@ -2,10 +2,12 @@
 
 namespace Shop.Repositories
 {
-    public interface IRepository
+    public interface IRepository<T>
     {
-        IEnumerable<Item> GetAllItems();
-        Item GetItemByID(Guid ItemId);
-        IEnumerable<Item> GetItemsByName(string name);
+        IEnumerable<T> GetAll();
+        T GetById(string id);
+        void Add(T entity);
+        void Update(T entity);
+        void Delete(T entity);
     }
 }

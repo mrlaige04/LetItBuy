@@ -8,24 +8,23 @@ using Shop.Models.Identity;
 using Shop.Services;
 using System.Text.RegularExpressions;
 
-namespace Shop.Clients
+namespace Shop.Services
 {
-    public class IdentityAccountClient
+    public class AccountService
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly ILogger<IdentityAccountClient> _logger;
-        private readonly ICustomEmailSender _emailSender;
-        private readonly RoleClient _roleClient;
-        public IdentityAccountClient(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<IdentityAccountClient> logger, ICustomEmailSender emailSender, RoleClient roleClient)
+        public readonly UserManager<User> _userManager;
+        public readonly SignInManager<User> _signInManager;
+        public readonly ILogger<AccountService> _logger;
+        public readonly ICustomEmailSender _emailSender;
+        public readonly RoleService _roleClient;
+        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<AccountService> logger, ICustomEmailSender emailSender, RoleService roleClient)
         {
             _roleClient = roleClient;
             _userManager = userManager;
             _logger = logger;
             _signInManager = signInManager;
             _emailSender = emailSender;
-        }
-        
+        }        
         
         public async Task<ClientsResultModel> RegisterAsync(RegisterDTOModel reg_dto)
         {
@@ -92,6 +91,11 @@ namespace Shop.Clients
             else
                 return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = new List<string> { "Wrong password or email" } };
         }                 
+        public async Task<ClientsResultModel> LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
+            return new ClientsResultModel { ResultCode = ResultCodes.Successed };
+        }
         public async Task<ClientsResultModel> ForgotPasswordAsync(ForgotPasswordDTOModel fp_model)
         {
             var user = await _userManager.FindByEmailAsync(fp_model.Email);
@@ -108,7 +112,6 @@ namespace Shop.Clients
             else
                 return new ClientsResultModel { ResultCode = ResultCodes.Successed };
         }
-
         public async Task<ClientsResultModel> DeleteMyAccountAsync(string email)
         {            
             var user = await _userManager.FindByEmailAsync(email);
@@ -127,7 +130,6 @@ namespace Shop.Clients
             }
             else return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = new List<string> { "Couldn't find a user" } };
         } 
-        
         public async Task<ClientsResultModel> ChangePasswordAsync(ChangePasswordDTOModel ch_pmodel)
         {
             var user = await _userManager.FindByEmailAsync(ch_pmodel.Email);
@@ -137,7 +139,6 @@ namespace Shop.Clients
             else
                 return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = ch_p_res.Errors.Select(x => x.Description) };
         }
-
         public string GetEmailConfirmText(string urlCallback)
         {
             var html = string.Empty;

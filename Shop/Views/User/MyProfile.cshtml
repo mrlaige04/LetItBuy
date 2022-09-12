@@ -1,0 +1,37 @@
+﻿@using Shop.Models.UserModels;
+@using Shop.Models;
+@model Shop.Models.UserModels.ProfileViewModel;
+
+@if (Model != null) {
+    <div class="container">
+        <div class="userImage">
+            @if(Model.user.ImageURL == null)
+            {
+                <img width="200" height="200" style="border-radius:50%;" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"/>
+                <form asp-action="SetPhoto" asp-controller="User" method="post" enctype="multipart/form-data">
+                    <input type="file" name="photo" /><br>
+                    <input type="submit" value="Загрузить" />
+                </form>
+            } else
+            {
+                <img src="@Model.user.ImageURL" alt="userImage">
+                
+            }
+        </div>
+        <div class="userIdentityInfo">
+            <h2>@Model.user.UserName</h2>
+            <p>@Model.user.Email</p>
+        </div>
+        
+    </div>
+    <script>
+        function setphotosubmit() {
+            var form = document.getElementById("userphotoform").files;
+
+            fetch("/User/SetPhoto", {
+                method: "POST",
+                body: form
+            });
+        }
+    </script>
+}

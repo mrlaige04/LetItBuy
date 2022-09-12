@@ -2,13 +2,13 @@
 using Shop.Models;
 using Shop.Models.ClientsModels;
 
-namespace Shop.Clients
+namespace Shop.Services
 {
-    public class RoleClient
+    public class RoleService
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public RoleClient(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public RoleService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -21,7 +21,6 @@ namespace Shop.Clients
                 return new ClientsResultModel { ResultCode = ResultCodes.Successed };
             return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = delRes.Errors.Select(x => x.Description).ToList() };
         }
-
         public async Task<ClientsResultModel> AddUserToRoles(User user, params string[] roles)
         {
             foreach (var item in roles)
@@ -33,8 +32,6 @@ namespace Shop.Clients
                 return new ClientsResultModel { ResultCode = ResultCodes.Successed };
             return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = res.Errors.Select(x => x.Description) };
         }
-        
-
         public async Task<ClientsResultModel> DeleteUserFromRoles(User user, params string[] roles)
         {
             var res = await _userManager.RemoveFromRolesAsync(user, roles);

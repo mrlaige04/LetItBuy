@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Models;
+using Shop.Models.UserModels;
 using System.Security.Claims;
 
 namespace Shop.Controllers
@@ -10,15 +11,35 @@ namespace Shop.Controllers
     public class UserController : Controller
     {
         private readonly UserManager<User> _userManager;
-        public UserController(UserManager<User> userManager)
+        private readonly IWebHostEnvironment _webHost;
+        public UserController(UserManager<User> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
+            _webHost = webHostEnvironment;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetProfile()
         {
-            return View("Profile");
+            var user = await _userManager.GetUserAsync(User);
+            
+;           return View("MyProfile", new ProfileViewModel { user = user });
+        }
+
+        //TODO : Upload Image
+        [HttpPost]
+        public async Task<IActionResult> SetPhoto(IFormFile photo)
+        {
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var ext = photo.FileName.Substring(photo.FileName.LastIndexOf('.'));
+            string path = _webHost.WebRootPath + $"\\UserPhotos\\{userId}{ext}";
+
+            using (var fs = new FileStream(path, FileMode.Create))
+            {
+                photo.CopyTo(fs);
+            }            
+            return RedirectToAction("GetProfile");
         }
 
         [HttpPost]
