@@ -1,4 +1,6 @@
-﻿namespace Shop.Models.Identity
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Shop.Models.Identity
 {
     public class ChangePasswordViewModel
     {

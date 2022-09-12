@@ -1,4 +1,5 @@
-﻿namespace Shop.Models.User
+﻿
+namespace Shop.Models.UserModels
 {
     public class ProfileViewModel
     {
