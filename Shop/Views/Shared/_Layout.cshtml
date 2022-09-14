@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>LetItBuy</title>
     <link rel="shortcut icon" type="image/x-icon" width="50" href="/favicon.ico"/>
+    @RenderSection("Styles",false)
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.2.0/zephyr/bootstrap.min.css" integrity="sha512-4hshmZC4nWxAKC1H3MJBd2uRv+gRBkcBODzZoj3Jzd0XrF+osekpAAI1W7ASmMTuSKzrq+3xDoTfNU2sbNK67w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </head>
@@ -35,16 +36,20 @@
               <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
               <div class="dropdown-menu">
                    @if(User.Identity.IsAuthenticated)
-                    {
+                   {
+                       @if(User.IsInRole("Admin")) {
+                           <a class="dropdown-item" asp-controller="Admin" asp-action="GetAdminPanel">Admin panel</a>
+                       }
+                        
                        <a class="dropdown-item" asp-controller="User" asp-action="GetProfile">My account</a>
                        <a class="dropdown-item">My cart</a>
                        <a class="dropdown-item">My items</a>
                        <div class="dropdown-divider"></div>
                        <a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a>
-                    } else {                      
+                   } else {                      
                        <a class="dropdown-item" asp-controller="Account" asp-action="Login">Login</a>
                        <a class="dropdown-item" asp-controller="Account" asp-action="Register">Register</a>
-                    }
+                   }
               </div>
             </li>
           </ul>
@@ -56,7 +61,7 @@
     </nav>
 
     
-	<div class="container  mt-2">
+	<div class="container mt-5">
 		@RenderBody()
 	</div>
 

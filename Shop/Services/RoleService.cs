@@ -7,8 +7,8 @@ namespace Shop.Services
     public class RoleService
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public RoleService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+        public RoleService(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -16,7 +16,7 @@ namespace Shop.Services
         
         public async Task<ClientsResultModel> DeleteRole(string roleName)
         {
-            var delRes = await _roleManager.DeleteAsync(new IdentityRole(roleName));
+            var delRes = await _roleManager.DeleteAsync(new IdentityRole<Guid>(roleName));
             if (delRes.Succeeded)
                 return new ClientsResultModel { ResultCode = ResultCodes.Successed };
             return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = delRes.Errors.Select(x => x.Description).ToList() };
@@ -25,7 +25,7 @@ namespace Shop.Services
         {
             foreach (var item in roles)
             {
-                if (!await _roleManager.RoleExistsAsync(item)) await _roleManager.CreateAsync(new IdentityRole(item));
+                if (!await _roleManager.RoleExistsAsync(item)) await _roleManager.CreateAsync(new IdentityRole<Guid>(item));
             }
             var res = await _userManager.AddToRolesAsync(user, roles);
             if (res.Succeeded)

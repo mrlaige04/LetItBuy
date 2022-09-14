@@ -1,0 +1,38 @@
+﻿.main {
+    display: flex;
+    flex-direction: column;
+}
+
+.topinfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.profileImage {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+}
+.userImage {
+    display: flex;
+    flex-direction: column;
+}
+
+.imageoptions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+@media  (max-width : 600px) {
+    .topinfo {
+        flex-direction: column;
+    }
+    .profileImage {
+        width: 120px;
+        height: 120px;
+    }
+    .userIdentityInfo {
+        text-align:center;
+    }
+}

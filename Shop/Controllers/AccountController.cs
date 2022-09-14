@@ -50,7 +50,7 @@ namespace Shop.Controllers
         public async Task<IActionResult> ConfirmEmailAsync(string userId, string code)
         {
             if (ModelState.IsValid)
-            {
+            {                
                 var conf_em_res = await _accountClient.ConfirmEmailAsync(userId, code);
                 if (conf_em_res.ResultCode == ResultCodes.Successed)
                     return RedirectToAction("Login", "Account");

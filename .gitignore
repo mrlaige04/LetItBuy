@@ -351,3 +351,6 @@ MigrationBackup/
 
 # Mail Sender
 mailsenderdata.txt
+
+#UserPhotos
+./wwwroot/UserPhotos/

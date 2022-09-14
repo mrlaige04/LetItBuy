@@ -24,12 +24,13 @@ namespace Shop.Services
             _logger = logger;
             _signInManager = signInManager;
             _emailSender = emailSender;
-        }        
-        
+        }
+
         public async Task<ClientsResultModel> RegisterAsync(RegisterDTOModel reg_dto)
         {
             var cartId = Guid.NewGuid();
-            var userId = Guid.NewGuid().ToString();
+            var userId = Guid.NewGuid();
+            
             User user = new User
             {
                 Email = reg_dto.Email,
@@ -38,12 +39,16 @@ namespace Shop.Services
                 {
                     CartID = cartId,
                     UserID = userId,
-                    ItemsInCart = new List<CartItem>()
+                    ItemsInCart = new List<CartItem>() { }
                 },
                 CartID = cartId,
                 Items = new List<Item>(),
                 Id = userId
             };
+            user.Cart.UserOwner = user;
+
+            
+            
 
             var result = await _userManager.CreateAsync(user, reg_dto.Password);
             if (result.Succeeded) {
@@ -66,6 +71,7 @@ namespace Shop.Services
         }
         public async Task<ClientsResultModel> ConfirmEmailAsync(string userId, string code)
         {
+            if ((await _userManager.FindByIdAsync(userId)).EmailConfirmed) return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = new List<string> { "Email is already confirmed" } };
             code = Regex.Replace(code, " ", "+");
             if (userId == null || code == null)
                 return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = new List<string> { "UserID or Code is Null" } };

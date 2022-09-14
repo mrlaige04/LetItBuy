@@ -22,23 +22,41 @@ namespace Shop.Controllers
         public async Task<IActionResult> GetProfile()
         {
             var user = await _userManager.GetUserAsync(User);
-            
-;           return View("MyProfile", new ProfileViewModel { user = user });
+            ViewData["webrootpath"] = Request.Host.Value;
+            return View("MyProfile", new ProfileViewModel { user = user });
         }
 
-        //TODO : Upload Image
+        
         [HttpPost]
         public async Task<IActionResult> SetPhoto(IFormFile photo)
         {
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var ext = photo.FileName.Substring(photo.FileName.LastIndexOf('.'));
-            string path = _webHost.WebRootPath + $"\\UserPhotos\\{userId}{ext}";
-
-            using (var fs = new FileStream(path, FileMode.Create))
+            if (ModelState.IsValid)
             {
-                photo.CopyTo(fs);
-            }            
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var ext = photo.FileName.Substring(photo.FileName.LastIndexOf('.'));
+                string path = Path.Combine("UserPhotos", $"{userId}{ext}");
+
+                using (var fs = new FileStream(Path.Combine("wwwroot", path), FileMode.Create))
+                {
+                    photo.CopyTo(fs);
+                }
+                
+                var user = await _userManager.GetUserAsync(User);
+                user.HasPhoto = true;
+                var res = await _userManager.UpdateAsync(user);
+            }
+            return RedirectToAction("GetProfile");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUserImage()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            //System.IO.File.Delete("wwwroot\\" + user.ImageURL);
+            user.HasPhoto = false;
+            var res = await _userManager.UpdateAsync(user);
+            
             return RedirectToAction("GetProfile");
         }
 
@@ -67,32 +85,32 @@ namespace Shop.Controllers
             }           
         }
         
-        [HttpDelete]
-        public async void RemoveItem(string email, Guid itemId)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                ModelState.AddModelError("", "User not found");
-            }
-            else
-            {
-                var item = user.Items?.FirstOrDefault(i => i.ItemId == itemId);
-                if (item == null)
-                {
-                    ModelState.AddModelError("", "Item not found");
-                }
-                else
-                {
-                    user.Items?.Remove(item);
-                    var result = await _userManager.UpdateAsync(user);
-                    if (!result.Succeeded)
-                    {
-                        ModelState.AddModelError("", "Error while removing item");
-                    }
-                }
-            }
-        }
+        //[HttpDelete]
+        //public async void RemoveItem(string email, Guid itemId)
+        //{
+        //    var user = await _userManager.FindByEmailAsync(email);
+        //    if (user == null)
+        //    {
+        //        ModelState.AddModelError("", "User not found");
+        //    }
+        //    else
+        //    {
+        //        var item = user.Items?.FirstOrDefault(i => i.ItemId == itemId);
+        //        if (item == null)
+        //        {
+        //            ModelState.AddModelError("", "Item not found");
+        //        }
+        //        else
+        //        {
+        //            user.Items?.Remove(item);
+        //            var result = await _userManager.UpdateAsync(user);
+        //            if (!result.Succeeded)
+        //            {
+        //                ModelState.AddModelError("", "Error while removing item");
+        //            }
+        //        }
+        //    }
+        //}
 
         [HttpPost]
         public void EditItem(Item item)

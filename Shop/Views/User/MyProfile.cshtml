@@ -1,37 +1,60 @@
 ﻿@using Shop.Models.UserModels;
 @using Shop.Models;
 @model Shop.Models.UserModels.ProfileViewModel;
-
-@if (Model != null) {
-    <div class="container">
-        <div class="userImage">
-            @if(Model.user.ImageURL == null)
-            {
-                <img width="200" height="200" style="border-radius:50%;" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"/>
-                <form asp-action="SetPhoto" asp-controller="User" method="post" enctype="multipart/form-data">
-                    <input type="file" name="photo" /><br>
-                    <input type="submit" value="Загрузить" />
-                </form>
-            } else
-            {
-                <img src="@Model.user.ImageURL" alt="userImage">
+@{
+    //var imageUrlFull = @"\" + Model?.user?.ImageURL;
+}
+@section Styles {
+    <head>
+        <link rel="stylesheet" href="~/css/userProfile.css"/>
+    </head>
+    
+}
+@if (Model != null && Model.user != null) {
+    <div class="main container">
+        <div class="topinfo">
+            <div class="userImage">
+                @if (Model.user.HasPhoto == false)
+                {
                 
-            }
-        </div>
-        <div class="userIdentityInfo">
-            <h2>@Model.user.UserName</h2>
-            <p>@Model.user.Email</p>
+                        <img class="profileImage" style="border-radius:50%;" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
+                        <div class="imageoptions">
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">Select new photo</button>
+                            <div id="myModal" class="modal fade">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Choose File</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form asp-action="SetPhoto" asp-controller="User" method="post" enctype="multipart/form-data" id="choosePhoto">
+                                                <input class="form-control" required type="file" name="photo" /><br>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer"><button onclick="document.getElementById('choosePhoto').submit();" class="btn btn-default" type="button" data-dismiss="modal">Send</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                                 
+                } else
+                {               
+                     
+                        <img class="profileImage" style="border-radius:50%;"  @*src='@imageUrlFull'*@ alt="userphoto"/>
+                        <div class="imageoptions">
+                            <button onclick="deletePhoto()" class="btn btn-primary">Delete image</button>
+                        </div>
+               
+                }
+            </div>
+            <div class="userIdentityInfo">
+                <h2>@Model.user.UserName</h2>
+                <p>@Model.user.Email</p>
+            </div>
         </div>
         
+        
     </div>
-    <script>
-        function setphotosubmit() {
-            var form = document.getElementById("userphotoform").files;
-
-            fetch("/User/SetPhoto", {
-                method: "POST",
-                body: form
-            });
-        }
-    </script>
+    <script src="~/js/userProfile.js"></script>
 }

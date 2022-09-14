@@ -6,45 +6,50 @@ using Shop.Models;
 
 namespace Shop.Data
 {
-    public class ApplicationDBContext : IdentityDbContext<User>
+    public class ApplicationDBContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         public ApplicationDBContext(DbContextOptions options) : base(options)
         {
             Database.EnsureCreated();
         }
-        
+        public DbSet<User> Users { get; set; } = null!;
         public DbSet<Catalog> Catalogs { get; set; } = null!;
         public DbSet<Item> Items { get; set; } = null!;
         public DbSet<Cart> Carts { get; set; } = null!;
-
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {          
-            base.OnModelCreating(builder);
-            builder.Entity<User>().HasKey(x => x.Id);
+            base.OnModelCreating(builder);            
+            
             builder.Entity<User>()
                 .HasMany(x => x.Items)
                 .WithOne(x => x.OwnerUser)
                 .HasForeignKey(x => x.OwnerID)               
-                .OnDelete(DeleteBehavior.ClientCascade);
+                .OnDelete(DeleteBehavior.Cascade);
             
             builder.Entity<Catalog>()
                 .HasMany(x => x.Characteristics)
                 .WithOne(x => x.Catalog)
                 .HasForeignKey(x=>x.CatalogID)
-                .OnDelete(DeleteBehavior.Restrict)
-                ;
+                .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Cart>()
-                .HasOne(x => x.UserOwner)
-                .WithOne(x => x.Cart)
-                .HasForeignKey<Cart>(x=>x.UserID)
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<User>()
+                .HasOne<Cart>(x => x.Cart)
+                .WithOne(x => x.UserOwner)
+                .HasForeignKey<Cart>(x => x.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //builder.Entity<Cart>()
+            //    .HasOne(x => x.UserOwner)
+            //    .WithOne(x => x.Cart)
+            //    .HasForeignKey<User>(x => x.CartID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Cart>()
                 .HasMany(x => x.ItemsInCart)
                 .WithOne(x => x.Cart)
                 .HasForeignKey(x => x.CartItemID)
-                .OnDelete(DeleteBehavior.ClientCascade)
+                .OnDelete(DeleteBehavior.Restrict)
                 ;      
         }
     }

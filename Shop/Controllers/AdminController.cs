@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Data;
 using Shop.Models;
+using Shop.Models.Admin;
+using Shop.Models.UserModels;
 
 namespace Shop.Controllers
 {
@@ -10,18 +12,24 @@ namespace Shop.Controllers
     public class AdminController : Controller
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly ApplicationDBContext _db;
-        public AdminController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, ApplicationDBContext dBContext)
+        private readonly SignInManager<User> _signInManager;
+        public AdminController(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager, ApplicationDBContext dBContext, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _db = dBContext;
+            _signInManager = signInManager;
         }
-        public IActionResult Index()
+
+        [HttpGet]
+        public IActionResult GetAdminPanel()
         {
-            return View();
+            return View("AdminPanel");
         }
+        
+        
 
         [HttpGet]
         public IActionResult CreateCategory()
@@ -55,14 +63,67 @@ namespace Shop.Controllers
             
         }
 
-        public void AddAdmin()
+        [HttpGet]
+        public IActionResult AddAdmin()
         {
-            
+            return View();
         }
 
-        public void DeleteAdmin()
+        [HttpGet]
+        public IActionResult GetAllUsers()
         {
+            var users = _userManager.Users.Select(x=> new UserDTO { 
+                Username = x.UserName,
+                Email = x.Email 
+            }).ToList();
             
+            return View("Users", users);
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> AddAdmin(AddAdminViewModel addAdminViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = new User()
+                {
+                    Email = addAdminViewModel.Email,
+                    UserName = addAdminViewModel.UserName,
+                    EmailConfirmed = true,
+                    Id = Guid.NewGuid()
+                };
+                var createAdmin_Result = await _userManager.CreateAsync(user, addAdminViewModel.Password);
+                if (!createAdmin_Result.Succeeded)
+                {
+                    foreach (var error in createAdmin_Result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    return View();
+                }
+                var addRole_Result = await _userManager.AddToRoleAsync(user, "Admin");
+                return View("AddAdminConfirmation");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Incorrect data");
+                return View(addAdminViewModel);
+            }
+        }
+
+        public async Task<IActionResult> DeleteUser(string email)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user != null) await _userManager.DeleteAsync(user);
+                return RedirectToAction("GetAllUsers");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Incorrect data");      
+                return BadRequest("Incorrect data");
+            }
         }
     }
 }

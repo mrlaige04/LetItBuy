@@ -9,7 +9,7 @@
 
 
 ## About
-![alt](https://cdn.pixabay.com/photo/2017/03/29/04/09/shopping-icon-2184065_1280.png)
+![alt](./Shop/wwwroot/Logos/Zip/png/logo-color.png)
 
 ### Features
 For simple user:
