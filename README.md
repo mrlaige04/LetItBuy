@@ -5,6 +5,7 @@
 - Create SQL Server and write connection string to `appsettings.json`
 - Configure your Google SMTP Host to Send Emails in `emailsmtpconfig.json`
 - Configure email type, subject, topic and etc.
+- Configure admin account in `admininitialize.json`
 - Run.
 
 
