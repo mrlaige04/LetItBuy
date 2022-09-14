@@ -36,3 +36,14 @@
         text-align:center;
     }
 }
+.editLogin,
+.editPassword,
+.editEmail {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.deleteProfile {
+    margin-top: 30px;
+}

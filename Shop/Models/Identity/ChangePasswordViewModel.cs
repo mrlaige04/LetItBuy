@@ -4,7 +4,7 @@ namespace Shop.Models.Identity
 {
     public class ChangePasswordViewModel
     {
-        public string StatusMessage { get; set; }
+        public string? StatusMessage { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

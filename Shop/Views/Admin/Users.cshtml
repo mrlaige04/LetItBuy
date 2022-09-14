@@ -1,5 +1,6 @@
-﻿@using Shop.Models.UserModels;
-@model IEnumerable<UserDTO>;
+﻿@using Microsoft.AspNetCore.Identity
+@using Shop.Models.UserModels;
+@model List<UserDTO>;
 
 
 <table class="table table-hover">
@@ -15,12 +16,24 @@
       @if(Model!=null) {
           @foreach (var user in Model)
           {
-                <tr>
+               @if (user.IsAdmin)
+               {                    
+                <tr class="table-primary">                 
                     <td>@user.Username</td>
                     <td>@user.Email</td>
                     <td><a asp-controller="Admin" asp-action="EditUser" asp-route-email="@user.Email">Edit</a></td>
                     <td><a asp-controller="Admin" asp-action="DeleteUser" asp-route-email="@user.Email">Delete</a></td>
-                </tr>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>@user.Username</td>
+                        <td>@user.Email</td>
+                        <td><a asp-controller="Admin" asp-action="EditUser" asp-route-email="@user.Email">Edit</a></td>
+                        <td><a asp-controller="Admin" asp-action="DeleteUser" asp-route-email="@user.Email">Delete</a></td>
+                    </tr>
+                }
             }
       }      
   </tbody>

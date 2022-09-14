@@ -61,7 +61,7 @@ namespace Shop.Services
                         text);
                 if (!sendEmailResult)
                 {
-                    return await DeleteMyAccountAsync(user.Email);                     
+                    return await DeleteMyAccountByEmailAsync(user.Email);                     
                 }
                 var ad_rol_res = await _roleClient.AddUserToRoles(user, "simpleUser");
 
@@ -118,8 +118,31 @@ namespace Shop.Services
             else
                 return new ClientsResultModel { ResultCode = ResultCodes.Successed };
         }
-        public async Task<ClientsResultModel> DeleteMyAccountAsync(string email)
+        public async Task<ClientsResultModel> DeleteMyAccountAsync(string email, string password)
         {            
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                if (_userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, password)==PasswordVerificationResult.Failed)
+                {
+                    return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = new List<string> { "Wrong password" } };
+                }
+        
+                var delRes = await _userManager.DeleteAsync(user);
+                if (!delRes.Succeeded)
+                {
+                    return new ClientsResultModel
+                    {
+                        ResultCode = ResultCodes.Failed,
+                        Errors = delRes.Errors.Select(x => x.Description)
+                    };
+                }
+                else return new ClientsResultModel { ResultCode = ResultCodes.Successed };
+            }
+            else return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = new List<string> { "Couldn't find a user" } };
+        } 
+        public async Task<ClientsResultModel> DeleteMyAccountByEmailAsync(string email)
+        {
             var user = await _userManager.FindByEmailAsync(email);
             if (user != null)
             {
@@ -135,7 +158,7 @@ namespace Shop.Services
                 else return new ClientsResultModel { ResultCode = ResultCodes.Successed };
             }
             else return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = new List<string> { "Couldn't find a user" } };
-        } 
+        }
         public async Task<ClientsResultModel> ChangePasswordAsync(ChangePasswordDTOModel ch_pmodel)
         {
             var user = await _userManager.FindByEmailAsync(ch_pmodel.Email);

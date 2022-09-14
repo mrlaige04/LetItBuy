@@ -72,9 +72,10 @@ namespace Shop.Controllers
         [HttpGet]
         public IActionResult GetAllUsers()
         {
-            var users = _userManager.Users.Select(x=> new UserDTO { 
+            var users = _userManager.Users.ToList().Select(x=> new UserDTO { 
                 Username = x.UserName,
-                Email = x.Email 
+                Email = x.Email,
+                IsAdmin = _userManager.IsInRoleAsync(x, "Admin").Result
             }).ToList();
             
             return View("Users", users);

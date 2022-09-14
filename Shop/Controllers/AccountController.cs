@@ -6,19 +6,21 @@ using Shop.Models.ClientsModels;
 using Shop.Models.DTO;
 using Shop.Models.Identity;
 using System.Security.Claims;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace Shop.Controllers
 {
     public class AccountController : Controller
     {       
-        private readonly ILogger<AccountController> _logger;        
+        private readonly ILogger<AccountController> _logger;
 
+        private readonly SignInManager<User> _signinmanager;
         private readonly AccountService _accountClient;
-        public AccountController(AccountService accountClient, ILogger<AccountController> logger)
+        public AccountController(AccountService accountClient, ILogger<AccountController> logger, SignInManager<User> signInManager)
         {
             _accountClient = accountClient;
             _logger = logger;
+            _signinmanager = signInManager;
         }
 
         [HttpGet]
@@ -125,7 +127,7 @@ namespace Shop.Controllers
         }
         
         [HttpGet]
-        public IActionResult ChangePasswordAsync() => View("ChangePassword");
+        public IActionResult ChangePassword() => View("ChangePassword");
 
         [HttpPost]
         public async Task<IActionResult> ChangePasswordAsync (ChangePasswordViewModel model)
@@ -148,14 +150,23 @@ namespace Shop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteMyAccount(string email)
+        public async Task<IActionResult> DeleteMyAccount(string password)
         {
-
-            var del_ac_res = await _accountClient.DeleteMyAccountAsync(email);
-            if (del_ac_res.ResultCode == ResultCodes.Successed)
-                return RedirectToAction("GetWelcomePage", "Home");
-            else
-                return View("Error", new ErrorViewModel { ErrorMessages = del_ac_res.Errors });
+            if (ModelState.IsValid)
+            {
+                var userEmail = User.FindFirstValue(ClaimTypes.Email);
+                var del_ac_res = await _accountClient.DeleteMyAccountAsync(userEmail, password);
+                if (del_ac_res.ResultCode == ResultCodes.Successed)
+                {
+                    await _signinmanager.SignOutAsync();
+                    return RedirectToAction("Login", "Account");
+                }
+                else
+                    return View("Error", new ErrorViewModel { ErrorMessages = del_ac_res.Errors });
+            }
+            else {
+                return View("Error", new ErrorViewModel { ErrorMessages = new List<string> { "Invalid model state" } });
+            }
         }
 
         [HttpGet]

@@ -10,6 +10,6 @@ namespace Shop.Models
         public Cart Cart { get; set; }
         public Guid CartID { get; set; }
 
-        public bool HasPhoto { get; set; }
+        public string? ImageURL { get; set; }
     }    
 }

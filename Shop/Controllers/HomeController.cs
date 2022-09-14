@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shop.Data;
 using Shop.Models;
-using Shop.Repositories;
+
 using Shop.Services;
 using System.Text.Json;
 

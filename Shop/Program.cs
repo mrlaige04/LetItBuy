@@ -17,6 +17,8 @@ builder.Services.AddRazorPages();
 // DB and Identity
 builder.Services.AddDbContext<ApplicationDBContext>(options=>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 builder.Services.AddIdentity<User, IdentityRole<Guid>>(options => {
     options.SignIn.RequireConfirmedEmail = true;
     options.Password.RequiredLength = 7;

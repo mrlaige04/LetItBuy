@@ -39,11 +39,6 @@ namespace Shop.Data
                 .HasForeignKey<Cart>(x => x.UserID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //builder.Entity<Cart>()
-            //    .HasOne(x => x.UserOwner)
-            //    .WithOne(x => x.Cart)
-            //    .HasForeignKey<User>(x => x.CartID)
-            //    .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Cart>()
                 .HasMany(x => x.ItemsInCart)

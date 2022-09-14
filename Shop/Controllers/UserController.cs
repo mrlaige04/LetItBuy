@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace Shop.Controllers
 {
-    [Authorize(Roles="simpleUser")]
+    [Authorize(Roles="simpleUser, Admin")]
     public class UserController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -17,13 +17,14 @@ namespace Shop.Controllers
             _userManager = userManager;
             _webHost = webHostEnvironment;
         }
-
+        // TODO : Everywhere check if user exists else logout!!!
         [HttpGet]
         public async Task<IActionResult> GetProfile()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Logout", "Account");
             ViewData["webrootpath"] = Request.Host.Value;
-            return View("MyProfile", new ProfileViewModel { user = user });
+            return View("MyProfile", new ProfileViewModel { UserName = user.UserName, Email = user.Email, ImageUrl = user.ImageURL });
         }
 
         
@@ -42,7 +43,7 @@ namespace Shop.Controllers
                 }
                 
                 var user = await _userManager.GetUserAsync(User);
-                user.HasPhoto = true;
+                user.ImageURL = path;
                 var res = await _userManager.UpdateAsync(user);
             }
             return RedirectToAction("GetProfile");
@@ -53,8 +54,8 @@ namespace Shop.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
-            //System.IO.File.Delete("wwwroot\\" + user.ImageURL);
-            user.HasPhoto = false;
+            System.IO.File.Delete("wwwroot\\" + user.ImageURL);
+            user.ImageURL = null;
             var res = await _userManager.UpdateAsync(user);
             
             return RedirectToAction("GetProfile");

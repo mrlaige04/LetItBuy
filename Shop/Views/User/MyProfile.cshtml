@@ -2,7 +2,7 @@
 @using Shop.Models;
 @model Shop.Models.UserModels.ProfileViewModel;
 @{
-    //var imageUrlFull = @"\" + Model?.user?.ImageURL;
+    var imageUrlFull = @"\" + Model?.ImageUrl;
 }
 @section Styles {
     <head>
@@ -10,13 +10,12 @@
     </head>
     
 }
-@if (Model != null && Model.user != null) {
+@if (Model != null) {
     <div class="main container">
         <div class="topinfo">
             <div class="userImage">
-                @if (Model.user.HasPhoto == false)
-                {
-                
+                @if (Model.ImageUrl == null)
+                {             
                         <img class="profileImage" style="border-radius:50%;" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
                         <div class="imageoptions">
                             <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">Select new photo</button>
@@ -35,26 +34,71 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                                 
+                        </div>                                            
                 } else
-                {               
-                     
-                        <img class="profileImage" style="border-radius:50%;"  @*src='@imageUrlFull'*@ alt="userphoto"/>
-                        <div class="imageoptions">
-                            <button onclick="deletePhoto()" class="btn btn-primary">Delete image</button>
-                        </div>
-               
+                {                       
+                    <img class="profileImage" style="border-radius:50%;"  src='@imageUrlFull' alt="userphoto"/>
+                    <div class="imageoptions">
+                        <button onclick="deletePhoto()" class="btn btn-primary">Delete image</button>
+                    </div>       
                 }
             </div>
             <div class="userIdentityInfo">
-                <h2>@Model.user.UserName</h2>
-                <p>@Model.user.Email</p>
+                <h2>@Model.UserName</h2>
+                <p>@Model.Email</p>
+            </div>
+        </div>
+        <hr>
+        <div class="editprofile">
+            <div class="editLogin">
+                <p>Login</p>
+                <p>@Model.UserName</p>
+                <a asp-controller="User" asp-action="EditUserName">Edit</a>
+            </div>
+            <hr>
+            <div class="editEmail">
+                <p>Email</p>
+                <p>@Model.Email</p>
+                <a asp-controller="User" asp-action="EditEmail">Edit</a>
+            </div>
+            <hr>
+            <div class="editPassword">
+                <p>Password</p>
+                <p>********</p>
+                <a asp-controller="Account" asp-action="ChangePassword">Edit</a>
+            </div>
+        </div>
+        <hr>
+        <div class="deleteProfile d-grid">
+            <button class="btn btn-danger btn-lg" type="button" data-toggle="modal" data-target="#myModal2">Delete account</button>
+            <div id="myModal2" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Confirm</h4>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure want to delete your account permanently?
+                                <form asp-controller="Account" asp-action="DeleteMyAccount" id="formDeleteAccount">
+                                    <fieldset>
+                                        <legend>Enter password to continue</legend>
+                                        <div class="form-group">
+                                          <label for="exampleInputPassword1" class="form-label mt-4">Password</label>
+                                          <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-default" type="button" data-dismiss="modal">No</button>
+                                <button onclick="deleteAccount()" class="btn btn-danger" type="button">Yes</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
-        
     </div>
+    
     <script src="~/js/userProfile.js"></script>
 }
