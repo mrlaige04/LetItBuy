@@ -1,0 +1,65 @@
+﻿@using Shop.Models.UserModels
+@model EditItemViewModel;
+
+
+@{
+    ViewData["Title"] = "Edit Item";
+}
+
+
+@if (Model != null)
+{
+    <div class="container">
+        <form asp-action="EditItem" method="post">
+            <fieldset>
+                <h2>@Model.Name</h2>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <!-- Item Id Invisible Field -->
+                <div class="form-group d-none invisible">
+                  <fieldset>
+                    <label class="form-label mt-4" for="readOnlyInput">Id</label>
+                    <input asp-for="ItemId" class="form-control" id="readOnlyInput" type="text" placeholder="Id" readonly="">
+                  </fieldset>
+                </div>
+                
+                <!-- Item Price -->
+                <div class="form-group">
+                  <label asp-for="Price" class="form-label mt-4">Price</label>
+                  <div class="form-group">
+                    <div class="input-group mb-3">
+                      <span class="input-group-text">$</span>
+                      <input asp-for="Price" type="text" class="form-control" aria-label="Price">
+                      <span class="input-group-text">.00</span>
+                      <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Item Name -->
+                <div class="form-group">
+                  <label asp-for="Name" class="col-form-label" for="inputDefault">Item name</label>
+                  <input asp-for="Name" type="text" class="form-control" placeholder="Item Name" id="inputDefault" value="@Model.Name">
+                  <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                
+                <!-- Item Image -->
+                <div class="form-group">
+                  <label for="formFile" class="form-label mt-4">Image</label>
+                  <input class="form-control" type="file" id="formFile">
+                </div>
+
+                
+                <!-- Item Description -->
+                <div class="form-group">
+                  <label asp-for="Description" for="exampleTextarea" class="form-label mt-4">Description</label>
+                  <textarea asp-for="Description" class="form-control" id="exampleTextarea" rows="3">@Model.Description</textarea>
+                </div>
+                <div class="d-grid gap-2 mt-4">
+                  <button class="btn btn-lg btn-primary" type="submit">Confirm</button>                  
+                </div>
+            </fieldset>
+        </form>
+    </div>
+}

@@ -1,0 +1,27 @@
+﻿.itemImageSearch {
+    width: 90px;
+    height: 90px;
+}
+tr {
+    vertical-align: middle;
+    cursor: pointer;
+    margin-bottom: 12px;
+}
+.text-item {
+    text-align: center;
+    font-size: xx-large;
+}
+
+@media only screen and (max-width : 900px) {
+    .itemImageSearch {
+        width: 120px;
+        height: 120px;
+    }
+    tr {
+        text-align: center;
+        display: flex;
+        flex-direction: column;     
+    }
+    
+
+}

@@ -34,12 +34,12 @@ namespace Shop.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<User>()
-                .HasOne<Cart>(x => x.Cart)
+                .HasOne(x => x.Cart)
                 .WithOne(x => x.UserOwner)
                 .HasForeignKey<Cart>(x => x.UserID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-
+            
             builder.Entity<Cart>()
                 .HasMany(x => x.ItemsInCart)
                 .WithOne(x => x.Cart)

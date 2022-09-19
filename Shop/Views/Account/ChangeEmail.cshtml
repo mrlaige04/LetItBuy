@@ -1,0 +1,26 @@
+﻿
+@using Shop.Models.Identity
+@model ChangeEmailViewModel;
+
+
+@{
+    ViewData["Title"] = "Change Email";
+}
+<form asp-action="ChangeEmail" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <fieldset>
+        <div class="form-group">
+            <label asp-for="OldEmail"></label>
+            <input asp-for="OldEmail" type="email" class="form-control" required/>                    
+            <span asp-validation-for="OldEmail" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NewEmail"></label>
+            <input asp-for="NewEmail" type="email" class="form-control" required/>                    
+            <span asp-validation-for="NewEmail" class="text-danger"></span>
+        </div> <br />
+         <div class="d-grid gap-2">
+             <button class="btn btn-lg btn-primary" type="submit">Change</button>                  
+         </div>
+    </fieldset>
+</form>

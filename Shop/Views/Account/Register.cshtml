@@ -1,19 +1,21 @@
-﻿@using Shop.Models.Identity
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Shop.Models.Identity
 @model RegisterViewModel?
+@inject IViewLocalizer Localizer
 
 
-<h1>Register</h1>
 
-<div class="row">
+<div class="mt-4 container mb-4">
+    <h1>@Localizer["Register"]</h1>
     <div class="col-md-4">
         <form id="registerForm" asp-controller="Account" asp-action="Register" method="post">
             <fieldset>
                 <hr />
                 <div class="container-sm">
                     <ul>
-                        <li>Password must have at least 1 capital letter</li>
-                        <li>Password must have digits</li>
-                        <li>Password must more than 7 symbols</li>
+                        <li>@Localizer["PasswordCriteria1"]</li>
+                        <li>@Localizer["PasswordCriteria2"]</li>
+                        <li>@Localizer["PasswordCriteria3"]</li>
                     </ul>
                 </div>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -39,7 +41,7 @@
                 </div>
                 <br />
                 <div class="d-grid gap-2">
-                  <button class="btn btn-lg btn-primary" type="submit">Register</button>                  
+                  <button class="btn btn-lg btn-primary" type="submit">@Localizer["Register"]</button>                  
                 </div>
             </fieldset>
         </form>

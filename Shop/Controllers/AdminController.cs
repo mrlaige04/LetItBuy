@@ -15,12 +15,15 @@ namespace Shop.Controllers
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly ApplicationDBContext _db;
         private readonly SignInManager<User> _signInManager;
-        public AdminController(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager, ApplicationDBContext dBContext, SignInManager<User> signInManager)
+        private readonly IConfiguration _config;
+        public AdminController(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager, ApplicationDBContext dBContext, SignInManager<User> signInManager, IConfiguration config)
         {
+            _config = config;
             _userManager = userManager;
             _roleManager = roleManager;
             _db = dBContext;
             _signInManager = signInManager;
+            
         }
 
         [HttpGet]
@@ -116,6 +119,11 @@ namespace Shop.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (email == _config["Admin:Email"])
+                {
+                    ModelState.AddModelError("", "You can't delete admin");
+                    return RedirectToAction("GetAllUsers");
+                }
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user != null) await _userManager.DeleteAsync(user);
                 return RedirectToAction("GetAllUsers");

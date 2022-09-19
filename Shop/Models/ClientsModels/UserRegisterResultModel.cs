@@ -1,6 +1,6 @@
 ﻿namespace Shop.Models.ClientsModels
 {
-    public class UserRegisterResultModel : ClientsResultModel
+    public class UserRegisterResultModel : ServicesResultModel
     {
         public User User { get; set; }
     }

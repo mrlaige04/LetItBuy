@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
@@ -6,10 +8,11 @@
 	<title>LetItBuy</title>
     <link rel="shortcut icon" type="image/x-icon" width="50" href="/favicon.ico"/>
     @RenderSection("Styles",false)
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.2.0/zephyr/bootstrap.min.css" integrity="sha512-4hshmZC4nWxAKC1H3MJBd2uRv+gRBkcBODzZoj3Jzd0XrF+osekpAAI1W7ASmMTuSKzrq+3xDoTfNU2sbNK67w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </head>
-<body>
+<body style="margin:0px; height:100%;">
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
         <a class="navbar-brand col-md-3" asp-controller="Home" asp-action="GetWelcomePage">
@@ -22,49 +25,104 @@
         <div class="collapse navbar-collapse" id="navbarColor02">
           <ul class="navbar-nav me-auto">            
             <li class="nav-item">
-              <a class="nav-link" href="#">Categories</a>
+              <a class="nav-link" href="#">@Localizer["Catalogs"]</a>
             </li>
             <li class="nav-item">
                 <form method="get" class="d-flex align-content-center" asp-controller="Home" asp-action="SearchItems">
-                    <input name="q" class="form-control me-sm-2" type="text" placeholder="Search">
-                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                    <input name="q" class="form-control me-sm-2" type="text" placeholder="@Localizer["SearchPlaceholder"]">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">@Localizer["SearchButton"]</button>
                   </form>
             </li>
             
 
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Account"]</a>
               <div class="dropdown-menu">
                    @if(User.Identity.IsAuthenticated)
                    {
                        @if(User.IsInRole("Admin")) {
-                           <a class="dropdown-item" asp-controller="Admin" asp-action="GetAdminPanel">Admin panel</a>
+                           <a class="dropdown-item" asp-controller="Admin" asp-action="GetAdminPanel">@Localizer["Adminpanel"]</a>
                        }
                         
-                       <a class="dropdown-item" asp-controller="User" asp-action="GetProfile">My account</a>
-                       <a class="dropdown-item">My cart</a>
-                       <a class="dropdown-item">My items</a>
+                       <a class="dropdown-item" asp-controller="User" asp-action="GetProfile">@Localizer["Myaccount"]</a>
+                       <a class="dropdown-item">@Localizer["Mycart"]</a>
+                       <a asp-action="MyItems" asp-controller="User" class="dropdown-item">@Localizer["Myitems"]</a>
                        <div class="dropdown-divider"></div>
-                       <a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a>
+                       <a class="dropdown-item" asp-controller="Account" asp-action="Logout">@Localizer["Logout"]</a>
                    } else {                      
-                       <a class="dropdown-item" asp-controller="Account" asp-action="Login">Login</a>
-                       <a class="dropdown-item" asp-controller="Account" asp-action="Register">Register</a>
+                       <a class="dropdown-item" asp-controller="Account" asp-action="Login">@Localizer["Login"]</a>
+                       <a class="dropdown-item" asp-controller="Account" asp-action="Register">@Localizer["Register"]</a>
                    }
               </div>
             </li>
           </ul>
           
-
+          
           
         </div>
       </div>
     </nav>
 
     
-	<div class="container mt-5">
-		@RenderBody()
+	<div class="">
+		@RenderBody()     
 	</div>
+    
 
+    <div class="">   
+      <footer class="bg-light text-center text-white">
+          
+      <!-- Grid container -->
+      <div class="container p-4 pb-0">
+        <!-- Section: Social media -->
+        <section class="mb-4">
+          <a
+            class="btn text-white btn-floating m-1"
+            style="background-color: #55acee;"
+            href="#!"
+            role="button"
+            ><i class="fa fa-twitter"></i
+          ></a>
+      
+          <a
+            class="btn text-white btn-floating m-1"
+            style="background-color: #ac2bac;"
+            href="#!"
+            role="button"
+            ><i class="fa fa-instagram"></i
+          ></a>
+
+          <a
+            class="btn text-white btn-floating m-1"
+            style="background-color: #0082ca;"
+            href="#!"
+            role="button"
+            ><i class="fa fa-linkedin"></i
+          ></a>
+
+          <a
+            class="btn text-white btn-floating m-1"
+            style="background-color: #333333;"
+            href="#!"
+            role="button"
+            ><i class="fa fa-github"></i
+          ></a>
+        </section>
+        <div class="container col-2 mb-3"> 
+            <span style="color:black;">@Localizer["SelectLanguage"]:</span>@await Html.PartialAsync("_SelectLanguagePartial")
+        </div>
+      </div>
+          <!-- Copyright -->
+          <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2022 Copyright:
+            LetItBuy
+          </div>
+          <!-- Copyright -->
+        </footer>
+    </div>
+
+
+    
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>	
     <script src="/lib/bootstrap/dist/js/bootstrap.min.js">
 	<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

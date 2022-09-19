@@ -11,5 +11,7 @@ namespace Shop.Models
         public Guid CartID { get; set; }
 
         public string? ImageURL { get; set; }
+
+        
     }    
 }

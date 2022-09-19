@@ -4,20 +4,23 @@ using Shop.Services;
 using Microsoft.AspNetCore.Identity;
 using Shop.Models;
 using Microsoft.Extensions.FileProviders;
+using Shop.Middlewares;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 //using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
-
-
-
+// MVC Services
+builder.Services.AddControllersWithViews()
+    .AddDataAnnotationsLocalization()
+    .AddViewLocalization();
 builder.Services.AddRazorPages();
+
 
 // DB and Identity
 builder.Services.AddDbContext<ApplicationDBContext>(options=>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 
 builder.Services.AddIdentity<User, IdentityRole<Guid>>(options => {
     options.SignIn.RequireConfirmedEmail = true;
@@ -25,11 +28,33 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options => {
     options.Password.RequireDigit = true;
     options.User.RequireUniqueEmail = true;
     options.Password.RequireNonAlphanumeric = false;
-    
 })
 .AddEntityFrameworkStores<ApplicationDBContext>()
 .AddDefaultTokenProviders();
 
+
+builder.Services.AddAuthentication().AddCookie(x =>
+{
+    x.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    
+});
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[]
+    {
+        new CultureInfo("en"),
+        new CultureInfo("uk"),
+        new CultureInfo("de")
+    };
+    options.DefaultRequestCulture = new RequestCulture("ua");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+
+
+
+//Localization
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 
 // Custom Services
@@ -38,6 +63,7 @@ builder.Services.AddTransient<RoleService>();
 builder.Services.AddTransient<AccountService>();
 builder.Services.AddTransient<AdminService>();
 builder.Services.AddTransient<AdminInitializer>();
+builder.Services.AddTransient<UserService>();
 
 
 // Logging and Configuration
@@ -59,6 +85,7 @@ using (var scope = app.Services.CreateScope())
     var adminInitializer = services.GetRequiredService<AdminInitializer>();
     await adminInitializer.InitializeAdminAsync();
 }
+app.UseRequestLocalization();
 
 app.UseRouting();
 

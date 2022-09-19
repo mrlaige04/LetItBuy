@@ -15,12 +15,14 @@ namespace Shop.Controllers
         private readonly ILogger<AccountController> _logger;
 
         private readonly SignInManager<User> _signinmanager;
-        private readonly AccountService _accountClient;
-        public AccountController(AccountService accountClient, ILogger<AccountController> logger, SignInManager<User> signInManager)
+        private readonly AccountService _accountService;
+        private readonly IConfiguration _config;
+        public AccountController(AccountService accountClient, ILogger<AccountController> logger, SignInManager<User> signInManager, IConfiguration config)
         {
-            _accountClient = accountClient;
+            _accountService = accountClient;
             _logger = logger;
             _signinmanager = signInManager;
+            _config = config;
         }
 
         [HttpGet]
@@ -34,7 +36,7 @@ namespace Shop.Controllers
         {           
             if (ModelState.IsValid)
             {              
-                var register_result = await _accountClient.RegisterAsync(new RegisterDTOModel { Email = model.Email, Password = model.Password, Username = model.UserName, HostUrl = Request.Host.Value });
+                var register_result = await _accountService.RegisterAsync(new RegisterDTOModel { Email = model.Email, Password = model.Password, Username = model.UserName, HostUrl = Request.Host.Value });
                 if (register_result.ResultCode == ResultCodes.Failed)
                 {
                     foreach (var item in register_result.Errors)
@@ -53,7 +55,7 @@ namespace Shop.Controllers
         {
             if (ModelState.IsValid)
             {                
-                var conf_em_res = await _accountClient.ConfirmEmailAsync(userId, code);
+                var conf_em_res = await _accountService.ConfirmEmailAsync(userId, code);
                 if (conf_em_res.ResultCode == ResultCodes.Successed)
                     return RedirectToAction("Login", "Account");
                 else
@@ -76,7 +78,7 @@ namespace Shop.Controllers
         {
             if (ModelState.IsValid)
             {
-                var login_result = await _accountClient.LoginAsync(new LoginDTOModel { Email = model.Email, Password = model.Password, RememberMe = model.RememberMe, ReturnUrl = model.ReturnUrl, urlHelper = Url });
+                var login_result = await _accountService.LoginAsync(new LoginDTOModel { Email = model.Email, Password = model.Password, RememberMe = model.RememberMe, ReturnUrl = model.ReturnUrl, urlHelper = Url });
                 if (login_result.ResultCode == ResultCodes.Successed)
                     return Redirect(model.ReturnUrl ?? "../");
                 else
@@ -94,8 +96,8 @@ namespace Shop.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await _accountClient.LogoutAsync();
-            return RedirectToAction("GetWelcomePage", "Home");
+            await _accountService.LogoutAsync();
+            return RedirectToAction("Login", "Account");
         }
 
         [HttpGet]
@@ -112,7 +114,7 @@ namespace Shop.Controllers
         {
             if (ModelState.IsValid)
             {
-                var fp_res = await _accountClient.ForgotPasswordAsync(new ForgotPasswordDTOModel { Email = model.Email, HostUrl = Request.Host.Value });
+                var fp_res = await _accountService.ForgotPasswordAsync(new ForgotPasswordDTOModel { Email = model.Email, HostUrl = Request.Host.Value });
                 if (fp_res.ResultCode == ResultCodes.Successed)
                     return View("ForgotPasswordConfirmation");
                 else
@@ -127,6 +129,7 @@ namespace Shop.Controllers
         }
         
         [HttpGet]
+        [Authorize]
         public IActionResult ChangePassword() => View("ChangePassword");
 
         [HttpPost]
@@ -135,7 +138,7 @@ namespace Shop.Controllers
             if (ModelState.IsValid)
             {
                 var email = User.FindFirstValue(ClaimTypes.Email);
-                var cp_res = await _accountClient.ChangePasswordAsync(new ChangePasswordDTOModel { Email = email, NewPassword = model.NewPassword, OldPassword = model.OldPassword });
+                var cp_res = await _accountService.ChangePasswordAsync(new ChangePasswordDTOModel { Email = email, NewPassword = model.NewPassword, OldPassword = model.OldPassword });
                 if (cp_res.ResultCode == ResultCodes.Successed)
                     return View("ChangePasswordConfirmation");
                 else
@@ -155,7 +158,12 @@ namespace Shop.Controllers
             if (ModelState.IsValid)
             {
                 var userEmail = User.FindFirstValue(ClaimTypes.Email);
-                var del_ac_res = await _accountClient.DeleteMyAccountAsync(userEmail, password);
+                if(userEmail == _config["Admin:Email"])
+                {
+                    ModelState.AddModelError("", "You can't delete admin account");
+                    return View("Error", new ErrorViewModel { ErrorMessages = new List<string> { "You can't delete admin account" } });
+                }
+                var del_ac_res = await _accountService.DeleteMyAccountAsync(userEmail, password);
                 if (del_ac_res.ResultCode == ResultCodes.Successed)
                 {
                     await _signinmanager.SignOutAsync();
@@ -165,11 +173,57 @@ namespace Shop.Controllers
                     return View("Error", new ErrorViewModel { ErrorMessages = del_ac_res.Errors });
             }
             else {
-                return View("Error", new ErrorViewModel { ErrorMessages = new List<string> { "Invalid model state" } });
+                return View("Error", new ErrorViewModel { ErrorMessages = new List<string> { "Invalid password" } });
             }
         }
 
         [HttpGet]
         public IActionResult AccessDenied() => View();
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult ChangeEmail()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ChangeEmailAsync(ChangeEmailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                _accountService.urlHelper = Url;
+                var changeemail_result = await _accountService.ChangeEmailAsync(new ChangeEmailDTOModel { OldEmail = model.OldEmail, NewEmail = model.NewEmail });
+                if (changeemail_result.ResultCode == ResultCodes.Successed)
+                    return View("ChangeEmailConfirmation");
+                else
+                {
+                    
+                    foreach (var item in changeemail_result.Errors)
+                    {
+                        ModelState.AddModelError("", item);
+                    }
+                }
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmChangeEmailAsync(string userId, string newEmail, string token)
+        {
+            if (ModelState.IsValid)
+            {
+                var conf_ch_em_res = await _accountService.ConfirmChangeEmailAsync(token, userId, newEmail);
+                if (conf_ch_em_res.ResultCode == ResultCodes.Successed)
+                {
+                    await _accountService.LogoutAsync();
+                    return RedirectToAction("Login", "Account");
+                }           
+                else
+                    return View("Error", new ErrorViewModel { ErrorMessages = conf_ch_em_res.Errors });
+            }
+            else return View("Error", new ErrorViewModel { ErrorMessages = new List<string> { "Invalid token" } });
+        }
     }
 }

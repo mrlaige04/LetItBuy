@@ -1,5 +1,11 @@
-namespace ShopTests
+using Moq;
+using Shop;
+using Shop.Controllers;
+using Shop.Models.UserModels;
+
+namespace Tests
 {
+
     public class Tests
     {
         [SetUp]
@@ -13,4 +19,5 @@ namespace ShopTests
             Assert.Pass();
         }
     }
+
 }

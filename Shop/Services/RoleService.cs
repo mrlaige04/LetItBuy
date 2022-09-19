@@ -14,14 +14,14 @@ namespace Shop.Services
             _roleManager = roleManager;
         }
         
-        public async Task<ClientsResultModel> DeleteRole(string roleName)
+        public async Task<ServicesResultModel> DeleteRole(string roleName)
         {
             var delRes = await _roleManager.DeleteAsync(new IdentityRole<Guid>(roleName));
             if (delRes.Succeeded)
-                return new ClientsResultModel { ResultCode = ResultCodes.Successed };
-            return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = delRes.Errors.Select(x => x.Description).ToList() };
+                return new ServicesResultModel { ResultCode = ResultCodes.Successed };
+            return new ServicesResultModel { ResultCode = ResultCodes.Failed, Errors = delRes.Errors.Select(x => x.Description).ToList() };
         }
-        public async Task<ClientsResultModel> AddUserToRoles(User user, params string[] roles)
+        public async Task<ServicesResultModel> AddUserToRoles(User user, params string[] roles)
         {
             foreach (var item in roles)
             {
@@ -29,15 +29,15 @@ namespace Shop.Services
             }
             var res = await _userManager.AddToRolesAsync(user, roles);
             if (res.Succeeded)
-                return new ClientsResultModel { ResultCode = ResultCodes.Successed };
-            return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = res.Errors.Select(x => x.Description) };
+                return new ServicesResultModel { ResultCode = ResultCodes.Successed };
+            return new ServicesResultModel { ResultCode = ResultCodes.Failed, Errors = res.Errors.Select(x => x.Description) };
         }
-        public async Task<ClientsResultModel> DeleteUserFromRoles(User user, params string[] roles)
+        public async Task<ServicesResultModel> DeleteUserFromRoles(User user, params string[] roles)
         {
             var res = await _userManager.RemoveFromRolesAsync(user, roles);
             if (res.Succeeded)
-                return new ClientsResultModel { ResultCode = ResultCodes.Successed };
-            return new ClientsResultModel { ResultCode = ResultCodes.Failed, Errors = res.Errors.Select(x => x.Description) };
+                return new ServicesResultModel { ResultCode = ResultCodes.Successed };
+            return new ServicesResultModel { ResultCode = ResultCodes.Failed, Errors = res.Errors.Select(x => x.Description) };
         }       
     }
 }

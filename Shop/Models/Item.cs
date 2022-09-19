@@ -12,8 +12,10 @@ namespace Shop.Models
 
         
         public Guid OwnerID { get; set; }
-        public string Description { get; set; }
-        public Catalog ItemCatalog { get; set; }               
-        public double ItemPrice { get; set; }       
+        public string? Description { get; set; }
+        public Catalog? ItemCatalog { get; set; }               
+        public decimal ItemPrice { get; set; }
+
+        public string? ImageUrl { get; set; } 
     }
 }

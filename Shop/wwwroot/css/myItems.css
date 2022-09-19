@@ -1,0 +1,8 @@
+﻿table * {
+    vertical-align: middle;
+    
+}
+
+tr {
+    cursor: pointer;
+}

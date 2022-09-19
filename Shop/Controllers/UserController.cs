@@ -1,23 +1,31 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Shop.Data;
 using Shop.Models;
+using Shop.Models.ClientsModels;
 using Shop.Models.UserModels;
+using Shop.Services;
 using System.Security.Claims;
 
 namespace Shop.Controllers
 {
     [Authorize(Roles="simpleUser, Admin")]
+    
     public class UserController : Controller
     {
         private readonly UserManager<User> _userManager;
         private readonly IWebHostEnvironment _webHost;
-        public UserController(UserManager<User> userManager, IWebHostEnvironment webHostEnvironment)
+        private readonly ApplicationDBContext _db;
+        private readonly UserService _userService;
+        public UserController(UserManager<User> userManager, IWebHostEnvironment webHostEnvironment, ApplicationDBContext db, UserService userService)
         {
             _userManager = userManager;
             _webHost = webHostEnvironment;
+            _db = db;
+            _userService = userService;
         }
-        // TODO : Everywhere check if user exists else logout!!!
+
         [HttpGet]
         public async Task<IActionResult> GetProfile()
         {
@@ -31,9 +39,15 @@ namespace Shop.Controllers
         [HttpPost]
         public async Task<IActionResult> SetPhoto(IFormFile photo)
         {
+            
             if (ModelState.IsValid)
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null)
+                {
+                    ModelState.AddModelError("", "No user found");
+                    return RedirectToAction("Logout", "Account");
+                }
                 var ext = photo.FileName.Substring(photo.FileName.LastIndexOf('.'));
                 string path = Path.Combine("UserPhotos", $"{userId}{ext}");
 
@@ -53,7 +67,11 @@ namespace Shop.Controllers
         public async Task<IActionResult> DeleteUserImage()
         {
             var user = await _userManager.GetUserAsync(User);
-
+            if (user == null)
+            {
+                ModelState.AddModelError("", "No user found");
+                return RedirectToAction("Logout", "Account");
+            }
             System.IO.File.Delete("wwwroot\\" + user.ImageURL);
             user.ImageURL = null;
             var res = await _userManager.UpdateAsync(user);
@@ -61,62 +79,112 @@ namespace Shop.Controllers
             return RedirectToAction("GetProfile");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddItem(string email, Item item)
+        [HttpGet]
+        public IActionResult AddItemPage()
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if(user==null)
-            {
-                ModelState.AddModelError("", "User not found");
-                return BadRequest(ModelState);
-            }
-            else
-            {
-                if (user.Items == null)
-                {
-                    user.Items = new List<Item>();
-                }
-                user?.Items?.Add(item);
-                var result = await _userManager.UpdateAsync(user);
-                if (!result.Succeeded)
-                {
-                    ModelState.AddModelError("", "Error while adding item");
-                }
-                return RedirectToAction("MyItems", "User");  
-            }           
+            return View();
         }
-        
-        //[HttpDelete]
-        //public async void RemoveItem(string email, Guid itemId)
-        //{
-        //    var user = await _userManager.FindByEmailAsync(email);
-        //    if (user == null)
-        //    {
-        //        ModelState.AddModelError("", "User not found");
-        //    }
-        //    else
-        //    {
-        //        var item = user.Items?.FirstOrDefault(i => i.ItemId == itemId);
-        //        if (item == null)
-        //        {
-        //            ModelState.AddModelError("", "Item not found");
-        //        }
-        //        else
-        //        {
-        //            user.Items?.Remove(item);
-        //            var result = await _userManager.UpdateAsync(user);
-        //            if (!result.Succeeded)
-        //            {
-        //                ModelState.AddModelError("", "Error while removing item");
-        //            }
-        //        }
-        //    }
-        //}
+
+
+
+        // TODO : MY ITEMS, ADD ITEM, EDIT ITEM AND MORE
+        [HttpGet]
+        public IActionResult MyItems()
+        {
+            var user = _userManager.GetUserAsync(User).Result;
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (id == null) return RedirectToAction("Logout", "Account");
+            var items = _db.Items.Where(x=>x.OwnerID.ToString() == id).ToList();
+            return View(items);
+        }
 
         [HttpPost]
-        public void EditItem(Item item)
+        public async Task<IActionResult> AddItem(ItemAddViewModel item)
         {
-            
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return RedirectToAction("Logout", "Account");
+                var addItem_Result = await _userService.AddItemAsync(user, new Item
+                {
+                    Description = item.Description,
+                    ItemName = item.Name,
+                    ItemPrice = item.Price,
+                });
+                if (addItem_Result.ResultCode == ResultCodes.Successed)
+                {
+                    return RedirectToAction("MyItems");
+                }
+                else
+                {
+                    foreach (var error in addItem_Result.Errors)
+                    {
+                        ModelState.AddModelError("", error);
+                    }
+                }
+            }
+            return View("AddItemPage");
         }
-    }
+
+        
+        [HttpGet]
+        public IActionResult EditItem(Guid ItemId)
+        {
+            var item = _db.Items.FirstOrDefault(x => x.ItemId == ItemId);
+            if (item == null) return RedirectToAction("MyItems");
+            return View(new EditItemViewModel
+            {
+                Description = item.Description,
+                Name = item.ItemName,
+                Price = item.ItemPrice,
+                ItemId = item.ItemId
+            });
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> EditItem(EditItemViewModel item)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return RedirectToAction("Logout", "Account");
+                var editItem_Result = await _userService.EditItemAsync(user, new Item
+                {
+                    Description = item.Description,
+                    ItemName = item.Name,
+                    ItemPrice = item.Price,
+                    ItemId = item.ItemId
+                });
+                if (editItem_Result.ResultCode == ResultCodes.Successed) return RedirectToAction("MyItems");
+                else
+                {
+                    foreach (var error in editItem_Result.Errors)
+                    {
+                        ModelState.AddModelError("", error);
+                    }
+                }
+            }
+            return View("EditItem", item);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public async Task<IActionResult> DeleteItem(Guid ItemId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Logout", "Account");
+            var deleteItem_Result = await _userService.DeleteItemAsync(user, ItemId);
+            if (deleteItem_Result.ResultCode == ResultCodes.Successed) return RedirectToAction("MyItems");
+            else
+            {
+                foreach (var error in deleteItem_Result.Errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
+            }
+            return RedirectToAction("MyItems");
+        }
+    }  
+
 }

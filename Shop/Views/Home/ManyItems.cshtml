@@ -1,22 +1,31 @@
-﻿@model IEnumerable<Item>
+﻿@using Shop.Models.ViewDTO
+@model IEnumerable<ItemViewDTO>
 
 @{
     ViewData["Title"] = "Search results";
 }
-
-@if(Model != null) {
-    @foreach (var item in Model)
-    {
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">@item.ItemName</h5>
-                        <p class="card-text">@item.Description</p>
-                        <a asp-controller="Home" asp-action="GetItem" asp-route-ItemId="@item.ItemId" class="btn btn-primary">Go to item</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
+@section Styles {
+    <link rel="stylesheet" href="~/css/ManyItems.css"/>
+}
+@if(Model != null & Model.Count() > 0) {
+    <table class="table table-hover">
+        @foreach (var item in Model)
+        {
+           <tr onclick="location.replace('/Home/ItemPage?id=@item.ItemId')">  
+                 <th scope="row">
+                    @if(item.ImageURL == null)
+                    {
+                        <img class="itemImageSearch" src="https://gogeticon.net/files/1406874/995a3e47908a75edf8c47335835c1355.png"/>
+                    } else
+                    {
+                        <img class="itemImageSearch" src="@item.ImageURL"/>
+                    }
+                 </th>
+                 <td class="text-item">@item.ItemName</td>
+                 <td class="text-item">@item.ItemPrice</td>
+          </tr>     
+        }
+    </table>
+} else if (@Model.Count() == 0) {
+    <h2>No items found :(</h2>
 }

@@ -31,8 +31,9 @@ namespace Shop.Services
                 Id = userId
                 
             };
+            
             var createAdmin_Result = await _userManager.CreateAsync(user, _configuration["Admin:Password"]);
-            await _userManager.AddToRoleAsync(user, "Admin");
+            if (createAdmin_Result.Succeeded) await _userManager.AddToRoleAsync(user, "Admin");
         }
     }
 }
