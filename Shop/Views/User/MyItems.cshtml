@@ -1,6 +1,8 @@
-﻿@model List<Item>;
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model List<Item>;
+@inject IViewLocalizer Localizer;
 <a asp-controller="User" asp-action="AddItemPage" class="btn btn-light">
-    Add new
+    @Localizer["AddNew"]
 </a>
 
 @section Styles {

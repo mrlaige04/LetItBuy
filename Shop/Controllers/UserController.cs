@@ -185,6 +185,15 @@ namespace Shop.Controllers
             }
             return RedirectToAction("MyItems");
         }
+
+        [HttpGet]
+        public IActionResult MySells()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return RedirectToAction("Logout", "Account");
+            var sells = _db.Sells.AsEnumerable().Where(x => x.SellerID.ToString() == userId).ToList();
+            return View(sells);
+        }
     }  
 
 }

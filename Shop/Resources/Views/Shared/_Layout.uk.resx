@@ -149,6 +149,14 @@
     <value>Мої товари</value>
     <comment>My items</comment>
   </data>
+  <data name="MyOrders" xml:space="preserve">
+    <value>Мої покупки</value>
+    <comment>MyOrders</comment>
+  </data>
+  <data name="Mysells" xml:space="preserve">
+    <value>Мої продажі</value>
+    <comment>Mysells</comment>
+  </data>
   <data name="Register" xml:space="preserve">
     <value>Зареєструватися</value>
     <comment>Register</comment>

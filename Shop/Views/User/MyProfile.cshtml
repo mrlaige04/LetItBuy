@@ -1,6 +1,8 @@
-﻿@using Shop.Models.UserModels;
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Shop.Models.UserModels;
 @using Shop.Models;
 @model Shop.Models.UserModels.ProfileViewModel;
+@inject IViewLocalizer Localizer
 @{
     var imageUrlFull = @"\" + Model?.ImageUrl;
 }
@@ -18,19 +20,19 @@
                 {             
                         <img class="profileImage" style="border-radius:50%;" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
                         <div class="imageoptions">
-                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">Select new photo</button>
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">@Localizer["SelectNewPhoto"]</button>
                             <div id="myModal" class="modal fade">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Choose File</h4>
+                                            <h4 class="modal-title">@Localizer["ChooseFile"]</h4>
                                         </div>
                                         <div class="modal-body">
                                             <form asp-action="SetPhoto" asp-controller="User" method="post" enctype="multipart/form-data" id="choosePhoto">
                                                 <input class="form-control" required type="file" name="photo" /><br>
                                             </form>
                                         </div>
-                                        <div class="modal-footer"><button onclick="document.getElementById('choosePhoto').submit();" class="btn btn-default" type="button" data-dismiss="modal">Send</button></div>
+                                        <div class="modal-footer"><button onclick="document.getElementById('choosePhoto').submit();" class="btn btn-default" type="button" data-dismiss="modal">@Localizer["SendPhoto"]</button></div>
                                     </div>
                                 </div>
                             </div>
@@ -39,7 +41,7 @@
                 {                       
                     <img class="profileImage" style="border-radius:50%;"  src='@imageUrlFull' alt="userphoto"/>
                     <div class="imageoptions">
-                        <button onclick="deletePhoto()" class="btn btn-primary">Delete image</button>
+                        <button onclick="deletePhoto()" class="btn btn-primary">@Localizer["DeletePhoto"]</button>
                     </div>       
                 }
             </div>
@@ -51,47 +53,47 @@
         <hr>
         <div class="editprofile">
             <div class="editLogin">
-                <p>Login</p>
+                <p>@Localizer["Login"]</p>
                 <p>@Model.UserName</p>
-                <a asp-controller="User" asp-action="EditUserName">Edit</a>
+                <a asp-controller="User" asp-action="EditUserName">@Localizer["Edit"]</a>
             </div>
             <hr>
             <div class="editEmail">
-                <p>Email</p>
+                <p>@Localizer["Email"]</p>
                 <p>@Model.Email</p>
-                <a asp-controller="Account" asp-action="ChangeEmail">Edit</a>
+                <a asp-controller="Account" asp-action="ChangeEmail">@Localizer["Edit"]</a>
             </div>
             <hr>
             <div class="editPassword">
-                <p>Password</p>
+                <p>@Localizer["Password"]</p>
                 <p>********</p>
-                <a asp-controller="Account" asp-action="ChangePassword">Edit</a>
+                <a asp-controller="Account" asp-action="ChangePassword">@Localizer["Edit"]</a>
             </div>
         </div>
         <hr>
         <div class="deleteProfile d-grid">
-            <button class="btn btn-danger btn-lg" type="button" data-toggle="modal" data-target="#myModal2">Delete account</button>
+            <button class="btn btn-danger btn-lg" type="button" data-toggle="modal" data-target="#myModal2">@Localizer["DeleteAccount"]</button>
             <div id="myModal2" class="modal fade">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title">Confirm</h4>
+                            <h4 class="modal-title">@Localizer["ConfirmDelete"]</h4>
                             </div>
                             <div class="modal-body">
-                                Are you sure want to delete your account permanently?
+                                @Localizer["AreUSureToDelete"]
                                 <form asp-controller="Account" asp-action="DeleteMyAccount" id="formDeleteAccount">
                                     <fieldset>
-                                        <legend>Enter password to continue</legend>
+                                        <legend>@Localizer["EnterPassword"]</legend>
                                         <div class="form-group">
-                                          <label for="exampleInputPassword1" class="form-label mt-4">Password</label>
+                                          <label for="exampleInputPassword1" class="form-label mt-4">@Localizer["Password"]</label>
                                           <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
                                         </div>
                                     </fieldset>
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-default" type="button" data-dismiss="modal">No</button>
-                                <button onclick="deleteAccount()" class="btn btn-danger" type="button">Yes</button>
+                                <button class="btn btn-default" type="button" data-dismiss="modal">@Localizer["No"]</button>
+                                <button onclick="deleteAccount()" class="btn btn-danger" type="button">@Localizer["Yes"]</button>
                         </div>
                     </div>
                 </div>

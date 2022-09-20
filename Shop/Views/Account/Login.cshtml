@@ -1,11 +1,13 @@
-﻿@using Shop.Models.Identity;
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Shop.Models.Identity;
 @model LoginViewModel
+@inject IViewLocalizer Localizer
 
 
 
-<h1>Login</h1>
-<div class="row container mt-4">
-    <div class="col-md-4">
+<div class="container mt-4">
+    <h1>@Localizer["Login"]</h1>
+    <div class="col-md-4 mb-4">
         <form method="post" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
             <fieldset>
                 <hr />
@@ -22,13 +24,13 @@
                 </div>
                 <div class="form-group">        
                     <input class="form-check-input" type="checkbox" asp-for="RememberMe" />
-                    <label class="form-check-label" asp-for="RememberMe">Remember me</label>
+                    <label class="form-check-label" asp-for="RememberMe"></label>
                 </div>
                 <br />
-                <a class="w-100" asp-controller="Account" asp-action="Register">Dont have an account?</a> <br />
-                <a asp-controller="Account" asp-action="ForgotPassword">Forgot Password?</a>
+                <a class="w-100" asp-controller="Account" asp-action="Register">@Localizer["DontHaveAnAccount"]</a> <br />
+                <a asp-controller="Account" asp-action="ForgotPassword">@Localizer["ForgotPassword"]</a>
                 <div class="d-grid gap-2">
-                  <button class="btn btn-lg btn-primary" type="submit">Login</button>                  
+                  <button class="btn btn-lg btn-primary" type="submit">@Localizer["Login"]</button>                  
                 </div>
             </fieldset>
             

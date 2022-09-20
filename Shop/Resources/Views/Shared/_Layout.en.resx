@@ -149,6 +149,14 @@
     <value>My items</value>
     <comment>My items</comment>
   </data>
+  <data name="MyOrders" xml:space="preserve">
+    <value>My orders</value>
+    <comment>MyOrders</comment>
+  </data>
+  <data name="Mysells" xml:space="preserve">
+    <value>My sells</value>
+    <comment>Mysells</comment>
+  </data>
   <data name="Register" xml:space="preserve">
     <value>Register</value>
     <comment>Register</comment>

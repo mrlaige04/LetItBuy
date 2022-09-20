@@ -12,7 +12,7 @@
 		.Select(c => new SelectListItem { Value = c.Name, Text = c.NativeName }).ToList();
 }
 
-<form asp-controller="Home" asp-action="SetLanguage" asp-route-returnUrl="@Context.Request.Path" 
+<form asp-controller="Home" asp-action="SetLanguage" asp-route-returnUrl="@(Context.Request.Path + (Context.Request.QueryString.Value ?? "" ))" 
 	method="post" class="d-flex">
 	<select class="form-select" name="culture" onchange="this.form.submit();" class="dropdown_lang" asp-for="@requestCulture.RequestCulture.UICulture.Name" asp-items="cultureItems"></select>
 </form>

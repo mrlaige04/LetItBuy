@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Localization;
 using Shop.Controllers;
 using Shop.Models;
 using Shop.Models.ClientsModels;
@@ -13,20 +14,22 @@ namespace Shop.Services
 {
     public class AccountService
     {
-        public readonly UserManager<User> _userManager;
-        public readonly SignInManager<User> _signInManager;
-        public readonly ILogger<AccountService> _logger;
-        public readonly ICustomEmailSender _emailSender;
-        public readonly RoleService _roleClient;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly ILogger<AccountService> _logger;
+        private readonly ICustomEmailSender _emailSender;
+        private readonly RoleService _roleClient;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
         public IUrlHelper urlHelper;
-        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<AccountService> logger, ICustomEmailSender emailSender, RoleService roleClient)
+        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<AccountService> logger, ICustomEmailSender emailSender, RoleService roleClient, IStringLocalizer<SharedResource> localizer)
         {
             _roleClient = roleClient;
             _userManager = userManager;
             _logger = logger;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _localizer = localizer;
         }
 
         public async Task<ServicesResultModel> RegisterAsync(RegisterDTOModel reg_dto)
@@ -93,12 +96,12 @@ namespace Shop.Services
         {
             var user = await _userManager.FindByEmailAsync(log_model.Email);
             if (user == null)
-                return new ServicesResultModel { ResultCode = ResultCodes.Failed, Errors = new List<string> { "User not found" } };
+                return new ServicesResultModel { ResultCode = ResultCodes.Failed, Errors = new List<string> { _localizer["UserNotFound"] } };
             var sign_res = await _signInManager.PasswordSignInAsync(user, log_model.Password, log_model.RememberMe, false);           
             if (sign_res.Succeeded)
                 return new ServicesResultModel { ResultCode = ResultCodes.Successed };
             else
-                return new ServicesResultModel { ResultCode = ResultCodes.Failed, Errors = new List<string> { "Wrong password or email" } };
+                return new ServicesResultModel { ResultCode = ResultCodes.Failed, Errors = new List<string> { _localizer["WrongPassOrEm"] } };
         }                 
         public async Task<ServicesResultModel> LogoutAsync()
         {

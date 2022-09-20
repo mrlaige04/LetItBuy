@@ -13,7 +13,7 @@ namespace Shop.Models.Identity
         [Display(Name = "Password")]
         public string Password { get; set; }
 
-        [Display(Name = "Remember?")]
+        [Display(Name = "RememberMe")]
         public bool RememberMe { get; set; }
 
         public string? ReturnUrl { get; set; }

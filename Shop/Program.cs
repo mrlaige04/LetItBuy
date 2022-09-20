@@ -1,12 +1,12 @@
-using Microsoft.EntityFrameworkCore;
-using Shop.Data;
-using Shop.Services;
 using Microsoft.AspNetCore.Identity;
-using Shop.Models;
-using Microsoft.Extensions.FileProviders;
-using Shop.Middlewares;
-using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using Shop.Data;
+using Shop.Errors;
+using Shop.Models;
+using Shop.Services;
+using System.Globalization;
 //using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +22,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ApplicationDBContext>(options=>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<User, IdentityRole<Guid>>(options => {
+builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
+{
     options.SignIn.RequireConfirmedEmail = true;
     options.Password.RequiredLength = 7;
     options.Password.RequireDigit = true;
@@ -30,7 +31,8 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options => {
     options.Password.RequireNonAlphanumeric = false;
 })
 .AddEntityFrameworkStores<ApplicationDBContext>()
-.AddDefaultTokenProviders();
+.AddDefaultTokenProviders()
+.AddErrorDescriber<MultiLanguageErrorDescriber>();
 
 
 builder.Services.AddAuthentication().AddCookie(x =>

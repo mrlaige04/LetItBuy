@@ -16,7 +16,7 @@ namespace Shop.Data
         public DbSet<Catalog> Catalogs { get; set; } = null!;
         public DbSet<Item> Items { get; set; } = null!;
         public DbSet<Cart> Carts { get; set; } = null!;
-        
+        public DbSet<Sell> Sells { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder builder)
         {          
             base.OnModelCreating(builder);            
