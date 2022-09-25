@@ -94,10 +94,10 @@ namespace Shop.Controllers
 
         [HttpGet]
         [HttpPost]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(string returnUrl)
         {
             await _accountService.LogoutAsync();
-            return RedirectToAction("Login", "Account");
+            return LocalRedirect(returnUrl);
         }
 
         [HttpGet]

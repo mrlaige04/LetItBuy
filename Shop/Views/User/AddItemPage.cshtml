@@ -9,122 +9,113 @@
 @{
     var curs = @Html.GetEnumSelectList(typeof(Currency));
 
-    //var criterias = db.Criterias.Where(x => x.CategoryId == Model.CategoryId).ToList();
+    
     var categories = CategoryService.GetCategories().Select(x=>new SelectListItem
     {
         Text = x.Name,
         Value = x.Id.ToString()
     });
 }
-<form asp-action="AddItem">
-    <div class="form-group">
-        <label for="itemName">@Localizer["ItemName"]</label>
-        <input asp-for="Name" type="text" class="form-control" required id="itemName">
-    </div>
-    
-    <div class="form-group">
-        <label asp-for="CategoryID" for="category"></label>
-        <select asp-for="CategoryID" class="form-select categorySelect" asp-items="@categories"></select>
-    </div>    
-    
-    
-    
-    
-    <div class="form-group">
-        <label for="itemName">@Localizer["ItemPrice"]</label>
-        <div class="item-group d-flex flex-row">
-            <input asp-for="Price" min="0" type="number" class="form-control" required id="itemName">
-            <select asp-for="Currency" asp-items="curs" class="input-group-text"></select>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="itemName">@Localizer["ItemDescrip"]</label>
-        <input asp-for="Description" type="text" class="form-control" required id="itemName">
-    </div> <br />
-     
-    
+<form asp-action="AddItem" asp-controller="User" method="post" enctype="multipart/form-data">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" data-bs-toggle="tab" href="#maininfo" aria-selected="false" role="tab" tabindex="-1">@Localizer["MainInfo"]</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" data-bs-toggle="tab" href="#CharacteristicsFields" aria-selected="false" role="tab" tabindex="-1">@Localizer["Characteristics"]</a>
+        </li>
+    </ul>
 
-
-    <div class="border-top my-3"></div>
-
-
+    <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade active show" id="maininfo" role="tabpanel">
+            <div class="form-group">
+                <label for="itemName">@Localizer["ItemName"]</label>
+                <input asp-for="Name" type="text" class="form-control" required id="itemName">
+            </div>
     
-    <div class="form-group mt-3">
-        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group me-2" role="group" aria-label="First group">
-                <button onclick="appendNumberField()" type="button" class="btn btn-secondary">Number</button>
-                <button onclick="appendTextField()" type="button" class="btn btn-secondary">Text</button>
+            <div class="form-group">
+                <label asp-for="CategoryID" for="category"></label>
+                <select id="categorySelectID" asp-for="CategoryID" class="form-select categorySelect" asp-items="@categories">
+                    <option hidden disabled selected> -- select category -- </option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="itemName">@Localizer["ItemPrice"]</label>
+                <div class="item-group d-flex flex-row">
+                    <input asp-for="Price" min="0" type="number" class="form-control" required id="itemName">
+                    <select asp-for="Currency" asp-items="curs" class="input-group-text"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="itemName">@Localizer["ItemDescrip"]</label>
+                <input asp-for="Description" type="text" class="form-control" required id="itemName">
+            </div>
+            <div class="form-group">
+              <label for="formFile" class="form-label mt-4">@Localizer["SelectItemImage"]</label>
+              <input class="form-control" name="itemImage" type="file" id="itemImage">
             </div>
         </div>
-      
-    
-        <div class="characteristics">
         
+        <div class="tab-pane fade" id="CharacteristicsFields" role="tabpanel"> 
         </div>
     </div>
-
-    
-    
+        
 
 
 
-
-
-
-
-
-    <div class="d-grid gap-2">
+    <div class="d-grid gap-2 mt-3">
         <button class="btn btn-lg btn-primary" type="submit">@Localizer["AddItem"]</button>                  
     </div>
 </form>
 
 
 <script>
-        document.getElementsByClassName("categorySelect")[0].onchange = function (x) {
-            var categoryId = x.target.value;
-            var url = "/Home/GetCriterias?categoryId=" + categoryId;
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    var characteristics = document.getElementsByClassName("characteristics")[0];
-                    characteristics.innerHTML = "";
-                    data.forEach(x => {
-                        var div = document.createElement("div");
-                        div.classList.add("form-group");
-                        var label = document.createElement("label");
-                        label.innerHTML = x.name;
-                        div.appendChild(label);
-                        if (x.type == "Number") {
-                            var input = document.createElement("input");
-                            input.type = "number";
-                            input.classList.add("form-control");
-                            input.name = "Criterias[" + x.id + "]";
-                            div.appendChild(input);
-                        }
-                        else {
-                            var input = document.createElement("input");
-                            input.type = "text";
-                            input.classList.add("form-control");
-                            input.name = "Criterias[" + x.id + "]";
-                            div.appendChild(input);
-                        }
-                        characteristics.appendChild(div);
-                    });
-                });
-        }
-        function appendNumberField() {
-            var div = document.createElement('div');
-            div.className = "form-group";
-            div.innerHTML = '<label for="itemName">Number</label><input type="number" class="form-control" required id="itemName">';
-            document.getElementsByClassName('characteristics')[0].appendChild(div);
-        }
-        function appendTextField() {
-            var div = document.createElement('div');
-            div.className = "form-group";
-            div.innerHTML = '<label for="itemName">Text</label><input type="text" class="form-control" required id="itemName">';
-            document.getElementsByClassName('characteristics')[0].appendChild(div);
-        }
-    </script>
+    function loadCriterias(categoryId) {
+        
+        var url = "/Home/GetCriterias?categoryId=" + categoryId;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                var characteristics = document.getElementById("CharacteristicsFields");
+                characteristics.innerHTML = "";
+                data.forEach(x => {
+                    var div = document.createElement("div");
+                    div.classList.add("form-group");
+                    var label = document.createElement("label");
+                    label.innerHTML = x.name;
+                    div.appendChild(label);
+
+                    var input = document.createElement("input");
+                    input.classList.add("form-control");
+                    input.name = "x" + x.name;
+                    
+                    if (x.type == "2") {            
+                        input.type = "number";                       
+                    } else if (x.type=="1") {                     
+                        input.type = "number";
+                        input.min = "0";
+                    } else if (x.type == "0") {
+                        input.type = "text";
+                    } else if (x.type == "4") {
+                        input.type = "checkbox";
+                    } else if (x.type == "3") {
+                        input.type = "date";
+                    }
+                    
+                    div.appendChild(input);
+                    characteristics.appendChild(div);
+                });     
+            });
+    }
+    document.getElementsByClassName("categorySelect")[0].onchange = function (x) {
+            loadCriterias(x.target.value);
+    }
+    document.addEventListener("DOMContentLoaded", ready);
+    function ready() {
+        loadCriterias(document.getElementById("categorySelectID").value);
+    }
+</script>
 
     
 @functions {

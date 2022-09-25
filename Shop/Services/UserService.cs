@@ -21,7 +21,6 @@ namespace Shop.Services
             if (user == null) return new ServicesResultModel() { ResultCode = ResultCodes.Failed, Errors = new List<string> { "User not found" } };
             item.OwnerUser = user;
             item.OwnerID = user.Id;
-            item.ItemId = Guid.NewGuid();
             try
             {
                 await _db.Items.AddAsync(item);

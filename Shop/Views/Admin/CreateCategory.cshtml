@@ -1,4 +1,6 @@
-﻿
+﻿@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+}
 
 @{
     var criteriaTypes = @Html.GetEnumSelectList(typeof(CriteriaTypes));  
@@ -60,6 +62,15 @@ function appendField() {
     select.innerHTML = `@Html.DropDownList("Criteria", criteriaTypes, new { @class = "form-control", @name = "criteriaType", @required = "required" })`;
     divInner.appendChild(select);
     div.innerHTML = "<label for='itemName'>Criteria</label>";
+    var i = document.createElement('i');
+    i.className = "fa fa-trash";
+    i.setAttribute("aria-hidden", "true");
+    i.onclick = function () {
+        div.remove();
+    }
+    i.style.fontSize = "xxx-large";
+    i.style.cursor = "pointer";
+    divInner.appendChild(i);
     div.appendChild(divInner);
     document.getElementById('characteristics').appendChild(div);
 }

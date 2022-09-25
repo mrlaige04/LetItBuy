@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Shop.Services
 @inject IViewLocalizer Localizer
+@inject CategoryService CategoryService;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,12 +27,18 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarColor02">
           <ul class="navbar-nav me-auto">            
-            <li class="nav-item">
-              <a class="nav-link" href="#">@Localizer["Catalogs"]</a>
+            <li class="nav-item dropdown" >    
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Catalogs"]</a>
+                <div class="dropdown-menu">
+                            @foreach (var category in CategoryService.GetCategories())
+                            {
+                                <a class="dropdown-item" asp-controller="Home" asp-action="ItemsByCategory" asp-route-categoryId="@category.Id">@category.Name</a>
+                            }
+                </div>
             </li>
             <li class="nav-item">
                 <form method="get" class="d-flex align-content-center" asp-controller="Home" asp-action="SearchItems">
-                    <input name="q" class="form-control me-sm-2" type="text" placeholder="@Localizer["SearchPlaceholder"]">
+                    <input required name="q" class="form-control me-sm-2" type="text" placeholder="@Localizer["SearchPlaceholder"]">
                     <button class="btn btn-secondary my-2 my-sm-0" type="submit">@Localizer["SearchButton"]</button>
                   </form>
             </li>
@@ -51,7 +59,7 @@
                        <a asp-action="MySells" asp-controller="User" class="dropdown-item">@Localizer["Mysells"]</a>
                        <a asp-action="MyOrders" asp-controller="User" class="dropdown-item">@Localizer["MyOrders"]</a>
                        <div class="dropdown-divider"></div>
-                       <a class="dropdown-item" asp-controller="Account" asp-action="Logout">@Localizer["Logout"]</a>
+                       <a class="dropdown-item" asp-route-returnUrl='@(@Context.Request.Path + @Context.Request.QueryString)' asp-controller="Account" asp-action="Logout">@Localizer["Logout"]</a>
                    } else {                      
                        <a class="dropdown-item" asp-controller="Account" asp-action="Login">@Localizer["Login"]</a>
                        <a class="dropdown-item" asp-controller="Account" asp-action="Register">@Localizer["Register"]</a>

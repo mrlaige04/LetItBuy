@@ -35,6 +35,13 @@ namespace Shop.Data
                 .HasForeignKey(x=>x.CategoryID)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
+            builder.Entity<Category>()
+                .HasMany(x => x.Items)
+                .WithOne(x => x.Category)
+                .HasForeignKey(x => x.Category_ID)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<User>()
                 .HasOne(x => x.Cart)
                 .WithOne(x => x.UserOwner)

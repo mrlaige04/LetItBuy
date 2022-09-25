@@ -2,19 +2,10 @@
 @model Item;
 
 @inject IViewLocalizer Localizer;
-@*<ol class="breadcrumb">
-  @foreach (var item in @Model.ItemCatalog?.Characteristics?.ToList())
-  {
-      <li class="breadcrumb-item ">@item.Name</li>
-  }
-</ol>*@
+@{
+    var imgUrlCorrect = string.Format("\\ItemPhotos\\" + Model.ImageUrl);
+}
 @if(Model!=null) {
-<ol class="breadcrumb">
-    <li class="breadcrumb-item">Aoalla</li>
-    <li class="breadcrumb-item">Aoalla</li>
-    <li class="breadcrumb-item">Aoalla</li>
-    <li class="breadcrumb-item">Aoalla</li>
-</ol>
 
 
 <div>
@@ -33,13 +24,53 @@
       <div class="tab-pane fade show active" id="maininfo" role="tabpanel">
         <div class="container">
             <div class="maininfo">
-                <img src="" alt="PHOTO"/>
+                <img src="@imgUrlCorrect" alt="PHOTO" style="width:100vh;"/>
                 <h2>@Model.ItemName</h2>
             </div>
+            
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a class="btn btn-primary" asp-action="BuyItem" asp-controller="Home" asp-route-itemID="@Model.ItemId">Buy</a>
+                <a class="btn btn-primary" asp-action="AddToCart" asp-controller="Home" asp-route-itemID="@Model.ItemId">Add to cart</a>
+            }
+            else {
+                <form asp-action="BuyItemByPhone" method="post">
+                    <input class="form-control" type="text" name="phonenumber" required placeholder="PhoneNumber">
+                    <input style="display:none;visibility:hidden;" disabled="disabled" value="@Model.ItemId" name="itemId">
+                    <button class="btn btn-primary">Buy</button>
+                </form>
+            }
         </div>
       </div>
       <div class="tab-pane fade" id="charateristics" role="tabpanel">
-        <p>Charateristics</p>
+                @if (Model.Characteristics != null && Model.Characteristics.Count > 0)
+                {
+                    <table class="table shadow-none">
+                        <thead>
+                            <tr>
+                                <th scope="col">@Localizer["Name"]</th>
+                                <th scope="col">@Localizer["Value"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Characteristics)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    @if (item.Value == null)
+                                    {
+                                        <td>-</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@item.Value</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    
+                }
       </div>
            
     </div>

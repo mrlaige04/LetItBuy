@@ -7,6 +7,7 @@ using Shop.Models.ClientsModels;
 using Shop.Models.UserModels;
 using Shop.Services;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace Shop.Controllers
 {
@@ -99,21 +100,47 @@ namespace Shop.Controllers
         public async Task<IActionResult> AddItem(ItemAddViewModel viewItem)
         {
             if (ModelState.IsValid)
-            {      
-                
+            {
+                var image = Request.Form.Files["itemImage"];
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null) return RedirectToAction("Logout", "Account");
-                Category category = _db.Categories.FirstOrDefault(x => x.Id.ToString() == viewItem.CategoryID);
+                Category? category = _db.Categories
+                    .Include(x=>x.Criterias)
+                    .FirstOrDefault(x => x.Id.ToString() == viewItem.CategoryID);
+                
                 Item item = new Item
                 {
+                    ItemId = Guid.NewGuid(),
                     Description = viewItem.Description,
                     ItemName = viewItem.Name,
                     ItemPrice = viewItem.Price,
                     Currency = viewItem.Currency,
-                    ItemCatalog = category,
-                    IDCatalog = category.Id,
+                    Category = category,
+                    Category_ID = category.Id,
                     CategoryName = category.Name,
+                    Characteristics = new List<Characteristic>(),  
                 };
+                string path = Path.Combine("wwwroot\\ItemPhotos\\", item.ItemId.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.')));
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+                }
+                item.ImageUrl = item.ItemId.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.'));
+                for (int i = 0; i < category?.Criterias.Count; i++)
+                {
+                    var criteria = category.Criterias.ToList()[i];
+                    var str = Request.Form[$"x{criteria.Name}"];
+                    item.Characteristics.Add(new Characteristic()
+                    {
+                        ID = Guid.NewGuid(),
+                        CriteriaID = criteria.ID,
+                        Value = str,
+                        Item = item,
+                        ItemID = item.ItemId,
+                        Name = criteria.Name
+                    });
+                }
+                
                 var addItem_Result = await _userService.AddItemAsync(user, item);
                 if (addItem_Result.ResultCode == ResultCodes.Successed)
                 {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Shop.Data;
 using Shop.Models;
@@ -41,26 +42,7 @@ namespace Shop.Controllers
             return View();
         }
         
-        //[HttpPost]
-        //public void CreateCategory(CreateCatalogViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var catalog = new Category()
-        //        {
-        //            Id = Guid.NewGuid(),
-        //            Name = model.Name,
-        //            Parent = model.Parent,
-        //            Characteristics = model.Charatrestics
-        //        };
-        //        _db.Categories.Add(catalog);
-        //        _db.SaveChanges();
-        //    }
-        //    else
-        //    {
-        //        ModelState.AddModelError("", "");
-        //    }
-        //}
+        
 
         [HttpPost]
         public async Task<IActionResult> CreateCategoryAsync()
@@ -95,13 +77,87 @@ namespace Shop.Controllers
             {
                 return Problem(e.Message);
             }
-            return Ok();
+            return RedirectToAction("ManageCategories");
         }
 
         
         public void RemoveAllUsers()
         {
             
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public async Task<IActionResult> DeleteCategory(string id)
+        {
+            if (ModelState.IsValid)
+            {
+                var category = _db.Categories.FirstOrDefault(x => x.Id.ToString() == id);
+                try
+                {
+                    _db.Categories.Remove(category);
+                    
+                    await _db.SaveChangesAsync();
+                    return RedirectToAction("ManageCategories");
+                } catch (Exception e)
+                {
+                    return BadRequest(e.Message);
+                }
+            }
+            else return BadRequest("Invalid id");
+        }
+
+        [HttpGet]
+        public IActionResult EditCategory(string id)
+        {
+            var category = _db.Categories
+                .Include(x => x.Criterias)
+                .FirstOrDefault(x => x.Id.ToString() == id);
+            return View(category);
+        }
+
+        [HttpPost] 
+        public async Task<IActionResult> EditCategory(Category category)
+        {
+            var categoryFromDB = await _db.Categories.Include(x => x.Criterias).FirstOrDefaultAsync(x => x.Id == category.Id);
+            if (categoryFromDB == null) return NotFound();
+            categoryFromDB.Criterias.Clear();
+            _db.Criterias.RemoveRange(_db.Criterias.Where(x => x.CategoryID == categoryFromDB.Id));
+            await _db.SaveChangesAsync();
+
+            var categoryName = Request.Form["categoryName"];
+            var criteriaNames = Request.Form["criteriaName"];
+            var criteriaTypes = Request.Form["criteriaType"];
+            if (categoryName.ToString() == null || (criteriaNames.Count != criteriaTypes.Count)) return BadRequest("Incorrect data");
+            categoryFromDB.Name = categoryName[0];
+            for (int i = 0; i < criteriaNames.Count; i++)
+            {
+                _db.Criterias.Add(new Criteria()
+                {
+                    ID = Guid.NewGuid(),
+                    Name = criteriaNames[i].ToString(),
+                    Type = (CriteriaTypes)Enum.Parse(typeof(CriteriaTypes), criteriaTypes[i]),
+                    Category = categoryFromDB,
+                    CategoryID = categoryFromDB.Id
+                });
+            }
+
+            try
+            {
+                _db.Categories.Update(categoryFromDB);
+                await _db.SaveChangesAsync();
+            } catch (Exception e)
+            {
+                return Problem(e.Message);
+            }
+            return Ok();
+        }
+
+        [HttpGet]
+        public IActionResult ManageCategories()
+        {
+            var categories = _db.Categories.ToList();
+            return View(categories);
         }
 
         [HttpGet]

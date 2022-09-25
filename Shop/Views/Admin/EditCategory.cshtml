@@ -1,0 +1,95 @@
+﻿@model Category;
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+}
+@{
+    var criteriaTypes = @Html.GetEnumSelectList(typeof(CriteriaTypes));  
+}
+@if (Model != null) {
+    <form asp-controller="Admin" asp-action="EditCategory" method="post">
+        <div class="form-group">
+            <label for="categoryName">Category Name</label>
+            <input value="@Model.Name" class="form-control" type="text" id="categoryName" required name="categoryName"/>
+        </div>
+
+        <p>Criterias</p>
+        <div class="border-top my-3"></div>
+
+        <div class="form-group mt-3">        
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group me-2" role="group" aria-label="First group">
+                    <button onclick="appendField()" type="button" class="btn btn-secondary">Add field</button>
+                </div>
+            </div>      
+    
+            <div id="characteristics">
+                @foreach (var criteria in Model.Criterias) {
+                    <div class="criteriaForms mt-3 mb-3">
+                        <div class="d-flex justify-content-center">
+                            <input value="@criteria.Name" name="criteriaName" class="form-control me-2" type="text" placeholder="Characteristic name" required/>
+                            <select name="criteriaType" class="form-select" required >
+                                @foreach (var item in criteriaTypes) {
+                                    @if (item.Value == criteria.Type.ToString())
+                                    {
+                                        <option selected value="@item.Value">@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            <i style="font-size: xxx-large;" class="fa fa-trash" onclick="removeItemBase()"></i>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <button class="btn mt-3 btn-primary" type="submit">Submit</button>
+    </form>
+}
+
+<script type="text/javascript">
+    var category = {
+    categoryName: "aboba",
+    characteristics: [],
+    };
+    
+    function removeItemBase() {
+        var item = event.target.parentElement.parentElement;
+        item.remove();
+    }
+
+function appendField() {
+    var div = document.createElement('div');
+    div.className = "criteriaForms mt-3 mb-3";
+    var divInner = document.createElement('div');
+    divInner.className = "d-flex justify-content-center";
+    var inputNameField = document.createElement('input');
+    inputNameField.name = "criteriaName";
+    inputNameField.className = "form-control me-2";
+    inputNameField.type = "text";
+    inputNameField.placeholder = "Characteristic name";
+    inputNameField.required = true;
+    divInner.appendChild(inputNameField);
+    var select = document.createElement('select');
+    select.required = true;
+    select.className = "form-select";
+    select.name = "criteriaType";
+    select.innerHTML = `@Html.DropDownList("Criteria", criteriaTypes, new { @class = "form-control", @name = "criteriaType", @required = "required" })`;
+    divInner.appendChild(select);
+    div.innerHTML = "<label for='itemName'>Criteria</label>";
+    var i = document.createElement('i');
+    i.className = "fa fa-trash";
+    i.setAttribute("aria-hidden", "true");
+    i.onclick = function () {
+        div.remove();
+    }
+    i.style.fontSize = "xxx-large";
+    i.style.cursor = "pointer";
+    divInner.appendChild(i);
+    div.appendChild(divInner);
+    document.getElementById('characteristics').appendChild(div);
+}
+</script>

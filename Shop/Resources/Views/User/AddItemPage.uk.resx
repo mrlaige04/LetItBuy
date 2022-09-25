@@ -133,4 +133,7 @@
     <value>Ціна</value>
     <comment>ItemPrice</comment>
   </data>
+  <data name="SelectItemImage" xml:space="preserve">
+    <value>Оберіть фото товару</value>
+  </data>
 </root>

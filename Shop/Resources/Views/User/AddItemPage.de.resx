@@ -133,4 +133,7 @@
     <value>Preis</value>
     <comment>ItemPrice</comment>
   </data>
+  <data name="SelectItemImage" xml:space="preserve">
+    <value>Artikelbild auswählen</value>
+  </data>
 </root>

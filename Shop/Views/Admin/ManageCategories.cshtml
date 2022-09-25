@@ -1,0 +1,28 @@
+﻿@model List<Category>;
+
+<a class="btn btn-primary" asp-action="CreateCategory">Create Category</a>
+
+@if(Model != null && Model.Count > 0) {
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <th scope="row">@category.Id</th>
+                    <td>@category.Name</td>
+                    <td><a asp-action="EditCategory" asp-route-id="@category.Id">Edit</a></td>
+                    <td><a asp-action="DeleteCategory" asp-route-id="@category.Id">Delete</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

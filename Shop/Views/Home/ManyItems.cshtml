@@ -4,6 +4,7 @@
 @inject IViewLocalizer Localizer;
 @{
     ViewData["Title"] = "Search results";
+    
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/ManyItems.css"/>
@@ -18,7 +19,7 @@
                 <h3 class="card-header">@advert.ItemName</h3>
                 @if (advert.ImageURL != null)
                 {
-                    <img class="card-img-top" alt="advertphoto" src="@advert.ImageURL"/>
+                    <img class="card-img-top" alt="advertphoto" src="@string.Format("\\ItemPhotos\\" + advert.ImageURL)"/>
                 } else
                 {
                     <img class="card-img-top"  src="https://psmvideo.ru/assets/d0e40864/empty.jpg"/>

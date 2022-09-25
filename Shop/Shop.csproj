@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.Translate.v2" Version="1.57.0.875" />
     <PackageReference Include="MailKit" Version="3.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.8" />
@@ -56,6 +57,7 @@
 
   <ItemGroup>
     <Folder Include="Resources\SharedResource\" />
+    <Folder Include="wwwroot\ItemPhotos\" />
   </ItemGroup>
 
 </Project>

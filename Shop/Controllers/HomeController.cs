@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shop.Data;
 using Shop.Models;
 using Shop.Models.ViewDTO;
 using Shop.Services;
+using System.Resources;
 using System.Text.Json;
+
 
 namespace Shop.Controllers
 {
@@ -18,6 +21,8 @@ namespace Shop.Controllers
             _sender = sender;
             //_repository = new MultiShopRepository(db);
             _db = db;
+            
+            
         }
 
         [HttpPost]
@@ -42,30 +47,36 @@ namespace Shop.Controllers
         [HttpGet] // TODO : PAGING LIKE A SKIP(N).TAKE(K);
         public IActionResult SearchItems( string q)
         {
-            List<ItemViewDTO> result;
-            if(Guid.TryParse(q, out Guid itemId))
+            if (ModelState.IsValid)
             {
-                result = _db.Items.AsEnumerable().Where(i => i.ItemId == itemId).Select(x => new ItemViewDTO
+                List<ItemViewDTO> result;
+                if (Guid.TryParse(q, out Guid itemId))
                 {
-                    ItemId = x.ItemId,
-                    ItemPrice = x.ItemPrice,
-                    ItemName = x.ItemName,
-                    Currency = x.Currency,
-                    Description = x.Description
-                }).ToList();
-            } else
-            {
-                result = _db.Items.AsEnumerable().Where(i => i.ItemName.ToLower().Contains(q.ToLower())).Select(x => new ItemViewDTO
+                    result = _db.Items.AsEnumerable().Where(i => i.ItemId == itemId).Select(x => new ItemViewDTO
+                    {
+                        ItemId = x.ItemId,
+                        ItemPrice = x.ItemPrice,
+                        ItemName = x.ItemName,
+                        Currency = x.Currency,
+                        Description = x.Description,
+                        ImageURL = x.ImageUrl
+                    }).ToList();
+                }
+                else
                 {
-                    ItemId = x.ItemId,
-                    ItemPrice = x.ItemPrice,
-                    ItemName = x.ItemName,
-                    Currency = x.Currency,
-                    Description = x.Description,
-                }).ToList();
-            }
-            
-            return View("ManyItems", result);            
+                    result = _db.Items.AsEnumerable().Where(i => i.ItemName.ToLower().Contains(q.ToLower())).Select(x => new ItemViewDTO
+                    {
+                        ItemId = x.ItemId,
+                        ItemPrice = x.ItemPrice,
+                        ItemName = x.ItemName,
+                        Currency = x.Currency,
+                        Description = x.Description,
+                        ImageURL = x.ImageUrl
+                    }).ToList();
+                }
+
+                return View("ManyItems", result);
+            } return BadRequest();
         }
 
 
@@ -73,11 +84,11 @@ namespace Shop.Controllers
         [HttpGet]
         public IActionResult ItemPage(string id)
         {
-            var item = _db.Items.AsEnumerable().FirstOrDefault(x => x.ItemId.ToString() == id);
-            return View("ItemPage",item);
+            var item = _db.Items.Include(x=>x.Characteristics).AsEnumerable().FirstOrDefault(x => x.ItemId.ToString() == id);
+            return View("ItemPage", item);
         }
 
-
+        
         [HttpGet]
         public IActionResult GetCriterias (string categoryId)
         {
@@ -85,6 +96,43 @@ namespace Shop.Controllers
             return Json(criterias);
         }
 
-        
+        [HttpGet]
+        public IActionResult ItemsByCategory(string categoryId)
+        {
+            var items = _db.Items.AsEnumerable().Where(x => x.Category_ID.ToString() == categoryId).ToList();
+            var itemViews = items.Select(x => new ItemViewDTO
+            {
+                ItemId = x.ItemId,
+                ItemPrice = x.ItemPrice,
+                ItemName = x.ItemName,
+                Currency = x.Currency,
+                Description = x.Description,
+                ImageURL = x.ImageUrl
+            }).ToList();
+            return View("ManyItems", itemViews);
+        }
+
+
+
+
+
+        // TODO : BUY ITEM
+        public IActionResult BuyItem(string itemId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IActionResult BuyItemByPhone(string itemId)
+        {
+            var item = Request.Form["itemId"];
+            var phone = Request.Form["phonenumber"];
+            throw new NotImplementedException();
+        }
+
+        public IActionResult AddToCart(string itemId)
+        {
+            
+            throw new NotImplementedException();
+        }
     }
 }
