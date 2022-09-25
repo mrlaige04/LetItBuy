@@ -9,4 +9,6 @@ function deletePhoto() {
 
 function deleteAccount() {
     document.getElementById("formDeleteAccount").submit();
+
+    
 }

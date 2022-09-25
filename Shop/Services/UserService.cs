@@ -43,6 +43,7 @@ namespace Shop.Services
             itemFromDb.ItemName = item.ItemName;
             itemFromDb.Description = item.Description;
             itemFromDb.ItemPrice = item.ItemPrice;
+            itemFromDb.Currency = item.Currency;
             //itemFromDb.Category = item.Category;
             //itemFromDb.Image = item.Image;
             try

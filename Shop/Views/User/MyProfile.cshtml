@@ -4,7 +4,11 @@
 @model Shop.Models.UserModels.ProfileViewModel;
 @inject IViewLocalizer Localizer
 @{
-    var imageUrlFull = @"\" + Model?.ImageUrl;
+    string imageUrlFull = string.Empty;
+    if (Model?.ImageUrl != null)
+    {
+        imageUrlFull = Model?.ImageUrl.Substring(Model.ImageUrl.IndexOf("wwwroot"));
+    }
 }
 @section Styles {
     <head>
@@ -18,25 +22,27 @@
             <div class="userImage">
                 @if (Model.ImageUrl == null)
                 {             
-                        <img class="profileImage" style="border-radius:50%;" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
-                        <div class="imageoptions">
-                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">@Localizer["SelectNewPhoto"]</button>
-                            <div id="myModal" class="modal fade">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">@Localizer["ChooseFile"]</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form asp-action="SetPhoto" asp-controller="User" method="post" enctype="multipart/form-data" id="choosePhoto">
-                                                <input class="form-control" required type="file" name="photo" /><br>
-                                            </form>
-                                        </div>
-                                        <div class="modal-footer"><button onclick="document.getElementById('choosePhoto').submit();" class="btn btn-default" type="button" data-dismiss="modal">@Localizer["SendPhoto"]</button></div>
+                    <img class="profileImage" style="border-radius:50%;" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
+                    <div class="imageoptions">
+                        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">@Localizer["SelectNewPhoto"]</button>
+                        <div id="myModal" class="modal fade">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">@Localizer["ChooseFile"]</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form asp-action="SetUserImage" asp-controller="User" method="post" enctype="multipart/form-data" id="choosePhoto">
+                                            <input class="form-control" required type="file" name="photo" /><br>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button onclick="document.getElementById('choosePhoto').submit();" class="btn btn-default" type="button" data-dismiss="modal">@Localizer["SendPhoto"]</button>
                                     </div>
                                 </div>
                             </div>
-                        </div>                                            
+                        </div>
+                    </div> 
                 } else
                 {                       
                     <img class="profileImage" style="border-radius:50%;"  src='@imageUrlFull' alt="userphoto"/>
@@ -98,8 +104,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-        
+        </div>       
     </div>
     
     <script src="~/js/userProfile.js"></script>

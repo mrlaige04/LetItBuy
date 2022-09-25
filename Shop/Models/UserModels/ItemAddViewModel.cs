@@ -10,5 +10,10 @@ namespace Shop.Models.UserModels
         [Required]
         [Range(0, 1000000)]
         public decimal Price { get; set; }
+
+        [Required]
+        public Currency Currency { get; set; }
+
+        public string CategoryID { get; set; }
     }
 }

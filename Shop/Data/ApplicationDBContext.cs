@@ -13,10 +13,12 @@ namespace Shop.Data
             Database.EnsureCreated();
         }
         public DbSet<User> Users { get; set; } = null!;
-        public DbSet<Catalog> Catalogs { get; set; } = null!;
+        public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Item> Items { get; set; } = null!;
         public DbSet<Cart> Carts { get; set; } = null!;
         public DbSet<Sell> Sells { get; set; } = null!;
+        public DbSet<Criteria> Criterias { get; set; } = null!;
+        public DbSet<Characteristic> Characteristics { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder builder)
         {          
             base.OnModelCreating(builder);            
@@ -27,10 +29,10 @@ namespace Shop.Data
                 .HasForeignKey(x => x.OwnerID)               
                 .OnDelete(DeleteBehavior.Cascade);
             
-            builder.Entity<Catalog>()
-                .HasMany(x => x.Characteristics)
-                .WithOne(x => x.Catalog)
-                .HasForeignKey(x=>x.CatalogID)
+            builder.Entity<Category>()
+                .HasMany(x => x.Criterias)
+                .WithOne(x => x.Category)
+                .HasForeignKey(x=>x.CategoryID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<User>()
@@ -38,14 +40,19 @@ namespace Shop.Data
                 .WithOne(x => x.UserOwner)
                 .HasForeignKey<Cart>(x => x.UserID)
                 .OnDelete(DeleteBehavior.Cascade);
-
             
             builder.Entity<Cart>()
                 .HasMany(x => x.ItemsInCart)
                 .WithOne(x => x.Cart)
                 .HasForeignKey(x => x.CartItemID)
                 .OnDelete(DeleteBehavior.Restrict)
-                ;      
+                ;
+
+            builder.Entity<Item>()
+                .HasMany(x => x.Characteristics)
+                .WithOne(x => x.Item)
+                .HasForeignKey(x => x.ItemID)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

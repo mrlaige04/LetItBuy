@@ -1,21 +1,153 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Shop.Data;
 @using Shop.Models.UserModels
+@using Shop.Services
 @model ItemAddViewModel;
 @inject IViewLocalizer Localizer;
+@inject CategoryService CategoryService;
+@inject ApplicationDBContext db;
+@{
+    var curs = @Html.GetEnumSelectList(typeof(Currency));
+
+    //var criterias = db.Criterias.Where(x => x.CategoryId == Model.CategoryId).ToList();
+    var categories = CategoryService.GetCategories().Select(x=>new SelectListItem
+    {
+        Text = x.Name,
+        Value = x.Id.ToString()
+    });
+}
 <form asp-action="AddItem">
     <div class="form-group">
         <label for="itemName">@Localizer["ItemName"]</label>
         <input asp-for="Name" type="text" class="form-control" required id="itemName">
     </div>
+    
+    <div class="form-group">
+        <label asp-for="CategoryID" for="category"></label>
+        <select asp-for="CategoryID" class="form-select categorySelect" asp-items="@categories"></select>
+    </div>    
+    
+    
+    
+    
     <div class="form-group">
         <label for="itemName">@Localizer["ItemPrice"]</label>
-        <input asp-for="Price" type="number" class="form-control" required id="itemName">
+        <div class="item-group d-flex flex-row">
+            <input asp-for="Price" min="0" type="number" class="form-control" required id="itemName">
+            <select asp-for="Currency" asp-items="curs" class="input-group-text"></select>
+        </div>
     </div>
     <div class="form-group">
         <label for="itemName">@Localizer["ItemDescrip"]</label>
         <input asp-for="Description" type="text" class="form-control" required id="itemName">
     </div> <br />
-     <div class="d-grid gap-2">
-         <button class="btn btn-lg btn-primary" type="submit">@Localizer["AddItem"]</button>                  
-     </div> 
+     
+    
+
+
+    <div class="border-top my-3"></div>
+
+
+    
+    <div class="form-group mt-3">
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group me-2" role="group" aria-label="First group">
+                <button onclick="appendNumberField()" type="button" class="btn btn-secondary">Number</button>
+                <button onclick="appendTextField()" type="button" class="btn btn-secondary">Text</button>
+            </div>
+        </div>
+      
+    
+        <div class="characteristics">
+        
+        </div>
+    </div>
+
+    
+    
+
+
+
+
+
+
+
+
+    <div class="d-grid gap-2">
+        <button class="btn btn-lg btn-primary" type="submit">@Localizer["AddItem"]</button>                  
+    </div>
 </form>
+
+
+<script>
+        document.getElementsByClassName("categorySelect")[0].onchange = function (x) {
+            var categoryId = x.target.value;
+            var url = "/Home/GetCriterias?categoryId=" + categoryId;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    var characteristics = document.getElementsByClassName("characteristics")[0];
+                    characteristics.innerHTML = "";
+                    data.forEach(x => {
+                        var div = document.createElement("div");
+                        div.classList.add("form-group");
+                        var label = document.createElement("label");
+                        label.innerHTML = x.name;
+                        div.appendChild(label);
+                        if (x.type == "Number") {
+                            var input = document.createElement("input");
+                            input.type = "number";
+                            input.classList.add("form-control");
+                            input.name = "Criterias[" + x.id + "]";
+                            div.appendChild(input);
+                        }
+                        else {
+                            var input = document.createElement("input");
+                            input.type = "text";
+                            input.classList.add("form-control");
+                            input.name = "Criterias[" + x.id + "]";
+                            div.appendChild(input);
+                        }
+                        characteristics.appendChild(div);
+                    });
+                });
+        }
+        function appendNumberField() {
+            var div = document.createElement('div');
+            div.className = "form-group";
+            div.innerHTML = '<label for="itemName">Number</label><input type="number" class="form-control" required id="itemName">';
+            document.getElementsByClassName('characteristics')[0].appendChild(div);
+        }
+        function appendTextField() {
+            var div = document.createElement('div');
+            div.className = "form-group";
+            div.innerHTML = '<label for="itemName">Text</label><input type="text" class="form-control" required id="itemName">';
+            document.getElementsByClassName('characteristics')[0].appendChild(div);
+        }
+    </script>
+
+    
+@functions {
+    IEnumerable<SelectListItem> GetSubcategories(string id)
+    {
+        var categories = CategoryService.GetSubCategories(id);
+        var list = categories.ToList().Select(x => new SelectListItem
+        {
+            Text = x.Name,
+            Value = x.Id.ToString()
+        });
+        return list;
+    }
+
+    //IEnumerable<SelectListItem> GetCriterias(string id)
+    //{
+    //    var criterias = db.Criterias.Where(x => x.CategoryID.ToString() == id).ToList();
+    //    var list = criterias.Select(x => new SelectListItem
+    //        {
+    //            Text = x.Name,
+    //            Value = x.Id.ToString()
+    //        });
+    //    return list;
+    //}
+    
+}

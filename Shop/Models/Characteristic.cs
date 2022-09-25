@@ -4,13 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Shop.Models
 {
     
-    public class Charatrestic
+    public class Characteristic
     {
+        [Key]
         public Guid ID { get; set; }
-        public Catalog Catalog { get; set; }
-        public Guid CatalogID { get; set; }
-        [Key]        
-        public string Name { get; set; }
+        public Criteria Criteria { get; set; }
         public string Value { get; set; }
+
+        public Item Item { get; set; }
+        public Guid ItemID { get; set; }
     }
 }

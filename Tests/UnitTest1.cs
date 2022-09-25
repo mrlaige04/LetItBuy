@@ -1,7 +1,5 @@
 using Moq;
-using Shop;
-using Shop.Controllers;
-using Shop.Models.UserModels;
+
 
 namespace Tests
 {

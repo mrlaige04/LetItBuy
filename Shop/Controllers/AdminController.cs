@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Shop.Data;
 using Shop.Models;
 using Shop.Models.Admin;
@@ -40,27 +41,64 @@ namespace Shop.Controllers
             return View();
         }
         
+        //[HttpPost]
+        //public void CreateCategory(CreateCatalogViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var catalog = new Category()
+        //        {
+        //            Id = Guid.NewGuid(),
+        //            Name = model.Name,
+        //            Parent = model.Parent,
+        //            Characteristics = model.Charatrestics
+        //        };
+        //        _db.Categories.Add(catalog);
+        //        _db.SaveChanges();
+        //    }
+        //    else
+        //    {
+        //        ModelState.AddModelError("", "");
+        //    }
+        //}
+
         [HttpPost]
-        public void CreateCategory(CreateCatalogViewModel model)
+        public async Task<IActionResult> CreateCategoryAsync()
         {
-            if (ModelState.IsValid)
+            Category category = new Category
             {
-                var catalog = new Catalog()
+                Id = Guid.NewGuid(),
+                Criterias = new List<Criteria>()
+            };
+            var categoryName = Request.Form["categoryName"];
+            var criteriaNames = Request.Form["criteriaName"];
+            var criteriaTypes = Request.Form["criteriaType"];
+            if (categoryName.ToString() == null || (criteriaNames.Count != criteriaTypes.Count)) return BadRequest("Incorrect data");
+            category.Name = categoryName[0];
+            for (int i = 0; i < criteriaNames.Count; i++)
+            {
+                category.Criterias.Add(new Criteria()
                 {
-                    Id = Guid.NewGuid(),
-                    Name = model.Name,
-                    Parent = model.Parent,
-                    Characteristics = model.Charatrestics
-                };
-                _db.Catalogs.Add(catalog);
-                _db.SaveChanges();
+                    ID = Guid.NewGuid(),
+                    Name = criteriaNames[i].ToString(),
+                    Type = (CriteriaTypes)Enum.Parse(typeof(CriteriaTypes), criteriaTypes[i]),
+                    Category = category,
+                    CategoryID = category.Id
+                });
             }
-            else
+            try
             {
-                ModelState.AddModelError("", "");
+                _db.Categories.Add(category);
+                await _db.SaveChangesAsync();
+
+            } catch (Exception e)
+            {
+                return Problem(e.Message);
             }
+            return Ok();
         }
 
+        
         public void RemoveAllUsers()
         {
             

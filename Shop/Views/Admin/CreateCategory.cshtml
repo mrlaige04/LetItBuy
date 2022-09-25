@@ -1,5 +1,66 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
+
 @{
+    var criteriaTypes = @Html.GetEnumSelectList(typeof(CriteriaTypes));  
 }
+
+<form asp-action="CreateCategory" id="mainForm" asp-controller="Admin" method="post">
+    <div class="form-group">
+        <label for="categoryName">Category Name</label>
+        <input class="form-control" type="text" id="categoryName" required name="categoryName"/>
+    </div>
+
+    <p>Criterias</p>
+    <div class="border-top my-3"></div>
+
+    
+
+
+    <div class="form-group mt-3">
+        
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group me-2" role="group" aria-label="First group">
+                <button onclick="appendField()" type="button" class="btn btn-secondary">Add field</button>
+            </div>
+        </div>
+      
+    
+        <div id="characteristics">
+        
+        </div>
+    </div>
+
+    <button class="btn mt-3 btn-primary" type="submit">Submit</button>
+</form>
+
+
+
+<script type="text/javascript">
+    var category = {
+    categoryName: "aboba",
+    characteristics: [],
+};
+
+function appendField() {
+    var div = document.createElement('div');
+    div.className = "criteriaForms mt-3 mb-3";
+    var divInner = document.createElement('div');
+    divInner.className = "d-flex justify-content-center";
+    var inputNameField = document.createElement('input');
+    inputNameField.name = "criteriaName";
+    inputNameField.className = "form-control me-2";
+    inputNameField.type = "text";
+    inputNameField.placeholder = "Characteristic name";
+    inputNameField.required = true;
+    divInner.appendChild(inputNameField);
+    var select = document.createElement('select');
+    select.required = true;
+    select.className = "form-select";
+    select.name = "criteriaType";
+    select.innerHTML = `@Html.DropDownList("Criteria", criteriaTypes, new { @class = "form-control", @name = "criteriaType", @required = "required" })`;
+    divInner.appendChild(select);
+    div.innerHTML = "<label for='itemName'>Criteria</label>";
+    div.appendChild(divInner);
+    document.getElementById('characteristics').appendChild(div);
+}
+</script>

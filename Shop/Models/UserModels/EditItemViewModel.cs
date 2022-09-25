@@ -14,6 +14,8 @@ namespace Shop.Models.UserModels
         public string? ImageUrl { get; set; }
         [Required]
         public Guid ItemId { get; set; }
-        public Catalog? ItemCatalog { get; set; }
+        public Category? ItemCatalog { get; set; }
+
+        public Currency Currency { get; set; }
     }
 }

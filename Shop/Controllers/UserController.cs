@@ -18,12 +18,14 @@ namespace Shop.Controllers
         private readonly IWebHostEnvironment _webHost;
         private readonly ApplicationDBContext _db;
         private readonly UserService _userService;
-        public UserController(UserManager<User> userManager, IWebHostEnvironment webHostEnvironment, ApplicationDBContext db, UserService userService)
+        private readonly PhotoService _photoService;
+        public UserController(UserManager<User> userManager, IWebHostEnvironment webHostEnvironment, ApplicationDBContext db, UserService userService, PhotoService photoService)
         {
             _userManager = userManager;
             _webHost = webHostEnvironment;
             _db = db;
             _userService = userService;
+            _photoService = photoService;
         }
 
         [HttpGet]
@@ -37,9 +39,8 @@ namespace Shop.Controllers
 
         
         [HttpPost]
-        public async Task<IActionResult> SetPhoto(IFormFile photo)
-        {
-            
+        public async Task<IActionResult> SetUserImage(IFormFile photo)
+        {        
             if (ModelState.IsValid)
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -48,17 +49,14 @@ namespace Shop.Controllers
                     ModelState.AddModelError("", "No user found");
                     return RedirectToAction("Logout", "Account");
                 }
-                var ext = photo.FileName.Substring(photo.FileName.LastIndexOf('.'));
-                string path = Path.Combine("UserPhotos", $"{userId}{ext}");
-
-                using (var fs = new FileStream(Path.Combine("wwwroot", path), FileMode.Create))
+                var setUserPhoto_Result = await _photoService.SetUserProfileImage(photo, userId);
+                if (setUserPhoto_Result.ResultCode == ResultCodes.Failed)
                 {
-                    photo.CopyTo(fs);
+                    foreach (var error in setUserPhoto_Result.Errors)
+                    {
+                        ModelState.AddModelError("", error);
+                    }
                 }
-                
-                var user = await _userManager.GetUserAsync(User);
-                user.ImageURL = path;
-                var res = await _userManager.UpdateAsync(user);
             }
             return RedirectToAction("GetProfile");
         }
@@ -66,16 +64,15 @@ namespace Shop.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUserImage()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var deleteUserImage = await _photoService.DeleteUserImage(userId);
+            if (deleteUserImage.ResultCode == ResultCodes.Failed)
             {
-                ModelState.AddModelError("", "No user found");
-                return RedirectToAction("Logout", "Account");
+                foreach (var error in deleteUserImage.Errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
             }
-            System.IO.File.Delete("wwwroot\\" + user.ImageURL);
-            user.ImageURL = null;
-            var res = await _userManager.UpdateAsync(user);
-            
             return RedirectToAction("GetProfile");
         }
 
@@ -99,18 +96,25 @@ namespace Shop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddItem(ItemAddViewModel item)
+        public async Task<IActionResult> AddItem(ItemAddViewModel viewItem)
         {
             if (ModelState.IsValid)
-            {
+            {      
+                
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null) return RedirectToAction("Logout", "Account");
-                var addItem_Result = await _userService.AddItemAsync(user, new Item
+                Category category = _db.Categories.FirstOrDefault(x => x.Id.ToString() == viewItem.CategoryID);
+                Item item = new Item
                 {
-                    Description = item.Description,
-                    ItemName = item.Name,
-                    ItemPrice = item.Price,
-                });
+                    Description = viewItem.Description,
+                    ItemName = viewItem.Name,
+                    ItemPrice = viewItem.Price,
+                    Currency = viewItem.Currency,
+                    ItemCatalog = category,
+                    IDCatalog = category.Id,
+                    CategoryName = category.Name,
+                };
+                var addItem_Result = await _userService.AddItemAsync(user, item);
                 if (addItem_Result.ResultCode == ResultCodes.Successed)
                 {
                     return RedirectToAction("MyItems");
@@ -123,7 +127,9 @@ namespace Shop.Controllers
                     }
                 }
             }
+            
             return View("AddItemPage");
+            
         }
 
         
@@ -154,7 +160,8 @@ namespace Shop.Controllers
                     Description = item.Description,
                     ItemName = item.Name,
                     ItemPrice = item.Price,
-                    ItemId = item.ItemId
+                    ItemId = item.ItemId,
+                    Currency = item.Currency
                 });
                 if (editItem_Result.ResultCode == ResultCodes.Successed) return RedirectToAction("MyItems");
                 else

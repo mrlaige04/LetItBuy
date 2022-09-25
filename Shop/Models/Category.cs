@@ -3,12 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Shop.Models
 {
-    [Table("Catalogs")]
-    public class Catalog
+    [Table("Catehogories")]
+    public class Category
     {
+        [Key]
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public Catalog? Parent { get; set; }
-        public ICollection<Charatrestic>? Characteristics { get; set; }        
+        public Category? Parent { get; set; }
+
+        public ICollection<Criteria> Criterias { get; set; }    
     }
 }

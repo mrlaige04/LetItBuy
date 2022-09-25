@@ -7,6 +7,8 @@ using Shop.Errors;
 using Shop.Models;
 using Shop.Services;
 using System.Globalization;
+using Microsoft.AspNetCore.SignalR;
+using Shop.Hubs;
 //using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,8 @@ builder.Services.AddControllersWithViews()
     .AddDataAnnotationsLocalization()
     .AddViewLocalization();
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
+
 
 
 // DB and Identity
@@ -35,11 +39,12 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 .AddErrorDescriber<MultiLanguageErrorDescriber>();
 
 
-builder.Services.AddAuthentication().AddCookie(x =>
-{
-    x.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-    
-});
+builder.Services.AddAuthentication()
+    .AddCookie(x =>
+    {
+        x.ExpireTimeSpan = TimeSpan.FromMinutes(30);  
+    });
+
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new[]
@@ -66,6 +71,9 @@ builder.Services.AddTransient<AccountService>();
 builder.Services.AddTransient<AdminService>();
 builder.Services.AddTransient<AdminInitializer>();
 builder.Services.AddTransient<UserService>();
+builder.Services.AddTransient<PhotoService>();
+builder.Services.AddScoped<CategoryService>(); 
+
 
 
 // Logging and Configuration
@@ -97,6 +105,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=GetWelcomePage}/{id?}");
+
+app.MapHub<ChatHub>("/chatHub");
 
 app.MapRazorPages();
 

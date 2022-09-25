@@ -13,5 +13,8 @@ namespace Shop.Models.ViewDTO
         public decimal ItemPrice { get; set; }
 
         public string? ImageURL { get; set; }
+        public string? Description { get; set; }
+
+        public Currency Currency { get; set; }
     }
 }

@@ -8,7 +8,31 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/ManyItems.css"/>
 }
-@if(Model != null & Model.Count() > 0) {
+
+@if(Model != null & Model.Count() > 0)
+{
+    <div class="d-flex">
+        @foreach (var advert in Model)
+        { 
+            <div class="card col-md-2" style="margin-left:5px;">
+                <h3 class="card-header">@advert.ItemName</h3>
+                @if (advert.ImageURL != null)
+                {
+                    <img class="card-img-top" alt="advertphoto" src="@advert.ImageURL"/>
+                } else
+                {
+                    <img class="card-img-top"  src="https://psmvideo.ru/assets/d0e40864/empty.jpg"/>
+                }
+                <div class="card-body">
+                    @advert.Description
+                </div>
+                <a class="btn btn-primary" asp-controller="Home" asp-action="ItemPage" asp-route-id="@advert.ItemId" style="margin: 2px 5px 8px 5px;">@Localizer["GoToItemPage"]</a>
+            </div>
+        }
+    </div>
+}
+
+@*@if(Model != null & Model.Count() > 0) {
     <table class="table table-hover">
         @foreach (var item in Model)
         {
@@ -23,10 +47,10 @@
                     }
                  </th>
                  <td class="text-item">@item.ItemName</td>
-                 <td class="text-item">@item.ItemPrice</td>
+                 <td class="text-item">@item.ItemPrice @item.Currency</td>
           </tr>     
         }
     </table>
 } else if (@Model.Count() == 0) {
     <h3>@Localizer["NoItemsFound"]</h3>
-}
+}*@

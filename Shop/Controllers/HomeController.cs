@@ -49,7 +49,9 @@ namespace Shop.Controllers
                 {
                     ItemId = x.ItemId,
                     ItemPrice = x.ItemPrice,
-                    ItemName = x.ItemName
+                    ItemName = x.ItemName,
+                    Currency = x.Currency,
+                    Description = x.Description
                 }).ToList();
             } else
             {
@@ -57,9 +59,12 @@ namespace Shop.Controllers
                 {
                     ItemId = x.ItemId,
                     ItemPrice = x.ItemPrice,
-                    ItemName = x.ItemName
+                    ItemName = x.ItemName,
+                    Currency = x.Currency,
+                    Description = x.Description,
                 }).ToList();
-            }       
+            }
+            
             return View("ManyItems", result);            
         }
 
@@ -71,5 +76,15 @@ namespace Shop.Controllers
             var item = _db.Items.AsEnumerable().FirstOrDefault(x => x.ItemId.ToString() == id);
             return View("ItemPage",item);
         }
+
+
+        [HttpGet]
+        public IActionResult GetCriterias (string categoryId)
+        {
+            var criterias = _db.Criterias.AsEnumerable().Where(x => x.CategoryID.ToString() == categoryId).ToList();
+            return Json(criterias);
+        }
+
+        
     }
 }
