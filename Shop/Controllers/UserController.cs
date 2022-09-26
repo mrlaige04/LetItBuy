@@ -33,7 +33,8 @@ namespace Shop.Controllers
         public async Task<IActionResult> GetProfile()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null) return RedirectToAction("Logout", "Account");
+            var returlUrl = Request.Path + Request.QueryString;
+            if (user == null) return RedirectToAction("Logout", "Account", returlUrl);
             ViewData["webrootpath"] = Request.Host.Value;
             return View("MyProfile", new ProfileViewModel { UserName = user.UserName, Email = user.Email, ImageUrl = user.ImageURL });
         }
@@ -85,7 +86,6 @@ namespace Shop.Controllers
 
 
 
-        // TODO : MY ITEMS, ADD ITEM, EDIT ITEM AND MORE
         [HttpGet]
         public IActionResult MyItems()
         {
@@ -101,6 +101,7 @@ namespace Shop.Controllers
         {
             if (ModelState.IsValid)
             {
+                var isnew = Request.Form["IsNew"];
                 var image = Request.Form.Files["itemImage"];
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null) return RedirectToAction("Logout", "Account");
@@ -119,13 +120,17 @@ namespace Shop.Controllers
                     Category_ID = category.Id,
                     CategoryName = category.Name,
                     Characteristics = new List<Characteristic>(),  
+                    IsNew = viewItem.IsNew
                 };
-                string path = Path.Combine("wwwroot\\ItemPhotos\\", item.ItemId.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.')));
-                using (var stream = new FileStream(path, FileMode.Create))
+                if (image != null)
                 {
-                    await image.CopyToAsync(stream);
+                    string path = Path.Combine("wwwroot\\ItemPhotos\\", item.ItemId.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.')));
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await image.CopyToAsync(stream);
+                    }
+                    item.ImageUrl = item.ItemId.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.'));
                 }
-                item.ImageUrl = item.ItemId.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.'));
                 for (int i = 0; i < category?.Criterias.Count; i++)
                 {
                     var criteria = category.Criterias.ToList()[i];
@@ -227,6 +232,81 @@ namespace Shop.Controllers
             if (userId == null) return RedirectToAction("Logout", "Account");
             var sells = _db.Sells.AsEnumerable().Where(x => x.SellerID.ToString() == userId).ToList();
             return View(sells);
+        }
+
+
+
+        [HttpGet]
+        [HttpPost]
+        public async Task<IActionResult> BuyItem(string itemId)
+        {
+            if (ModelState.IsValid)
+            {
+                var ownerId = _db.Items.FirstOrDefault(x => x.ItemId.ToString() == itemId).OwnerID;
+                var buyerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+
+                if (ownerId.ToString() == buyerId)
+                {
+                    return BadRequest("You cannot order your item!");
+                }
+
+
+                Sell sell = new Sell
+                {
+                    Id = Guid.NewGuid(),
+                    BuyerID = Guid.Parse(buyerId),
+                    ItemId = Guid.Parse(itemId),
+                    SellerID = ownerId,
+                    Date = DateTime.Now,
+                    Status = SellStatus.WaitForOwner
+                };
+                try
+                {
+                    _db.Sells.Add(sell);
+                    await _db.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e.Message);
+                }
+            }
+            else return BadRequest();
+            return RedirectToAction("MyOrders", "User");
+        } // TODO : BUY
+
+
+        [HttpGet]
+        [HttpPost]
+        public async Task<IActionResult> AddToCart(string itemId) // TODO :CART
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var cart = _db.Carts.Include(x=>x.ItemsInCart).FirstOrDefault(x => x.UserID == user.Id);
+            if (user == null) return RedirectToAction("Logout", "Account");
+            var item = _db.Items.FirstOrDefault(x => x.ItemId.ToString() == itemId);
+            if (item == null) return BadRequest();
+            cart.ItemsInCart.Add(new CartItem()
+            {
+                Cart = cart,
+                CartItemID = cart.CartID,
+                Item = item,
+            });
+            _db.Carts.Update(cart);
+            await _db.SaveChangesAsync();
+            return Ok();
+        }
+
+
+        [HttpGet]
+        public IActionResult Cart() // TODO : CART VIEW
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cart = _db.Carts
+                .Include(x => x.ItemsInCart)
+                    .ThenInclude(x=>x.Item)
+                .FirstOrDefault(x => x.UserID.ToString() == userId);
+            return View(cart);
         }
     }  
 

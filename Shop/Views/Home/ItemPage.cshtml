@@ -3,76 +3,65 @@
 
 @inject IViewLocalizer Localizer;
 @{
-    var imgUrlCorrect = string.Format("\\ItemPhotos\\" + Model.ImageUrl);
+    var imgUrlCorrect = string.Format("\\ItemPhotos\\" + Model?.ImageUrl);
+}
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="~/css/ItemPage.css" rel="stylesheet" />
 }
 @if(Model!=null) {
 
-
-<div>
-    <ul class="nav nav-tabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <a class="nav-link active" data-bs-toggle="tab" href="#maininfo" aria-selected="true" role="tab">@Localizer["Basic"]</a>
-      </li>
-      <li class="nav-item" role="presentation">
-        <a class="nav-link" data-bs-toggle="tab" href="#charateristics" aria-selected="false" tabindex="-1" role="tab">@Localizer["Characteristics"]</a>
-      </li>
-          
-    </ul>
-
-
-    <div id="myTabContent" class="tab-content">
-      <div class="tab-pane fade show active" id="maininfo" role="tabpanel">
-        <div class="container">
-            <div class="maininfo">
-                <img src="@imgUrlCorrect" alt="PHOTO" style="width:100vh;"/>
-                <h2>@Model.ItemName</h2>
+    <!-- Product section-->
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="row gx-4 gx-lg-5 align-items-center">
+                <div class="col-md-6">
+                    @if(imgUrlCorrect != null)
+                    {
+                        <img class="card-img-top mb-5 mb-md-0" src="@imgUrlCorrect">
+                    } else {        
+                        <img class="card-img-top mb-5 mb-md-0" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="..." />
+                    }
+                </div>
+                <div class="col-md-6">
+                    <h1 class="display-5 fw-bolder">@Model.ItemName</h1>
+                    <div class="fs-5 mb-5">
+                        <span>@Model.Currency @Model.ItemPrice</span>
+                    </div>
+                    <p class="lead">@Model.Description</p>
+                    <div class="d-flex">
+                        <a style="margin-right: 5px;" asp-action="BuyItem" asp-controller="User" asp-route-itemId="@Model.ItemId" class="btn btn-outline-dark flex-shrink-0"> 
+                                Buy
+                            </a>
+                        <a asp-action="AddToCart" asp-controller="User" asp-route-itemId="@Model.ItemId" class="btn btn-outline-dark flex-shrink-0">
+                                <i class="bi-cart-fill me-1"></i>
+                                Add to cart
+                            </a>
+                    </div>
+                </div>
             </div>
-            
-            @if (User.Identity.IsAuthenticated)
-            {
-                <a class="btn btn-primary" asp-action="BuyItem" asp-controller="Home" asp-route-itemID="@Model.ItemId">Buy</a>
-                <a class="btn btn-primary" asp-action="AddToCart" asp-controller="Home" asp-route-itemID="@Model.ItemId">Add to cart</a>
-            }
-            else {
-                <form asp-action="BuyItemByPhone" method="post">
-                    <input class="form-control" type="text" name="phonenumber" required placeholder="PhoneNumber">
-                    <input style="display:none;visibility:hidden;" disabled="disabled" value="@Model.ItemId" name="itemId">
-                    <button class="btn btn-primary">Buy</button>
-                </form>
-            }
         </div>
-      </div>
-      <div class="tab-pane fade" id="charateristics" role="tabpanel">
-                @if (Model.Characteristics != null && Model.Characteristics.Count > 0)
-                {
-                    <table class="table shadow-none">
-                        <thead>
+    </section>
+
+    <!-- Specs section -->
+    <section class="py-5 bg-light">
+        <div class="container px-4 px-lg-5 mt-7">
+            <h2 class="fw-bolder mb-4">Specifications</h2>
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                <table class="table table-responsive "  style="box-shadow:none;">
+                    <tbody>
+                        @foreach (var charact in Model.Characteristics)
+                        {
                             <tr>
-                                <th scope="col">@Localizer["Name"]</th>
-                                <th scope="col">@Localizer["Value"]</th>
+                                <th>@charact.Name</th>
+                                <th>@charact.Value</th>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Characteristics)
-                            {
-                                <tr>
-                                    <td>@item.Name</td>
-                                    @if (item.Value == null)
-                                    {
-                                        <td>-</td>
-                                    }
-                                    else
-                                    {
-                                        <td>@item.Value</td>
-                                    }
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                    
-                }
-      </div>
-           
-    </div>
-</div>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
 } 

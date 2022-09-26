@@ -1,6 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Shop.Models
+namespace Shop.DAL.Data.Entities
 {
     [Table("Sells")]
     public class Sell

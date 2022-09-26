@@ -10,10 +10,12 @@ namespace Shop.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly ApplicationDBContext _db;
-        public UserService(UserManager<User> userManager, ApplicationDBContext db)
+        private readonly IWebHostEnvironment _webHost;
+        public UserService(UserManager<User> userManager, ApplicationDBContext db, IWebHostEnvironment webhost)
         {
             _userManager = userManager;
             _db = db;
+            _webHost = webhost;
         }
 
         public async Task<ServicesResultModel> AddItemAsync(User user, Item item)
@@ -64,6 +66,11 @@ namespace Shop.Services
             if (itemFromDb.OwnerID != user.Id) return new ServicesResultModel() { ResultCode = ResultCodes.Failed, Errors = new List<string> { "You can't delete this item" } };
             try
             {
+                if(itemFromDb.ImageUrl != null) {
+                    var path = Path.Combine(_webHost.ContentRootPath, "\\wwwroot\\ItemPhotos\\", itemFromDb.ImageUrl);
+                    File.Delete(_webHost.ContentRootPath + "\\wwwroot\\ItemPhotos\\" + itemFromDb.ImageUrl);
+                }
+                
                 _db.Items.Remove(itemFromDb);
                 await _db.SaveChangesAsync();
                 return new ServicesResultModel() { ResultCode = ResultCodes.Successed };

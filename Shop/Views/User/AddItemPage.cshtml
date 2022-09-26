@@ -55,6 +55,18 @@
               <label for="formFile" class="form-label mt-4">@Localizer["SelectItemImage"]</label>
               <input class="form-control" name="itemImage" type="file" id="itemImage">
             </div>
+            
+            <div class="form-check">
+                
+                @Html.CheckBoxFor(x=>x.IsNew, new {
+                    @class = "form-check-input",
+                    @id = "isNew"
+                }) @Html.LabelFor(x=>x.IsNew, "Is new", new {
+                    @class = "form-check-label",
+                    @for = "isNew"
+                })
+            </div>
+           
         </div>
         
         <div class="tab-pane fade" id="CharacteristicsFields" role="tabpanel"> 

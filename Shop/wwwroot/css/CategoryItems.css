@@ -1,0 +1,37 @@
+﻿@media screen and (max-width: 800px) {
+    .item {
+        max-width: max-content;
+        margin: 8px 2px;
+    }
+
+    .row {
+        justify-content: center;
+        text-align: center;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+}
+
+.priceGroup {
+    justify-content: space-between;
+    max-width: max-content;
+}
+
+button[type="submit"] {
+    width: 100%;
+}
+
+.item {
+    text-align: center;
+}
+
+a,
+a:hover,
+.product-title,
+strong,
+strong:hover .product-title:hover {
+    text-decoration: none;
+    color: black;
+}

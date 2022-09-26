@@ -1,1 +1,26 @@
-﻿
+﻿@model List<Sell>;
+
+    
+@if(Model!=null && Model.Count > 0) {
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sell in Model)
+            {
+                <tr>
+                    <th scope="row">@sell.Id</th>
+                    <td>Buyer: @sell.BuyerID</td>
+                    <td>Item: @sell.ItemId</td>
+                    <td><a asp-action="OpenSell" asp-route-id="@sell.Id">Open</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

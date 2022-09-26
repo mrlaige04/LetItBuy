@@ -23,13 +23,18 @@ namespace Shop.Services
             }
             var cartId = Guid.NewGuid();
             var userId = Guid.NewGuid();
+            Cart cart = new Cart()
+            {
+                CartID = cartId
+            };
             User user = new User()
             {
                 Email = _configuration["Admin:Email"],
                 UserName = _configuration["Admin:UserName"],
                 EmailConfirmed = true,
-                Id = userId
-                
+                Id = userId,
+                Cart = cart,
+                CartID = cartId
             };
             
             var createAdmin_Result = await _userManager.CreateAsync(user, _configuration["Admin:Password"]);

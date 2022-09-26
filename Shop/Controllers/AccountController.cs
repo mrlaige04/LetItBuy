@@ -97,7 +97,7 @@ namespace Shop.Controllers
         public async Task<IActionResult> Logout(string returnUrl)
         {
             await _accountService.LogoutAsync();
-            return LocalRedirect(returnUrl);
+            return LocalRedirect(returnUrl ?? "/");
         }
 
         [HttpGet]

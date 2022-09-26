@@ -29,9 +29,10 @@
                             <input value="@criteria.Name" name="criteriaName" class="form-control me-2" type="text" placeholder="Characteristic name" required/>
                             <select name="criteriaType" class="form-select" required >
                                 @foreach (var item in criteriaTypes) {
-                                    @if (item.Value == criteria.Type.ToString())
+                                    
+                                    @if (item.Value == ((int)(criteria.Type)).ToString())
                                     {
-                                        <option selected value="@item.Value">@item.Text</option>
+                                        <option selected="selected" value="@item.Value">@item.Text</option>
                                     }
                                     else
                                     {

@@ -1,57 +1,98 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @using Shop.Models.ViewDTO
-@model IEnumerable<ItemViewDTO>
+@model SearchViewModel;
 @inject IViewLocalizer Localizer;
 @{
     ViewData["Title"] = "Search results";
-    
+    int i = 1;
 }
 @section Styles {
-    <link rel="stylesheet" href="~/css/ManyItems.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/css/CategoryItems.css"/>
 }
 
-@if(Model != null & Model.Count() > 0)
+@if(Model != null)
 {
-    <div class="d-flex">
-        @foreach (var advert in Model)
-        { 
-            <div class="card col-md-2" style="margin-left:5px;">
-                <h3 class="card-header">@advert.ItemName</h3>
-                @if (advert.ImageURL != null)
-                {
-                    <img class="card-img-top" alt="advertphoto" src="@string.Format("\\ItemPhotos\\" + advert.ImageURL)"/>
-                } else
-                {
-                    <img class="card-img-top"  src="https://psmvideo.ru/assets/d0e40864/empty.jpg"/>
-                }
-                <div class="card-body">
-                    @advert.Description
-                </div>
-                <a class="btn btn-primary" asp-controller="Home" asp-action="ItemPage" asp-route-id="@advert.ItemId" style="margin: 2px 5px 8px 5px;">@Localizer["GoToItemPage"]</a>
+    <div class="container mt-4">
+        <form asp-action="Search" method="">
+            <legend>Filters</legend>
+            <div class="form-group priceGroup d-flex">
+                <input placeholder="Min price" asp-for="@Model.input.minPrice" type="number" class="form-control" name="minprice" min="0" id="">
+                <input placeholder="Max price" asp-for="@Model.input.maxPrice" type="number" class="form-control" name="maxprice" min="1" id="">
             </div>
-        }
+            @foreach (var criteria in Model.output.Criterias)
+            {
+                <div class="form-group">
+                    <label>@criteria.Name</label>
+                    @if (criteria.Type == CriteriaTypes.Number)
+                    {                   
+                        <input name="NL-@criteria.Name" class="form-control" type="number">
+                        <input name="NR-@criteria.Name" class="form-control" type="number">
+                    } else if (criteria.Type == CriteriaTypes.Boolean)
+                    {
+                        <input name="B-@criteria.Name" class="form-control" type="checkbox">
+                    } else if (criteria.Type == CriteriaTypes.Date)
+                    {
+                        <input name="D-@criteria.Name" class="form-control" type="date">
+                    } else if (criteria.Type == CriteriaTypes.NumberMoreThanZero)
+                    {
+                        <input name="NPL-@criteria.Name" class="form-control" type="number" min="0">
+                    } else if (criteria.Type == CriteriaTypes.String)
+                    {
+                        <input name="STR-@criteria.Name" class="form-control" type="text">
+                    } 
+                </div>
+            }
+            
+            <div class="form-group">
+                <legend>Company</legend>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
+                    <label class="form-check-label" for="optionsRadios1">
+					  Apple
+					</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
+                    <label class="form-check-label" for="optionsRadios1">
+					  Google
+					</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
+                    <label class="form-check-label" for="optionsRadios1">
+					  Microsoft
+					</label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
     </div>
-}
+    <hr>
+    <div class="container mt-4 items">
+        <div class="row">
+            <div class="col-md-4 item">
+                @foreach (var item in Model.output.Items)
+                {
+                    <a class="product-item" asp-action="ItemPage" asp-controller="Home" asp-route-id="@item.ItemId">
+                        @if(item.ImageURL != null)
+                        {
+                            <img src="@string.Format("\\ItemPhotos\\" + @item.ImageURL)" alt="item image" class="img-fluid product-thumbnail">
+                        }
+                        else
+                        {
+                            <img src="https://img.freepik.com/free-vector/error-404-concept-illustration_114360-1811.jpg?w=2000" class="img-fluid product-thumbnail" />
+                        }
+                        
+                        <h3 class="product-title">@item.ItemName</h3>
+                        <strong class="product-price">@item.ItemPrice @item.Currency</strong>
+                    </a>
+                }
+                
+            </div>
 
-@*@if(Model != null & Model.Count() > 0) {
-    <table class="table table-hover">
-        @foreach (var item in Model)
-        {
-           <tr onclick="location.replace('/Home/ItemPage?id=@item.ItemId')">  
-                 <th scope="row">
-                    @if(item.ImageURL == null)
-                    {
-                        <img class="itemImageSearch" src="https://gogeticon.net/files/1406874/995a3e47908a75edf8c47335835c1355.png"/>
-                    } else
-                    {
-                        <img class="itemImageSearch" src="@item.ImageURL"/>
-                    }
-                 </th>
-                 <td class="text-item">@item.ItemName</td>
-                 <td class="text-item">@item.ItemPrice @item.Currency</td>
-          </tr>     
-        }
-    </table>
-} else if (@Model.Count() == 0) {
-    <h3>@Localizer["NoItemsFound"]</h3>
-}*@
+        </div>
+    </div>
+        
+
+}

@@ -15,5 +15,9 @@ namespace Shop.Models.UserModels
         public Currency Currency { get; set; }
 
         public string CategoryID { get; set; }
+        [Required]
+        public bool IsNew { get; set; }
     }
+
+    
 }

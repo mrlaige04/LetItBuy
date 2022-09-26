@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Localization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.Data;
@@ -6,6 +7,7 @@ using Shop.Models;
 using Shop.Models.ViewDTO;
 using Shop.Services;
 using System.Resources;
+using System.Security.Claims;
 using System.Text.Json;
 
 
@@ -109,30 +111,48 @@ namespace Shop.Controllers
                 Description = x.Description,
                 ImageURL = x.ImageUrl
             }).ToList();
-            return View("ManyItems", itemViews);
+            var criterias = _db.Criterias.AsEnumerable().Where(x => x.CategoryID.ToString() == categoryId).ToList();
+            SearchViewModel search = new SearchViewModel()
+            {
+                output = new SearchViewModel.Output()
+                {
+                    Items = itemViews,
+                    Criterias = criterias,
+                },
+            };
+            
+            return View("ManyItems", search);
         }
 
 
 
 
 
-        // TODO : BUY ITEM
-        public IActionResult BuyItem(string itemId)
-        {
-            throw new NotImplementedException();
-        }
+        
+        
 
-        public IActionResult BuyItemByPhone(string itemId)
+        public IActionResult BuyItemByPhone(string itemId) // TODO :BUY BY PHONE
         {
             var item = Request.Form["itemId"];
             var phone = Request.Form["phonenumber"];
+
+            var sellerID = _db.Items.FirstOrDefault(x => x.ItemId.ToString() == itemId)?.OwnerID;
+            if(sellerID != null)
+            {
+                Sell sell = new Sell
+                {
+                    Id = Guid.NewGuid(),
+                    PhoneNumber = phone,
+                    Status = SellStatus.WaitForOwner,
+                    ItemId = Guid.Parse(itemId),
+                    SellerID = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                    Date = DateTime.Now
+                };
+            }
             throw new NotImplementedException();
         }
 
-        public IActionResult AddToCart(string itemId)
-        {
-            
-            throw new NotImplementedException();
-        }
+        
+
     }
 }
