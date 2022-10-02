@@ -131,6 +131,6 @@
   </data>
   <data name="RememberMe" xml:space="preserve">
     <value>Не виходити?</value>
-    <comment>Remember</comment>
+    <comment>RememberMe</comment>
   </data>
 </root>

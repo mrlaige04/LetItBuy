@@ -26,6 +26,12 @@ namespace Shop.DAL.Data.Entities
         public bool IsNew { get; set; }
 
         public ICollection<Characteristic> Characteristics { get; set; }
+
+
+        public string this[string criteriaName]
+        {
+            get => Characteristics.Where(c => c.CriteriaName == criteriaName).FirstOrDefault().Value;
+        }
     }
 
     public enum Currency

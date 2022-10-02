@@ -17,6 +17,8 @@ namespace Shop.DAL.Data.Entities
         public Category? Category { get; set; }
         [Display(Name = "CategoryName")]
         public Guid CategoryID { get; set; }
+
+        
     }
     public enum CriteriaTypes
     {

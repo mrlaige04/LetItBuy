@@ -1,4 +1,6 @@
-﻿@model Cart;
+﻿@using Shop.DAL.Data.Entities
+
+@model Cart;
 
 <div class="container">
     @if (Model!= null & Model.ItemsInCart != null & Model.ItemsInCart.Count > 0) {

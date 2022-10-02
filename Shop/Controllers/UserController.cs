@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Shop.Data;
-using Shop.Models;
-using Shop.Models.ClientsModels;
 using Shop.Models.UserModels;
-using Shop.Services;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using Shop.DAL.Data.Entities;
+using Shop.DAL.Data.EF;
+using Shop.BLL.Services;
+using Shop.BLL.Models;
 
 namespace Shop.Controllers
 {
@@ -52,7 +52,7 @@ namespace Shop.Controllers
                     return RedirectToAction("Logout", "Account");
                 }
                 var setUserPhoto_Result = await _photoService.SetUserProfileImage(photo, userId);
-                if (setUserPhoto_Result.ResultCode == ResultCodes.Failed)
+                if (setUserPhoto_Result.ResultCode == ResultCodes.Fail)
                 {
                     foreach (var error in setUserPhoto_Result.Errors)
                     {
@@ -68,7 +68,7 @@ namespace Shop.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var deleteUserImage = await _photoService.DeleteUserImage(userId);
-            if (deleteUserImage.ResultCode == ResultCodes.Failed)
+            if (deleteUserImage.ResultCode == ResultCodes.Fail)
             {
                 foreach (var error in deleteUserImage.Errors)
                 {
@@ -142,12 +142,13 @@ namespace Shop.Controllers
                         Value = str,
                         Item = item,
                         ItemID = item.ItemId,
-                        Name = criteria.Name
+                        Name = criteria.Name,
+                        CriteriaName = criteria.Name
                     });
                 }
                 
                 var addItem_Result = await _userService.AddItemAsync(user, item);
-                if (addItem_Result.ResultCode == ResultCodes.Successed)
+                if (addItem_Result.ResultCode == ResultCodes.Success)
                 {
                     return RedirectToAction("MyItems");
                 }
@@ -195,7 +196,7 @@ namespace Shop.Controllers
                     ItemId = item.ItemId,
                     Currency = item.Currency
                 });
-                if (editItem_Result.ResultCode == ResultCodes.Successed) return RedirectToAction("MyItems");
+                if (editItem_Result.ResultCode == ResultCodes.Success) return RedirectToAction("MyItems");
                 else
                 {
                     foreach (var error in editItem_Result.Errors)
@@ -214,7 +215,7 @@ namespace Shop.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToAction("Logout", "Account");
             var deleteItem_Result = await _userService.DeleteItemAsync(user, ItemId);
-            if (deleteItem_Result.ResultCode == ResultCodes.Successed) return RedirectToAction("MyItems");
+            if (deleteItem_Result.ResultCode == ResultCodes.Success) return RedirectToAction("MyItems");
             else
             {
                 foreach (var error in deleteItem_Result.Errors)
@@ -230,11 +231,18 @@ namespace Shop.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return RedirectToAction("Logout", "Account");
-            var sells = _db.Sells.AsEnumerable().Where(x => x.SellerID.ToString() == userId).ToList();
+            var sells = _db.Sells.Where(x => x.SellerID.ToString() == userId).ToList();
             return View(sells);
         }
 
-
+        [HttpGet]
+        public IActionResult MyOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return RedirectToAction("Logout", "Account");
+            var orders = _db.Sells.Where(x => x.BuyerID.ToString() == userId).ToList();
+            return View(orders);
+        }
 
         [HttpGet]
         [HttpPost]

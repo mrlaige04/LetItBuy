@@ -1,5 +1,6 @@
-﻿namespace Shop
+﻿namespace Shop.UI
 {
+
     public class SharedResource
     {
     }

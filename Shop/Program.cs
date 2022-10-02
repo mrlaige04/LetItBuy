@@ -2,14 +2,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-using Shop.Data;
-using Shop.Errors;
-using Shop.Models;
-using Shop.Services;
+
 using System.Globalization;
 using Microsoft.AspNetCore.SignalR;
 using Shop.Hubs;
-//using Microsoft.AspNetCore.Authentication.Google;
+using Shop.DAL.Data.EF;
+using Shop.DAL.Data.Entities;
+using Shop.BLL.Services;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using Shop.UI;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews()
     .AddDataAnnotationsLocalization()
     .AddViewLocalization();
+
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 
@@ -42,8 +46,17 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 builder.Services.AddAuthentication()
     .AddCookie(x =>
     {
-        x.ExpireTimeSpan = TimeSpan.FromMinutes(30);  
+        x.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     });
+    //.AddGoogle(x=>
+    //{
+    //    x.ClientId = s"your client id";
+    //    x.ClientSecret = "your client secret";
+    //})
+    //.AddFacebook(x=> {
+    //    x.ClientId = "";
+    //    x.ClientSecret = "";
+    //});
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
@@ -65,15 +78,16 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 
 
 // Custom Services
-builder.Services.AddSingleton<ICustomEmailSender, GmailSmtpSender>();
-builder.Services.AddTransient<RoleService>();
-builder.Services.AddTransient<AccountService>();
-builder.Services.AddTransient<AdminService>();
-builder.Services.AddTransient<AdminInitializer>();
-builder.Services.AddTransient<UserService>();
-builder.Services.AddTransient<PhotoService>();
-builder.Services.AddScoped<CategoryService>(); 
-
+builder.Services.AddScoped<ICustomEmailSender, GmailSmtpSender>();
+builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<AccountService>(); // TODO : EXCEPTION ISTRINGLOCALIZER
+builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<AdminInitializer>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<PhotoService>();
+builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ItemService>();
+builder.Services.AddScoped<FilterService>();
 
 
 // Logging and Configuration
