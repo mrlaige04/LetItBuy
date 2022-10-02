@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Extensions.Localization;
+using System.ComponentModel.DataAnnotations;
 
-namespace Shop.Models.Identity
+namespace Shop.UI.Models.Identity
 {
     public class LoginViewModel
     {
+        
         [Required]
         [Display(Name = "Email")]
         public string Email { get; set; }

@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Shop.Data;
+using Shop.DAL.Data.EF;
+using Shop.DAL.Data.Entities;
 using Shop.Models;
 using Shop.Models.Admin;
 using Shop.Models.UserModels;
@@ -79,11 +80,19 @@ namespace Shop.Controllers
             }
             return RedirectToAction("ManageCategories");
         }
-
         
-        public void RemoveAllUsers()
+        
+        public async void RemoveAllUsers()
         {
-            
+            try
+            {
+                _db.Users.RemoveRange(_db.Users);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         [HttpGet]
@@ -95,6 +104,7 @@ namespace Shop.Controllers
                 var category = _db.Categories.FirstOrDefault(x => x.Id.ToString() == id);
                 try
                 {
+                    
                     _db.Categories.Remove(category);
                     
                     await _db.SaveChangesAsync();

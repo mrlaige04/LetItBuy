@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
-@using Shop.Services
+@using Shop.BLL.Services
+
 @inject IViewLocalizer Localizer
 @inject CategoryService CategoryService;
 <!DOCTYPE html>
@@ -37,10 +38,7 @@
                 </div>
             </li>
             <li class="nav-item">
-                <form method="get" class="d-flex align-content-center" asp-controller="Home" asp-action="SearchItems">
-                    <input required name="q" class="form-control me-sm-2" type="text" placeholder="@Localizer["SearchPlaceholder"]">
-                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">@Localizer["SearchButton"]</button>
-                  </form>
+                <a asp-controller="Home" asp-action="SearchPage" class="nav-link">@Localizer["Search"]</a>
             </li>
             
 

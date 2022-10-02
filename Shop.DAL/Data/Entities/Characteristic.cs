@@ -12,6 +12,7 @@ namespace Shop.DAL.Data.Entities
         [Key]
         public Guid ID { get; set; }
         public Guid CriteriaID { get; set; }
+        public string CriteriaName { get; set; }
         public string Value { get; set; }
 
         public Item Item { get; set; }

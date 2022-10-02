@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shop.Models.Identity
+namespace Shop.UI.Models.Identity
 {
     public class ChangeEmailViewModel
     {

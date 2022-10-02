@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Shop.DAL.Data.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Shop.Models.ViewDTO
 {

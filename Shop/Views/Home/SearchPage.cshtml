@@ -1,0 +1,68 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Shop.Models.ViewDTO;
+@model SearchViewModel;
+@inject IViewLocalizer Localizer;
+@section Styles {
+    <link rel="stylesheet" href="~/css/SearchPage.css"/>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+}
+<div class="container">
+    <div class="topsearch">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <form asp-controller="Home" asp-action="Search" method="get" class="card card-sm">
+                    <div class="card-body row no-gutters align-items-center">
+                        <div class="col-auto">
+                            <i class="fas fa-search h4 text-body"></i>
+                        </div>
+                        <div class="col">
+                            <input required asp-for="SearchString" id="searchKeyWords" class="form-control form-control-lg form-control-borderless" type="search" placeholder="@Localizer["Search"]">
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-lg btn-success" type="submit">@Localizer["Search"]</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div><hr />
+    <div class="itemsBox">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Open</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(Model != null && Model.Items != null && Model.Items.Count() > 0) {
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <th>@item.ItemName</th>
+                            <th>@item.ItemPrice</th>
+                            <th>@Html.ActionLink("Open", "ItemPage", "Home", new {id=item.ItemId})</th>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    function search() {
+        var box = document.getElementById("searchKeyWords").value;
+    
+        fetch(`/Home/GetItems?q=${box}`,{
+            method: "post"
+        }).then(function(response) {
+            var itemsBox = document.getElementsByClassName("itemsBox");
+            var els = response.json();
+            els.foreach()
+        });
+    }
+</script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

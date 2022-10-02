@@ -1,28 +1,33 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shop.Services;
-using Shop.Models;
-using Shop.Models.ClientsModels;
-using Shop.Models.DTO;
-using Shop.Models.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Shop.DAL.Data.Entities;
+using Shop.UI.Models;
+using Shop.UI.Models.Identity;
+using Shop.BLL.Services;
+using Shop.BLL.DTO;
+using Shop.BLL.Models;
+using Microsoft.Extensions.Localization;
+using Shop.UI;
 
 namespace Shop.Controllers
 {
     public class AccountController : Controller
     {       
         private readonly ILogger<AccountController> _logger;
-
+        
         private readonly SignInManager<User> _signinmanager;
         private readonly AccountService _accountService;
         private readonly IConfiguration _config;
-        public AccountController(AccountService accountClient, ILogger<AccountController> logger, SignInManager<User> signInManager, IConfiguration config)
+        private readonly IStringLocalizer<SharedResource> _localizer;
+        public AccountController(AccountService accountClient, ILogger<AccountController> logger, SignInManager<User> signInManager, IConfiguration config, IStringLocalizer<SharedResource> localizer)
         {
             _accountService = accountClient;
             _logger = logger;
             _signinmanager = signInManager;
             _config = config;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -37,7 +42,7 @@ namespace Shop.Controllers
             if (ModelState.IsValid)
             {              
                 var register_result = await _accountService.RegisterAsync(new RegisterDTOModel { Email = model.Email, Password = model.Password, Username = model.UserName, HostUrl = Request.Host.Value });
-                if (register_result.ResultCode == ResultCodes.Failed)
+                if (register_result.ResultCode == ResultCodes.Fail)
                 {
                     foreach (var item in register_result.Errors)
                     {
@@ -56,19 +61,19 @@ namespace Shop.Controllers
             if (ModelState.IsValid)
             {                
                 var conf_em_res = await _accountService.ConfirmEmailAsync(userId, code);
-                if (conf_em_res.ResultCode == ResultCodes.Successed)
+                if (conf_em_res.ResultCode == ResultCodes.Success)
                     return RedirectToAction("Login", "Account");
                 else
-                    return View("Error", new ErrorViewModel { ErrorMessages = conf_em_res.Errors });
+                    return View("Error", new ErrorViewModel { Errors = conf_em_res.Errors });
             }
-            else return View("Error", new ErrorViewModel { ErrorMessages = new List<string> { "Invalid model state" } });
+            else return View("Error", new ErrorViewModel { Errors = new List<string> { "Invalid model state" } });
         }
  
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
             if (User.Identity.IsAuthenticated)
-                return View("Error", new ErrorViewModel { ErrorMessages = new List<string> { "You are already logged in" } });
+                return View("Error", new ErrorViewModel { Errors = new List<string> { "You are already logged in" } });
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
@@ -79,13 +84,13 @@ namespace Shop.Controllers
             if (ModelState.IsValid)
             {
                 var login_result = await _accountService.LoginAsync(new LoginDTOModel { Email = model.Email, Password = model.Password, RememberMe = model.RememberMe, ReturnUrl = model.ReturnUrl, urlHelper = Url });
-                if (login_result.ResultCode == ResultCodes.Successed)
+                if (login_result.ResultCode == ResultCodes.Success)
                     return Redirect(model.ReturnUrl ?? "../");
                 else
                 {
                     foreach (var item in login_result.Errors)
                     {
-                        ModelState.AddModelError("", item);
+                        ModelState.AddModelError("", _localizer[item]);
                     }
                 }
             }
@@ -115,7 +120,7 @@ namespace Shop.Controllers
             if (ModelState.IsValid)
             {
                 var fp_res = await _accountService.ForgotPasswordAsync(new ForgotPasswordDTOModel { Email = model.Email, HostUrl = Request.Host.Value });
-                if (fp_res.ResultCode == ResultCodes.Successed)
+                if (fp_res.ResultCode == ResultCodes.Success)
                     return View("ForgotPasswordConfirmation");
                 else
                 {
@@ -139,7 +144,7 @@ namespace Shop.Controllers
             {
                 var email = User.FindFirstValue(ClaimTypes.Email);
                 var cp_res = await _accountService.ChangePasswordAsync(new ChangePasswordDTOModel { Email = email, NewPassword = model.NewPassword, OldPassword = model.OldPassword });
-                if (cp_res.ResultCode == ResultCodes.Successed)
+                if (cp_res.ResultCode == ResultCodes.Success)
                     return View("ChangePasswordConfirmation");
                 else
                 {
@@ -161,19 +166,19 @@ namespace Shop.Controllers
                 if(userEmail == _config["Admin:Email"])
                 {
                     ModelState.AddModelError("", "You can't delete admin account");
-                    return View("Error", new ErrorViewModel { ErrorMessages = new List<string> { "You can't delete admin account" } });
+                    return View("Error", new ErrorViewModel { Errors = new List<string> { "You can't delete admin account" } });
                 }
                 var del_ac_res = await _accountService.DeleteMyAccountAsync(userEmail, password);
-                if (del_ac_res.ResultCode == ResultCodes.Successed)
+                if (del_ac_res.ResultCode == ResultCodes.Success)
                 {
                     await _signinmanager.SignOutAsync();
                     return RedirectToAction("Login", "Account");
                 }
                 else
-                    return View("Error", new ErrorViewModel { ErrorMessages = del_ac_res.Errors });
+                    return View("Error", new ErrorViewModel { Errors = del_ac_res.Errors });
             }
             else {
-                return View("Error", new ErrorViewModel { ErrorMessages = new List<string> { "Invalid password" } });
+                return View("Error", new ErrorViewModel { Errors = new List<string> { "Invalid password" } });
             }
         }
 
@@ -195,7 +200,7 @@ namespace Shop.Controllers
             {
                 _accountService.urlHelper = Url;
                 var changeemail_result = await _accountService.ChangeEmailAsync(new ChangeEmailDTOModel { OldEmail = model.OldEmail, NewEmail = model.NewEmail });
-                if (changeemail_result.ResultCode == ResultCodes.Successed)
+                if (changeemail_result.ResultCode == ResultCodes.Success)
                     return View("ChangeEmailConfirmation");
                 else
                 {
@@ -215,15 +220,15 @@ namespace Shop.Controllers
             if (ModelState.IsValid)
             {
                 var conf_ch_em_res = await _accountService.ConfirmChangeEmailAsync(token, userId, newEmail);
-                if (conf_ch_em_res.ResultCode == ResultCodes.Successed)
+                if (conf_ch_em_res.ResultCode == ResultCodes.Success)
                 {
                     await _accountService.LogoutAsync();
                     return RedirectToAction("Login", "Account");
                 }           
                 else
-                    return View("Error", new ErrorViewModel { ErrorMessages = conf_ch_em_res.Errors });
+                    return View("Error", new ErrorViewModel { Errors = conf_ch_em_res.Errors });
             }
-            else return View("Error", new ErrorViewModel { ErrorMessages = new List<string> { "Invalid token" } });
+            else return View("Error", new ErrorViewModel { Errors = new List<string> { "Invalid token" } });
         }
     }
 }

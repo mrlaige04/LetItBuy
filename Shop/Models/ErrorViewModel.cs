@@ -1,7 +1,9 @@
-﻿namespace Shop.Models
+﻿using Microsoft.AspNetCore.Mvc.Localization;
+
+namespace Shop.UI.Models
 {
     public class ErrorViewModel
     {
-        public IEnumerable<string> ErrorMessages { get; set; }
+        public IEnumerable<string> Errors { get; set; }
     }
 }

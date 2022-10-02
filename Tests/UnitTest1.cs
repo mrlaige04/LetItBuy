@@ -1,5 +1,5 @@
 using Moq;
-
+using NUnit;
 
 namespace Tests
 {
@@ -13,7 +13,7 @@ namespace Tests
 
         [Test]
         public void Test1()
-        {
+        {   
             Assert.Pass();
         }
     }
