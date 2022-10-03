@@ -121,6 +121,9 @@
     <value>Акаунт</value>
     <comment>Account</comment>
   </data>
+  <data name="AccountSettings" xml:space="preserve">
+    <value>Налаштування акаунта</value>
+  </data>
   <data name="Adminpanel" xml:space="preserve">
     <value>Адмін панель</value>
     <comment>Admin panel</comment>
@@ -128,6 +131,9 @@
   <data name="Catalogs" xml:space="preserve">
     <value>Каталоги</value>
     <comment>Catalogs button</comment>
+  </data>
+  <data name="Entersomewords" xml:space="preserve">
+    <value>Введіть декілька слів</value>
   </data>
   <data name="Login" xml:space="preserve">
     <value>Увійти</value>

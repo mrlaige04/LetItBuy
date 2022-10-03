@@ -11,6 +11,7 @@ using Shop.BLL.Models;
 using Microsoft.Extensions.Localization;
 using Shop.UI;
 
+
 namespace Shop.Controllers
 {
     public class AccountController : Controller
@@ -37,7 +38,7 @@ namespace Shop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterAsync(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {           
             if (ModelState.IsValid)
             {              
@@ -79,7 +80,7 @@ namespace Shop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LoginAsync(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -138,14 +139,14 @@ namespace Shop.Controllers
         public IActionResult ChangePassword() => View("ChangePassword");
 
         [HttpPost]
-        public async Task<IActionResult> ChangePasswordAsync (ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var email = User.FindFirstValue(ClaimTypes.Email);
                 var cp_res = await _accountService.ChangePasswordAsync(new ChangePasswordDTOModel { Email = email, NewPassword = model.NewPassword, OldPassword = model.OldPassword });
                 if (cp_res.ResultCode == ResultCodes.Success)
-                    return View("ChangePasswordConfirmation");
+                    return Ok();
                 else
                 {
                     foreach (var item in cp_res.Errors)
@@ -156,6 +157,14 @@ namespace Shop.Controllers
             }
             return View(model);
         }
+
+        [HttpPost]
+        public IActionResult ChangePassword(string OldPassword, string NewPassword, string ConfirmPassword)
+        {
+            return Ok();
+        }
+
+        
 
         [HttpPost]
         public async Task<IActionResult> DeleteMyAccount(string password)

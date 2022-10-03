@@ -135,7 +135,7 @@ namespace Shop.Controllers
         }
 
 
-
+        public IActionResult NotFoundPage() => View("NotFound");
 
 
 
@@ -203,141 +203,141 @@ namespace Shop.Controllers
         }
 
 
-        [HttpPost]
-        [HttpGet]
-        public IActionResult Index2(IndexViewModel model)
-        {
-            if (model != null)
-            {
-                var sort = model.SortViewModel;
-                var filter = model.FilterViewModel;
-                var paging = model.PageViewModel;
+        //[HttpPost]
+        //[HttpGet]
+        //public IActionResult Index2(IndexViewModel model)
+        //{
+        //    if (model != null)
+        //    {
+        //        var sort = model.SortViewModel;
+        //        var filter = model.FilterViewModel;
+        //        var paging = model.PageViewModel;
 
-                if (filter != null)
-                {
-                    try
-                    {
-                        filterService.SetData(model.Items, model.CategoryID);
-                    }
-                    catch (Exception e)
-                    {
-                        return BadRequest(e.Message);
-                    }
+        //        if (filter != null)
+        //        {
+        //            try
+        //            {
+        //                filterService.SetData(model.Items, model.CategoryID);
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                return BadRequest(e.Message);
+        //            }
                     
                     
-                    FilterExpression expression = new FilterExpression()
-                    {
-                        maxPrice = filter.maxPrice,
-                        minPrice = filter.minPrice,
-                        FilterValues = Request.Form.Where(x => x.Key.StartsWith("C-")).Select(x => new FilterValue
-                        {
-                            CriteriaName = x.Key.Split('-')[1],
-                            Value = x.Value
-                        }).ToList()
-                    };
-                    model.Items = filterService.FilterItems(expression);
-                }
+        //            FilterExpression expression = new FilterExpression()
+        //            {
+        //                maxPrice = filter.maxPrice,
+        //                minPrice = filter.minPrice,
+        //                FilterValues = Request.Form.Where(x => x.Key.StartsWith("C-")).Select(x => new FilterValue
+        //                {
+        //                    CriteriaName = x.Key.Split('-')[1],
+        //                    Value = x.Value
+        //                }).ToList()
+        //            };
+        //            model.Items = filterService.FilterItems(expression);
+        //        }
 
                 
-                if (sort != null)
-                {
-                    switch (model.SortViewModel?.SortState)
-                    {
-                        case SortState.NameAsc:
-                            model.Items = model.Items.OrderBy(s => s.ItemName);
-                            break;
-                        case SortState.NameDesc:
-                            model.Items = model.Items.OrderByDescending(s => s.ItemName);
-                            break;
-                        case SortState.PriceAsc:
-                            model.Items = model.Items.OrderBy(s => s.ItemPrice);
-                            break;
-                        case SortState.PriceDesc:
-                            model.Items = model.Items.OrderByDescending(s => s.ItemPrice);
-                            break;
-                    }
-                }
-                if (paging != null)
-                {
+        //        if (sort != null)
+        //        {
+        //            switch (model.SortViewModel?.SortState)
+        //            {
+        //                case SortState.NameAsc:
+        //                    model.Items = model.Items.OrderBy(s => s.ItemName);
+        //                    break;
+        //                case SortState.NameDesc:
+        //                    model.Items = model.Items.OrderByDescending(s => s.ItemName);
+        //                    break;
+        //                case SortState.PriceAsc:
+        //                    model.Items = model.Items.OrderBy(s => s.ItemPrice);
+        //                    break;
+        //                case SortState.PriceDesc:
+        //                    model.Items = model.Items.OrderByDescending(s => s.ItemPrice);
+        //                    break;
+        //            }
+        //        }
+        //        if (paging != null)
+        //        {
 
-                }
-            }
-            return View("Index", model);
-        }
-        [HttpPost]
-        public void Filter(FilterViewModel filter) // TODO: FILTERING
-        {
-            var categoryId = "0e2d9904-63d9-486e-ade2-a9d9a32f3168";
-            // Items from db by such category
-            IQueryable<Item> items = _db.Items
-                .Include(x=>x.Characteristics)
-                .Where(x=>x.Category_ID.ToString() == categoryId);
-            // Category
-            Category category = _db.Categories
-                .Include(x=>x.Criterias)
-                .FirstOrDefault(x => x.Id.ToString() == categoryId);
+        //        }
+        //    }
+        //    return View("Index", model);
+        //}
+        //[HttpPost]
+        //public void Filter(FilterViewModel filter) // TODO: FILTERING
+        //{
+        //    var categoryId = "0e2d9904-63d9-486e-ade2-a9d9a32f3168";
+        //    // Items from db by such category
+        //    IQueryable<Item> items = _db.Items
+        //        .Include(x=>x.Characteristics)
+        //        .Where(x=>x.Category_ID.ToString() == categoryId);
+        //    // Category
+        //    Category category = _db.Categories
+        //        .Include(x=>x.Criterias)
+        //        .FirstOrDefault(x => x.Id.ToString() == categoryId);
             
-            var minPrice = filter?.minPrice;
-            var maxPrice = filter?.maxPrice;
-            if (minPrice != 0)
-            {
-                items = items.Where(x => x.ItemPrice >= minPrice);
-            }
-            if (maxPrice != 0)
-            {
-                items = items.Where(x => x.ItemPrice <= maxPrice);
-            }
+        //    var minPrice = filter?.minPrice;
+        //    var maxPrice = filter?.maxPrice;
+        //    if (minPrice != 0)
+        //    {
+        //        items = items.Where(x => x.ItemPrice >= minPrice);
+        //    }
+        //    if (maxPrice != 0)
+        //    {
+        //        items = items.Where(x => x.ItemPrice <= maxPrice);
+        //    }
 
 
-            // Foreach in criterias of category
-            foreach (var criteria in category?.Criterias)
-            {
-                // Check criteria type and get values
-                if (criteria.Type == CriteriaTypes.String)
-                {
-                    var value = Request.Form["C-" + criteria.Name];
-                    if (!string.IsNullOrEmpty(value))
-                    {
-                        items = from item in items
-                                from j in item.Characteristics
-                                where j.CriteriaID == criteria.ID && j.Value == value
-                                select item;  
-                    }
-                }
-                else if (criteria.Type == CriteriaTypes.Number || criteria.Type == CriteriaTypes.NumberMoreThanZero)
-                {
-                    var minA = Request.Form["C-" + criteria.Name + "-min"];
-                    var maxA = Request.Form["C-" + criteria.Name + "-max"];
-                    var minNum = minA is { } ? double.PositiveInfinity : double.Parse(Request.Form[minA]);
-                    var maxNum = maxA is { } ? double.PositiveInfinity : double.Parse(Request.Form[maxA]);
+        //    // Foreach in criterias of category
+        //    foreach (var criteria in category?.Criterias)
+        //    {
+        //        // Check criteria type and get values
+        //        if (criteria.Type == CriteriaTypes.String)
+        //        {
+        //            var value = Request.Form["C-" + criteria.Name];
+        //            if (!string.IsNullOrEmpty(value))
+        //            {
+        //                items = from item in items
+        //                        from j in item.Characteristics
+        //                        where j.CriteriaID == criteria.ID && j.Value == value
+        //                        select item;  
+        //            }
+        //        }
+        //        else if (criteria.Type == CriteriaTypes.Number || criteria.Type == CriteriaTypes.NumberMoreThanZero)
+        //        {
+        //            var minA = Request.Form["C-" + criteria.Name + "-min"];
+        //            var maxA = Request.Form["C-" + criteria.Name + "-max"];
+        //            var minNum = minA is { } ? double.PositiveInfinity : double.Parse(Request.Form[minA]);
+        //            var maxNum = maxA is { } ? double.PositiveInfinity : double.Parse(Request.Form[maxA]);
 
-                    if(minNum != double.PositiveInfinity)
-                    {
-                        if (maxNum != double.PositiveInfinity)
-                        {
-                            items = from item in items
-                                    from j in item.Characteristics
-                                    where j.CriteriaID == criteria.ID && double.Parse(j.Value) >= minNum && double.Parse(j.Value) <= maxNum
-                                    select item;
-                        }
-                        else
-                        {
-                            items = from item in items
-                                    from j in item.Characteristics
-                                    where j.CriteriaID == criteria.ID && double.Parse(j.Value) >= minNum
-                                    select item;
-                        }
-                    }
-                }  
-                else if (criteria.Type == CriteriaTypes.Boolean)
-                {
-                    var value = bool.Parse(Request.Form["C-" + criteria.Name]);
-                    items = (from item in items
-                             from j in item.Characteristics
-                             where j.CriteriaID == criteria.ID && bool.Parse(j.Value) == value
-                             select item);
-                }   
-            }   
-        }
+        //            if(minNum != double.PositiveInfinity)
+        //            {
+        //                if (maxNum != double.PositiveInfinity)
+        //                {
+        //                    items = from item in items
+        //                            from j in item.Characteristics
+        //                            where j.CriteriaID == criteria.ID && double.Parse(j.Value) >= minNum && double.Parse(j.Value) <= maxNum
+        //                            select item;
+        //                }
+        //                else
+        //                {
+        //                    items = from item in items
+        //                            from j in item.Characteristics
+        //                            where j.CriteriaID == criteria.ID && double.Parse(j.Value) >= minNum
+        //                            select item;
+        //                }
+        //            }
+        //        }  
+        //        else if (criteria.Type == CriteriaTypes.Boolean)
+        //        {
+        //            var value = bool.Parse(Request.Form["C-" + criteria.Name]);
+        //            items = (from item in items
+        //                     from j in item.Characteristics
+        //                     where j.CriteriaID == criteria.ID && bool.Parse(j.Value) == value
+        //                     select item);
+        //        }   
+        //    }   
+        //}
     }
 }

@@ -28,7 +28,7 @@ builder.Services.AddSignalR();
 
 // DB and Identity
 builder.Services.AddDbContext<ApplicationDBContext>(options=>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),b=>b.MigrationsAssembly("Shop.UI")));
 
 builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 {

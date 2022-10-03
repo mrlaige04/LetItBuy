@@ -1,0 +1,18 @@
+﻿@using Shop.UI.Models;
+@using Shop.DAL.Data.Entities;
+@model ErrorViewModel;
+
+@{
+    ViewData["Title"] = "Error";
+}
+
+The website generated an error. Error messages: 
+@if (Model != null)
+{
+    <ul>
+        @foreach (var error in Model.Errors)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}

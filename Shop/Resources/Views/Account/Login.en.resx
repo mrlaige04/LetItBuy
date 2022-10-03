@@ -125,8 +125,11 @@
     <value>Forgot password?</value>
     <comment>ForgotPassword</comment>
   </data>
-  <data name="Login" xml:space="preserve">
+  <data name="Logining" xml:space="preserve">
     <value>Login</value>
     <comment>Login</comment>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
 </root>

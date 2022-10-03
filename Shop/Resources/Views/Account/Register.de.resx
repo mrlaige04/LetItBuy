@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Alreadyhaveanaccount" xml:space="preserve">
+    <value>Haben Sie bereits ein Konto?</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Konto anlegen</value>
+  </data>
+  <data name="CreateanAccount" xml:space="preserve">
+    <value>Account erstellen</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Anmeldung</value>
+  </data>
   <data name="PasswordCriteria1" xml:space="preserve">
     <value>Das Passwort muss mindestens 1 Großbuchstaben enthalten</value>
     <comment>PasswordCriteria1</comment>

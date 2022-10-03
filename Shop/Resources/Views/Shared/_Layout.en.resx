@@ -121,6 +121,9 @@
     <value>Account</value>
     <comment>Account</comment>
   </data>
+  <data name="AccountSettings" xml:space="preserve">
+    <value>Account Settings</value>
+  </data>
   <data name="Adminpanel" xml:space="preserve">
     <value>Admin Panel</value>
     <comment>Admin panel</comment>
@@ -128,6 +131,9 @@
   <data name="Catalogs" xml:space="preserve">
     <value>Catalogs</value>
     <comment>Catalogs</comment>
+  </data>
+  <data name="Entersomewords" xml:space="preserve">
+    <value>Enter Some Words</value>
   </data>
   <data name="Login" xml:space="preserve">
     <value>Login</value>

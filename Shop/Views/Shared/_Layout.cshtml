@@ -6,139 +6,318 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>LetItBuy</title>
-    <link rel="shortcut icon" type="image/x-icon" width="50" href="/favicon.ico"/>
-    @RenderSection("Styles",false)
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.2.0/zephyr/bootstrap.min.css" integrity="sha512-4hshmZC4nWxAKC1H3MJBd2uRv+gRBkcBODzZoj3Jzd0XrF+osekpAAI1W7ASmMTuSKzrq+3xDoTfNU2sbNK67w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-</head>
-<body style="margin:0px; height:100%;">
+	<meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>LetItBuy</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
     
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand col-md-3" asp-controller="Home" asp-action="GetWelcomePage">
-            <img src="/Logos/Zip/png/logo-no-background.png"  width="50" height="30" alt="logobrand"/>
-            LetItBuy
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarColor02">
-          <ul class="navbar-nav me-auto">            
-            <li class="nav-item dropdown" >    
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Catalogs"]</a>
-                <div class="dropdown-menu">
-                            @foreach (var category in CategoryService.GetCategories())
-                            {
-                                <a class="dropdown-item" asp-controller="Home" asp-action="ItemsByCategory" asp-route-categoryId="@category.Id">@category.Name</a>
-                            }
-                </div>
-            </li>
+    <link rel="shortcut icon" type="image/x-icon" width="50" href="/favicon.ico"/>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    
+    <!-- Vendor CSS Files -->
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Template Main CSS File -->
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+    @RenderSection("Styles",false)
+</head>
+<body>
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="/" class="logo d-flex align-items-center">
+                <img src="assets/img/logo.png" alt="">
+                <span class="d-none d-lg-block">LetItBuy</span>
+            </a>
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+        </div>
+        <!-- End Logo -->
+
+        <div class="search-bar">
+            <form class="search-form d-flex align-items-center" method="POST" asp-controller="Home" asp-action="Search">
+                <input required id="topsearchbox" type="text" name="query" placeholder="@Localizer["SearchPlaceholder"]" title="@Localizer["Entersomewords"]">
+                <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+            </form>
+        </div>
+        <!-- End Search Bar -->
+
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+
+                <li class="nav-item d-block d-lg-none">
+                    <a class="nav-link nav-icon search-bar-toggle " href="#">
+                        <i class="bi bi-search"></i>
+                    </a>
+                </li>
+                <!-- End Search Icon-->
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge bg-primary badge-number">4</span>
+                    </a>
+                    <!-- End Notification Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                        <li class="dropdown-header">
+                            You have 4 new notifications
+                            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li class="notification-item">
+                            <i class="bi bi-exclamation-circle text-warning"></i>
+                            <div>
+                                <h4>Lorem Ipsum</h4>
+                                <p>Quae dolorem earum veritatis oditseno</p>
+                                <p>30 min. ago</p>
+                            </div>
+                        </li>
+                    </ul>
+                    <!-- End Notification Dropdown Items -->
+                </li>
+                <!-- End Notification Nav -->
+
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-chat-left-text"></i>
+                        <span class="badge bg-success badge-number">3</span>
+                    </a>
+                    <!-- End Messages Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
+                        <li class="dropdown-header">
+                            You have 3 new messages
+                            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li class="message-item">
+                            <a href="#">
+                                <img src="assets/img/messages-1.jpg" alt="" class="rounded-circle">
+                                <div>
+                                    <h4>Maria Hudson</h4>
+                                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                                    <p>4 hrs. ago</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li class="message-item">
+                            <a href="#">
+                                <img src="assets/img/messages-2.jpg" alt="" class="rounded-circle">
+                                <div>
+                                    <h4>Anna Nelson</h4>
+                                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                                    <p>6 hrs. ago</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li class="message-item">
+                            <a href="#">
+                                <img src="assets/img/messages-3.jpg" alt="" class="rounded-circle">
+                                <div>
+                                    <h4>David Muldon</h4>
+                                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                                    <p>8 hrs. ago</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li class="dropdown-footer">
+                            <a href="#">Show all messages</a>
+                        </li>
+
+                    </ul>
+                    <!-- End Messages Dropdown Items -->
+
+                </li>
+                <!-- End Messages Nav -->
+
+                <li class="nav-item dropdown pe-3">
+
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+                        <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+                    </a>
+                    <!-- End Profile Iamge Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li class="dropdown-header">
+                            <h6>Kevin Anderson</h6>
+                            <span>Web Designer</span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                                <i class="bi bi-person"></i>
+                                <span>@Localizer["Myaccount"]</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                                <i class="bi bi-gear"></i>
+                                <span>@Localizer["AccountSettings"]</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                                <i class="bi bi-question-circle"></i>
+                                <span>Need Help?</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li>
+
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    <span>Sign Out</span>
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+                    <!-- End Profile Dropdown Items -->
+                </li>
+                <!-- End Profile Nav -->
+
+            </ul>
+        </nav>
+        <!-- End Icons Navigation -->
+
+    </header>
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+
+        <ul class="sidebar-nav" id="sidebar-nav">
+
             <li class="nav-item">
-                <a asp-controller="Home" asp-action="SearchPage" class="nav-link">@Localizer["Search"]</a>
+                <a class="nav-link " href="/">
+                    <i class="bi bi-grid"></i>
+                    <span>Home</span>
+                </a>
             </li>
+            <!-- End Dashboard Nav -->
+
             
 
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@Localizer["Account"]</a>
-              <div class="dropdown-menu">
-                   @if(User.Identity.IsAuthenticated)
-                   {
-                       @if(User.IsInRole("Admin")) {
-                           <a class="dropdown-item" asp-controller="Admin" asp-action="GetAdminPanel">@Localizer["Adminpanel"]</a>
-                       }
-                        
-                       <a class="dropdown-item" asp-controller="User" asp-action="GetProfile">@Localizer["Myaccount"]</a>
-                       <a class="dropdown-item">@Localizer["Mycart"]</a>
-                       <a asp-action="MyItems" asp-controller="User" class="dropdown-item">@Localizer["Myitems"]</a>
-                       <a asp-action="MySells" asp-controller="User" class="dropdown-item">@Localizer["Mysells"]</a>
-                       <a asp-action="MyOrders" asp-controller="User" class="dropdown-item">@Localizer["MyOrders"]</a>
-                       <div class="dropdown-divider"></div>
-                       <a class="dropdown-item" asp-route-returnUrl='@(@Context.Request.Path + @Context.Request.QueryString)' asp-controller="Account" asp-action="Logout">@Localizer["Logout"]</a>
-                   } else {                      
-                       <a class="dropdown-item" asp-controller="Account" asp-action="Login">@Localizer["Login"]</a>
-                       <a class="dropdown-item" asp-controller="Account" asp-action="Register">@Localizer["Register"]</a>
-                   }
-              </div>
+            
+
+            
+            
+
+            <li class="nav-heading">Pages</li>
+
+            
+            <!-- End Profile Page Nav -->
+
+            
+            <!-- End F.A.Q Page Nav -->
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" asp-controller="Home" asp-action="Contact">
+                    <i class="bi bi-envelope"></i>
+                    <span>Contact</span>
+                </a>
             </li>
-          </ul>
-          
-          
-          
+            <!-- End Contact Page Nav -->
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-controller="Account" asp-action="Register">
+                        <i class="bi bi-card-list"></i>
+                        <span>@Localizer["Register"]</span>
+                    </a>
+                </li>
+                <!-- End Register Page Nav -->
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-controller="Account" asp-action="Login">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span>@Localizer["Login"]</span>
+                    </a>
+                </li>
+                <!-- End Login Page Nav -->
+            } else
+            {
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-controller="User" asp-action="GetProfile">
+                        <i class="bi bi-person"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-controller="Account" asp-action="Logout">
+                        <i class="bi bi-card-list"></i>
+                        <span>@Localizer["Logout"]</span>
+                    </a>
+                </li>
+            }
+            <li class="nav-heading">Settings</li>
+            <li class="nav-item">
+                <div class="nav-link collapsed">
+                    <span>@Localizer["SelectLanguage"]</span>
+                    @await Html.PartialAsync("_SelectLanguagePartial")
+                </div>
+            </li>
+        </ul>
+
+    </aside>
+    <!-- End Sidebar-->
+    <main id="main" class="main">
+        @RenderBody()
+    </main>
+	
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer">
+        <div class="copyright">
+            &copy; Copyright <strong><span>LetItBuy</span></strong>. All Rights Reserved
         </div>
-      </div>
-    </nav>
-
-    
-	<div class="pt-4 pb-4">
-		@RenderBody()     
-	</div>
-    
-
-    <div class="">   
-      <footer class="bg-light text-center text-white">
-          
-      <!-- Grid container -->
-      <div class="container p-4 pb-0">
-        <!-- Section: Social media -->
-        <section class="mb-4">
-          <a
-            class="btn text-white btn-floating m-1"
-            style="background-color: #55acee;"
-            href="#!"
-            role="button"
-            ><i class="fa fa-twitter"></i
-          ></a>
-      
-          <a
-            class="btn text-white btn-floating m-1"
-            style="background-color: #ac2bac;"
-            href="#!"
-            role="button"
-            ><i class="fa fa-instagram"></i
-          ></a>
-
-          <a
-            class="btn text-white btn-floating m-1"
-            style="background-color: #0082ca;"
-            href="#!"
-            role="button"
-            ><i class="fa fa-linkedin"></i
-          ></a>
-
-          <a
-            class="btn text-white btn-floating m-1"
-            style="background-color: #333333;"
-            href="#!"
-            role="button"
-            ><i class="fa fa-github"></i
-          ></a>
-        </section>
-        <div class="container col-2 mb-3"> 
-            <span style="color:black;">@Localizer["SelectLanguage"]:</span>@await Html.PartialAsync("_SelectLanguagePartial")
-        </div>
-      </div>
-          <!-- Copyright -->
-          <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-            © 2022 Copyright:
-            LetItBuy
-          </div>
-        </footer>
-    </div>
-
-    
-    @*<script async="async" type="text/javascript">   
-        window.onload = function() {
-            window.history.pushState({}, document.title, window.location.pathname);
-        };
-    </script>*@
-    
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>	
-    <script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
-	@await RenderSectionAsync("Scripts", required: false)
+        
+    </footer>
+    <!-- Template Main JS File -->
+    <script src="~/assets/js/main.js"></script>
+    <!-- Vendor JS Files -->
+    <script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </body>
 </html>

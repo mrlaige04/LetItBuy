@@ -125,7 +125,7 @@
     <value>Забули пароль?</value>
     <comment>ForgotPassword</comment>
   </data>
-  <data name="Login" xml:space="preserve">
+  <data name="Logining" xml:space="preserve">
     <value>Увійти</value>
     <comment>Login</comment>
   </data>

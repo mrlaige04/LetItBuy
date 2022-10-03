@@ -121,6 +121,9 @@
     <value>Konto</value>
     <comment>Account</comment>
   </data>
+  <data name="AccountSettings" xml:space="preserve">
+    <value>Account Einstellungen</value>
+  </data>
   <data name="Adminpanel" xml:space="preserve">
     <value>Administrationsmenü</value>
     <comment>Adminpanel</comment>
@@ -128,6 +131,9 @@
   <data name="Catalogs" xml:space="preserve">
     <value>Kataloge</value>
     <comment>Catalogs</comment>
+  </data>
+  <data name="Entersomewords" xml:space="preserve">
+    <value>Geben Sie einige Wörter ein</value>
   </data>
   <data name="Login" xml:space="preserve">
     <value>Anmeldung</value>

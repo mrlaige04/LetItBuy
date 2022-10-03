@@ -1,0 +1,31 @@
+﻿@using Shop.DAL.Data.Entities
+
+@model Cart;
+
+<div class="container">
+    @if (Model!= null & Model.ItemsInCart != null & Model.ItemsInCart.Count > 0) {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ItemsInCart)
+                {
+                    <tr>
+                        <th scope="row">@item.CartItemID</th>
+                        <td>@item.Item.ItemName</td>
+                        <td>@item.Item.ItemPrice</td>
+                        
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

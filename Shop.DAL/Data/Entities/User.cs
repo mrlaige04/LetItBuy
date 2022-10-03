@@ -12,5 +12,8 @@ namespace Shop.DAL.Data.Entities
         public Guid CartID { get; set; }
 
         public string? ImageURL { get; set; }
+
+        public string? AboutMe { get; set; }
+        public string Phone { get; set; }
     }
 }

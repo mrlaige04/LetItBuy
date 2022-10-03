@@ -3,37 +3,79 @@
 @model LoginViewModel
 @inject IViewLocalizer Localizer
 
+@{
+    Layout = null;
+}
 
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        
+        <!-- Google Fonts -->
+        <link href="https://fonts.gstatic.com" rel="preconnect">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+        <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Template Main CSS File -->
+        <link href="~/assets/css/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <main>
+        <div class="container">
+          <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+            <div class="container">
+              <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+                  <div class="d-flex justify-content-center py-4">
+                    <a href="/" class="logo d-flex align-items-center w-auto">
+                      <span class="d-none d-lg-block">LetItBuy</span>
+                    </a>
+                  </div><!-- End Logo -->
+                  <div class="card mb-3">
+                    <div class="card-body">
+                      <div class="pt-4 pb-2">
+                        <h5 class="card-title text-center pb-0 fs-4">@Localizer["Logining"]</h5>
+                      </div>
 
-<div class="container mt-4">
-    <h1>@Localizer["Login"]</h1>
-    <div class="col-md-4 mb-4">
-        <form method="post" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
-            <fieldset>
-                <hr />
-                <div asp-validation-summary="ModelOnly"></div>
-                <div class="form-group">               
-                    <label asp-for="Email"></label>
-                    <input asp-for="Email" class="form-control"  required />                    
-                    <span asp-validation-for="Email" class="text-danger"></span>
+                      <form asp-controller="Account" asp-action="Login" method="post" class="row g-3">
+                          <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                          <div class="col-12">
+                            <label asp-for="Email" for="yourUsername" class="form-label"></label>
+                            <div class="input-group has-validation">
+                              <input asp-for="Email" type="email" name="Email" class="form-control" id="yourUsername" required>
+                              <span asp-validation-for="Email"></span>
+                            </div>
+                          </div>
+
+                          <div class="col-12">
+                            <label asp-for="Password" for="yourPassword" class="form-label"></label>
+                            <input asp-for="Password" type="password" name="Password" class="form-control" id="yourPassword" required>
+                            <span asp-validation-for="Password"></span>
+                          </div>
+                          
+                          <div class="col-12">
+                            <div class="form-check">
+                              <input asp-for="RememberMe" class="form-check-input" type="checkbox" name="RememberMe" id="rememberMe">
+                              <label asp-for="RememberMe" name="RememberMe" class="form-check-label" for="rememberMe"></label>
+                            </div>
+                          </div>
+                          <div class="col-12">
+                            <button class="btn btn-primary w-100" type="submit">Login</button>
+                          </div>
+                          <div class="col-12">
+                            <p class="small mb-0">@Localizer["DontHaveAnAccount"] <a asp-action="Register" asp-controller="Account">@Localizer["Logining"]</a></p>
+                          </div>
+                      </form>
+                    </div>
+                  </div>
                 </div>
-                <div class="form-group">        
-                    <label asp-for="Password"></label>
-                    <input asp-for="Password" class="form-control" type="password"  required />                    
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <div class="form-group">        
-                    <input class="form-check-input" type="checkbox" asp-for="RememberMe" />
-                    <label class="form-check-label" asp-for="RememberMe"></label>
-                </div>
-                <br />
-                <a class="w-100" asp-controller="Account" asp-action="Register">@Localizer["DontHaveAnAccount"]</a> <br />
-                <a asp-controller="Account" asp-action="ForgotPassword">@Localizer["ForgotPassword"]</a>
-                <div class="d-grid gap-2">
-                  <button class="btn btn-lg btn-primary" type="submit">@Localizer["Login"]</button>                  
-                </div>
-            </fieldset>
-            
-        </form>
-    </div>
-</div>
+              </div>
+            </div>
+          </section>
+        </div>
+        </main>
+        <!-- Template Main JS File -->
+        @*<script defer src="~/js/main.js"></script>*@
+    </body>
+</html>

@@ -6,12 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+ 
+
   <ItemGroup>
     <Content Remove="wwwroot\favicon.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\css\userProfile.css" />
+    
     <None Include="wwwroot\favicon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -39,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Translate.v2" Version="1.57.0.875" />
+    
     <PackageReference Include="MailKit" Version="3.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.9" />
@@ -58,7 +60,6 @@
 
   <ItemGroup>
     <Folder Include="Resources\SharedResource\" />
-    <Folder Include="Services\" />
     <Folder Include="wwwroot\ItemPhotos\" />
   </ItemGroup>
 

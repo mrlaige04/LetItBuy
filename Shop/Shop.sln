@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shop.Tests", "..\Tests\Shop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shop.API", "..\LetItBuy_API\Shop.API.csproj", "{C6DA744A-057D-4AFA-A079-E35DB18F914D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shop.BLL", "..\Shop.BLL\Shop.BLL.csproj", "{56506F6F-ABF3-4F4C-84D3-A007FFA29A8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shop.BLL", "..\Shop.BLL\Shop.BLL.csproj", "{56506F6F-ABF3-4F4C-84D3-A007FFA29A8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shop.DAL", "..\Shop.DAL\Shop.DAL.csproj", "{9B9A08BF-F006-40BF-8436-B31FE5215B15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shop.DAL", "..\Shop.DAL\Shop.DAL.csproj", "{9B9A08BF-F006-40BF-8436-B31FE5215B15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
