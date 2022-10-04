@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
 
 namespace Shop.UI.Models.Identity
@@ -19,5 +20,7 @@ namespace Shop.UI.Models.Identity
         public bool RememberMe { get; set; }
 
         public string? ReturnUrl { get; set; }
+
+        public IEnumerable<AuthenticationScheme>? ExternalProviders { get; set; }
     }
 }

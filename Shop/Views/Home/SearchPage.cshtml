@@ -2,67 +2,61 @@
 @using Shop.Models.ViewDTO;
 @model SearchViewModel;
 @inject IViewLocalizer Localizer;
-@section Styles {
-    <link rel="stylesheet" href="~/css/SearchPage.css"/>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
-}
-<div class="container">
-    <div class="topsearch">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-10 col-lg-8">
-                <form asp-controller="Home" asp-action="Search" method="get" class="card card-sm">
-                    <div class="card-body row no-gutters align-items-center">
-                        <div class="col-auto">
-                            <i class="fas fa-search h4 text-body"></i>
+
+<div class="pagetitle">
+    <h1>Home</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">@Localizer["Home"]</a></li>
+            <li class="breadcrumb-item active">@Localizer["Search"]</li>
+        </ol>
+    </nav>
+</div>
+<section>
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@Localizer["Enterquery"]</h5>
+                <div class="filter">
+                    <form asp-controller="Home" asp-action="Index" method="get">
+                        <div class="col mb-3">
+                            <input class="form-control" name="query" title="EnterSomeText" id="">
                         </div>
-                        <div class="col">
-                            <input required asp-for="SearchString" id="searchKeyWords" class="form-control form-control-lg form-control-borderless" type="search" placeholder="@Localizer["Search"]">
+                        <div class="accordion mb-3" id="accordionExample">
+                            <div class="accordion-item">
+                                <div class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        @Localizer["Filters"]
+                                    </button>
+                                </div>
+                                <div id="collapseOne" aria-labelledby="headingOne" data-bs-parent="#accordionExample" class="accordion-collapse collapse">
+                                    <div class="accordion-body">
+                                        <div class="row">
+                                            <div class="row mb-3">
+                                                <label for="inputNumber" class="col-sm-2 col-form-label">@Localizer["Minprice"]</label>
+                                                <div class="col-sm-10">
+                                                    <input min="0" type="number" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label for="inputNumber" class="col-sm-2 col-form-label">@Localizer["Maxprice"]</label>
+                                                <div class="col-sm-10">
+                                                    <input min="1" type="number" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <button class="btn btn-lg btn-success" type="submit">@Localizer["Search"]</button>
+                        <div class="col-md-2">
+                            <div class="">
+                                <button type="submit" class="btn btn-primary">@Localizer["Search"]</button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-    </div><hr />
-    <div class="itemsBox">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Open</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if(Model != null && Model.Items != null && Model.Items.Count() > 0) {
-                    @foreach (var item in Model.Items)
-                    {
-                        <tr>
-                            <th>@item.ItemName</th>
-                            <th>@item.ItemPrice</th>
-                            <th>@Html.ActionLink("Open", "ItemPage", "Home", new {id=item.ItemId})</th>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
     </div>
-</div>
-<script type="text/javascript">
-    function search() {
-        var box = document.getElementById("searchKeyWords").value;
-    
-        fetch(`/Home/GetItems?q=${box}`,{
-            method: "post"
-        }).then(function(response) {
-            var itemsBox = document.getElementsByClassName("itemsBox");
-            var els = response.json();
-            els.foreach()
-        });
-    }
-</script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</section>

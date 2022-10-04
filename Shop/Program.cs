@@ -12,7 +12,7 @@ using Shop.BLL.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Shop.UI;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,26 +37,35 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
     options.Password.RequireDigit = true;
     options.User.RequireUniqueEmail = true;
     options.Password.RequireNonAlphanumeric = false;
+    options.User.AllowedUserNameCharacters = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzÀàÁáÂâÃãÄäÅå¨¸ÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ²³¯¿";
 })
 .AddEntityFrameworkStores<ApplicationDBContext>()
 .AddDefaultTokenProviders()
 .AddErrorDescriber<MultiLanguageErrorDescriber>();
 
 
-builder.Services.AddAuthentication()
-    .AddCookie(x =>
-    {
-        x.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-    });
-    //.AddGoogle(x=>
-    //{
-    //    x.ClientId = s"your client id";
-    //    x.ClientSecret = "your client secret";
-    //})
-    //.AddFacebook(x=> {
-    //    x.ClientId = "";
-    //    x.ClientSecret = "";
-    //});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+}).AddCookie(x =>
+{
+    x.LoginPath = "/Account/google-login";
+})
+.AddGoogle(config =>
+{
+    config.SignInScheme = IdentityConstants.ExternalScheme;
+    config.ClientId = builder.Configuration["Auth:Google:ClientId"];
+    config.ClientSecret = builder.Configuration["Auth:Google:ClientSecret"];
+    
+});
+
+//.AddFacebook(x =>
+//{
+//    x.AppId = builder.Configuration["Auth:Facebook:AppId"];
+//    x.AppSecret = builder.Configuration["Auth:Facebook:AppSecret"];
+//})
+
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
@@ -80,7 +89,7 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 // Custom Services
 builder.Services.AddScoped<ICustomEmailSender, GmailSmtpSender>();
 builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<AccountService>(); // TODO : EXCEPTION ISTRINGLOCALIZER
+builder.Services.AddScoped<AccountService>(); 
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AdminInitializer>();
 builder.Services.AddScoped<UserService>();

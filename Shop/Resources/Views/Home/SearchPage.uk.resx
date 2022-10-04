@@ -117,8 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Enterquery" xml:space="preserve">
+    <value>Введіть запит</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Фільтри</value>
+  </data>
   <data name="GoToItemPage" xml:space="preserve">
     <value>Відкрити товар</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Головна</value>
+  </data>
+  <data name="Maxprice" xml:space="preserve">
+    <value>Ціна до</value>
+  </data>
+  <data name="Minprice" xml:space="preserve">
+    <value>Ціна від</value>
   </data>
   <data name="NoItemsFound" xml:space="preserve">
     <value>За вашим запитом нічого не знайдено.</value>

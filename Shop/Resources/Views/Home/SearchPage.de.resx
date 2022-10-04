@@ -117,8 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Enterquery" xml:space="preserve">
+    <value>Abfrage eingeben</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filter</value>
+  </data>
   <data name="GoToItemPage" xml:space="preserve">
     <value>Gehen Sie zur Artikelseite</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Heim</value>
+  </data>
+  <data name="Maxprice" xml:space="preserve">
+    <value>Preis zu</value>
+  </data>
+  <data name="Minprice" xml:space="preserve">
+    <value>Preis von</value>
   </data>
   <data name="NoItemsFound" xml:space="preserve">
     <value>Keine Elemente gefunden</value>

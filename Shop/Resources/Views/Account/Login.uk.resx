@@ -125,8 +125,14 @@
     <value>Забули пароль?</value>
     <comment>ForgotPassword</comment>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>Вхід</value>
+  </data>
   <data name="Logining" xml:space="preserve">
     <value>Увійти</value>
     <comment>Login</comment>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Реєстрація</value>
   </data>
 </root>

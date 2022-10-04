@@ -129,7 +129,13 @@
     <value>Anmeldung</value>
     <comment>Login</comment>
   </data>
+  <data name="LoginTitle" xml:space="preserve">
+    <value>Anmeldung</value>
+  </data>
   <data name="LogintoYourAccount" xml:space="preserve">
     <value>Anmelden</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Registrieren</value>
   </data>
 </root>

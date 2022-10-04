@@ -10,7 +10,11 @@ using Shop.BLL.DTO;
 using Shop.BLL.Models;
 using Microsoft.Extensions.Localization;
 using Shop.UI;
-
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.ComponentModel.DataAnnotations;
+using Shop.UI.Models.ViewDTO;
 
 namespace Shop.Controllers
 {
@@ -32,9 +36,10 @@ namespace Shop.Controllers
         }
 
         [HttpGet]
-        public IActionResult Register()
+        public async Task<IActionResult> Register(string? returnUrl = null)
         {
-            return View();
+            var externalProviders = await _signinmanager.GetExternalAuthenticationSchemesAsync();
+            return View(new RegisterViewModel { ReturnUrl = returnUrl, ExternalProviders = externalProviders });
         }
 
         [HttpPost]
@@ -50,7 +55,7 @@ namespace Shop.Controllers
                         _logger.LogError(item);
                         ModelState.AddModelError("", item);
                     }                    
-                } else return View("ConfirmEmail");
+                } else return Redirect(model.ReturnUrl ?? "/");
             }
             return View(model);
         }
@@ -71,11 +76,12 @@ namespace Shop.Controllers
         }
  
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public async Task<IActionResult> Login(string returnUrl = null)
         {
             if (User.Identity.IsAuthenticated)
                 return View("Error", new ErrorViewModel { Errors = new List<string> { "You are already logged in" } });
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            var externalProviders = await _signinmanager.GetExternalAuthenticationSchemesAsync();
+            return View(new LoginViewModel { ReturnUrl = returnUrl, ExternalProviders = externalProviders });
         }
 
         [HttpPost]
@@ -239,5 +245,75 @@ namespace Shop.Controllers
             }
             else return View("Error", new ErrorViewModel { Errors = new List<string> { "Invalid token" } });
         }
+
+
+        
+
+
+
+
+
+
+        
+        public IActionResult ExternalLogin(string provider, string returnUrl)
+        {
+            var returnUri = returnUrl ?? Url.Content("~/");
+            var redirectUri = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUri });
+            var properties = _signinmanager.ConfigureExternalAuthenticationProperties(provider, redirectUri);
+            return Challenge(properties, provider);
+        }
+        public async Task<IActionResult> ExternalLoginCallback(string returnUri)
+        {
+            var info = await _signinmanager.GetExternalLoginInfoAsync();
+
+            if (info == null)
+                return RedirectToAction("Login");
+
+            
+
+            string? userName = info.Principal.FindFirst(ClaimTypes.Name)?.Value.Split(' ')[0];
+            string? userSurname = info.Principal.FindFirst(ClaimTypes.Surname)?.Value;
+            var userEmail = info.Principal.FindFirst(ClaimTypes.Email)?.Value;
+            var userPhoneNumber = info.Principal.FindFirst(ClaimTypes.MobilePhone)?.Value;
+
+            return RedirectToAction("ExternalRegister", new ExternalRegisterViewModel
+            {
+                UserName = userName + userSurname,
+                Email = userEmail,
+                PhoneNumber = userPhoneNumber
+            });
+        }
+
+        public async Task<IActionResult> ExternalRegister(ExternalRegisterViewModel vm)
+        {
+            var externalLogin_Result = await _accountService.ExternalLoginAsync(new ExternalLoginDTO()
+            {
+                Email = vm.Email,
+                UserName = vm.UserName,
+                PhoneNumber = vm.PhoneNumber
+            });
+            
+            if (externalLogin_Result.ResultCode == ResultCodes.Success)
+            {
+                if (string.IsNullOrEmpty(vm.ReturnUrl))
+                {
+                    return Redirect("/");
+                }
+                else
+                {
+                    return Redirect(vm.ReturnUrl);
+                }
+            }
+
+            else
+            {
+                return View("Error", new ErrorViewModel { Errors = externalLogin_Result.Errors });
+            }
+        }
+
+
+
+
     }
+    
 }

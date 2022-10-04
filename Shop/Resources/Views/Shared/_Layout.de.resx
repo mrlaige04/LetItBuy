@@ -132,8 +132,14 @@
     <value>Kataloge</value>
     <comment>Catalogs</comment>
   </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
   <data name="Entersomewords" xml:space="preserve">
     <value>Geben Sie einige Wörter ein</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Heimat</value>
   </data>
   <data name="Login" xml:space="preserve">
     <value>Anmeldung</value>
@@ -163,6 +169,12 @@
     <value>Meine verkauft</value>
     <comment>Mysells</comment>
   </data>
+  <data name="Pages" xml:space="preserve">
+    <value>Seiten</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
   <data name="Register" xml:space="preserve">
     <value>Registrieren</value>
     <comment>Register</comment>
@@ -178,5 +190,8 @@
   <data name="SelectLanguage" xml:space="preserve">
     <value>Sprache auswählen</value>
     <comment>Select Language</comment>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Einstellungen</value>
   </data>
 </root>

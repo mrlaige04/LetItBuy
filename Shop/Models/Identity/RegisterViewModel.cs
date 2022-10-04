@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Authentication;
+using System.ComponentModel.DataAnnotations;
 
 namespace Shop.UI.Models.Identity
 {
@@ -19,5 +20,8 @@ namespace Shop.UI.Models.Identity
         [Required]
         [Display(Name = "UserName")]
         public string UserName { get; set; }
+
+        public string? ReturnUrl { get; set; }
+        public IEnumerable<AuthenticationScheme>? ExternalProviders { get; set; }
     }
 }

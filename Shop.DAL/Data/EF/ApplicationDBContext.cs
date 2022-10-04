@@ -21,13 +21,25 @@ namespace Shop.DAL.Data.EF
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
+            
             builder.Entity<User>()
                 .HasMany(x => x.Items)
                 .WithOne(x => x.OwnerUser)
                 .HasForeignKey(x => x.OwnerID)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<User>()
+                .HasOne(x => x.Cart)
+                .WithOne(x => x.UserOwner)
+                .HasForeignKey<Cart>(x => x.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<User>()
+                .HasMany(x => x.Notifications)
+                .WithOne(x => x.User)
+                .HasForeignKey(x => x.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
+            
             builder.Entity<Category>()
                 .HasMany(x => x.Criterias)
                 .WithOne(x => x.Category)
@@ -41,11 +53,7 @@ namespace Shop.DAL.Data.EF
                 .HasForeignKey(x => x.Category_ID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<User>()
-                .HasOne(x => x.Cart)
-                .WithOne(x => x.UserOwner)
-                .HasForeignKey<Cart>(x => x.UserID)
-                .OnDelete(DeleteBehavior.Cascade);
+            
 
             builder.Entity<Cart>()
                 .HasMany(x => x.ItemsInCart)

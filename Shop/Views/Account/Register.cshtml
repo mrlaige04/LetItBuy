@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <!-- Vendor CSS Files -->
         <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css">
         <link href="~/assets/css/style.css" rel="stylesheet">
         
         <title>@Localizer["Register"]</title>     
@@ -84,7 +85,20 @@
                                         <div class="col-12">
                                             <p class="small mb-0">@Localizer["Alreadyhaveanaccount"] <a asp-action="Login" asp-controller="Account">@Localizer["Login"]</a></p>
                                         </div>
+                                        <div class="col-12 text-center">
+                                            @foreach (var provider in Model.ExternalProviders)
+                                                {
+                                                    <a asp-action="ExternalLogin" asp-controller="Account" asp-route-provider="@provider.Name" value="@provider.Name" asp-route-returnUrl="@Model.ReturnUrl" name="provider">
+                                                        @if(provider.Name=="Google") {
+                                                            <i class="bi bi-google"></i>
+                                                        } else if(provider.Name=="Facebook") {
+                                                            <i class="bi bi-facebook"></i>
+                                                        } 
+                                                    </a>
+                                                }
+                                        </div>
                                     </form>
+                                    
                                 </div>
                             </div>
                         </div>

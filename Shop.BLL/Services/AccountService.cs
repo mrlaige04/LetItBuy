@@ -8,6 +8,7 @@ using Shop.DAL.Data.Entities;
 using Shop.BLL;
 using System.Text.RegularExpressions;
 
+
 namespace Shop.BLL.Services
 {
     public class AccountService
@@ -46,7 +47,8 @@ namespace Shop.BLL.Services
                 },
                 CartID = cartId,
                 Items = new List<Item>(),
-                Id = userId
+                Id = userId,
+                PhoneNumber = reg_dto.PhoneNumber,
             };
             user.Cart.UserOwner = user;
 
@@ -212,6 +214,45 @@ namespace Shop.BLL.Services
             var str = html.Replace("{0}",
                 urlCallback);
             return str;
+        }
+
+        public async Task<ServicesResultModel> ExternalLoginAsync(ExternalLoginDTO externalLoginDTO)
+        {
+            var email = externalLoginDTO.Email;
+            if (email == null)
+            {
+                return new ServicesResultModel { ResultCode = ResultCodes.Fail, Errors = new List<string> { "Email is null" } };
+            }
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                await _signInManager.SignInAsync(user, false);
+                return new ServicesResultModel { ResultCode = ResultCodes.Success };
+            }
+            var newUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = externalLoginDTO.Email,
+                UserName = externalLoginDTO.UserName,
+                PhoneNumber = externalLoginDTO.PhoneNumber,
+                EmailConfirmed = true
+            };
+
+            var createUser_result = await _userManager.CreateAsync(newUser);
+            if(createUser_result.Succeeded)
+            {
+                var addToRole_Result = await _roleClient.AddUserToRoles(newUser, "simpleUser");
+                if (addToRole_Result.ResultCode == ResultCodes.Success)
+                {
+                    await _signInManager.SignInAsync(newUser, false);
+                    return new ServicesResultModel { ResultCode = ResultCodes.Success };
+                }
+                else
+                {
+                    return new ServicesResultModel { ResultCode = ResultCodes.Fail, Errors = addToRole_Result.Errors };
+                } 
+            }
+            else return new ServicesResultModel { ResultCode = ResultCodes.Fail, Errors = createUser_result.Errors.Select(x => x.Description).ToList() };
         }
     }
 }

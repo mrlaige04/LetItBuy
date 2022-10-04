@@ -132,8 +132,14 @@
     <value>Catalogs</value>
     <comment>Catalogs</comment>
   </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
   <data name="Entersomewords" xml:space="preserve">
     <value>Enter Some Words</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
   </data>
   <data name="Login" xml:space="preserve">
     <value>Login</value>
@@ -163,6 +169,12 @@
     <value>My sells</value>
     <comment>Mysells</comment>
   </data>
+  <data name="Pages" xml:space="preserve">
+    <value>Pages</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
   <data name="Register" xml:space="preserve">
     <value>Register</value>
     <comment>Register</comment>
@@ -178,5 +190,8 @@
   <data name="SelectLanguage" xml:space="preserve">
     <value>Select language</value>
     <comment>Select Language</comment>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
   </data>
 </root>

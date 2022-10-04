@@ -14,6 +14,7 @@ namespace Shop.DAL.Data.Entities
         public string? ImageURL { get; set; }
 
         public string? AboutMe { get; set; }
-        public string Phone { get; set; }
+
+        public ICollection<Notification>? Notifications { get; set; }
     }
 }
