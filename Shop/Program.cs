@@ -110,6 +110,8 @@ builder.Services.AddScoped<FilterService>();
 builder.Logging.AddConsole();
 builder.Configuration.AddJsonFile("emailsmtpconfig.json");
 builder.Configuration.AddJsonFile("admininitialize.json");
+builder.Configuration.AddJsonFile("secrets.json");
+
 
 var app = builder.Build();
 

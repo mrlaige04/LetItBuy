@@ -354,3 +354,7 @@ mailsenderdata.txt
 
 #UserPhotos
 ./wwwroot/UserPhotos/
+
+
+# Secrets json
+secrets.json
