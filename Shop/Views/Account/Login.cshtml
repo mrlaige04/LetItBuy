@@ -72,10 +72,12 @@
                                 {
                                     <a asp-action="ExternalLogin" asp-controller="Account" asp-route-provider="@provider.Name" value="@provider.Name" asp-route-returnUrl="@Model.ReturnUrl" name="provider">
                                         @if(provider.Name=="Google") {
-                                            <i class="bi bi-google"></i>
+                                            <i class="bi text-dark display-6 bi-google"></i>
                                         } else if(provider.Name=="Facebook") {
-                                            <i class="bi bi-facebook"></i>
-                                        } 
+                                            <i class="bi text-dark display-6 bi-facebook"></i>
+                                        } else if (provider.Name=="Microsoft") {
+                                            <i class="bi bi-microsoft display-6 bi-facebook"></i>
+                                        }
                                     </a>
                                 }
                           </div>

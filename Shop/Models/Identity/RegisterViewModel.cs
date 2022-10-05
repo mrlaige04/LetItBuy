@@ -22,6 +22,7 @@ namespace Shop.UI.Models.Identity
         public string UserName { get; set; }
 
         public string? ReturnUrl { get; set; }
+ 
         public IEnumerable<AuthenticationScheme>? ExternalProviders { get; set; }
     }
 }

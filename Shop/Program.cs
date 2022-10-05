@@ -11,8 +11,12 @@ using Shop.DAL.Data.Entities;
 using Shop.BLL.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Twitter;
+using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Shop.UI;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,14 +61,17 @@ builder.Services.AddAuthentication(options =>
     config.SignInScheme = IdentityConstants.ExternalScheme;
     config.ClientId = builder.Configuration["Auth:Google:ClientId"];
     config.ClientSecret = builder.Configuration["Auth:Google:ClientSecret"];
-    
+}).AddFacebook(x =>
+{
+    x.SignInScheme = IdentityConstants.ExternalScheme;
+    x.AppId = builder.Configuration["Auth:Facebook:AppId"];
+    x.AppSecret = builder.Configuration["Auth:Facebook:AppSecret"];
+}).AddMicrosoftAccount(x =>
+{
+    x.ClientId = builder.Configuration["Auth:Microsoft:ClientId"];
+    x.ClientSecret = builder.Configuration["Auth:Microsoft:ClientSecret"];  
 });
 
-//.AddFacebook(x =>
-//{
-//    x.AppId = builder.Configuration["Auth:Facebook:AppId"];
-//    x.AppSecret = builder.Configuration["Auth:Facebook:AppSecret"];
-//})
 
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>

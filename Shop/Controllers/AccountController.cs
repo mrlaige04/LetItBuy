@@ -57,6 +57,7 @@ namespace Shop.Controllers
                     }                    
                 } else return Redirect(model.ReturnUrl ?? "/");
             }
+            if (model.ExternalProviders == null) model.ExternalProviders = await _signinmanager.GetExternalAuthenticationSchemesAsync();
             return View(model);
         }
 
@@ -253,7 +254,7 @@ namespace Shop.Controllers
 
 
 
-
+        // TODO :FACEBOOK LOGIN PRIVACY AND TERMS LINK ERRORS
         
         public IActionResult ExternalLogin(string provider, string returnUrl)
         {
@@ -262,6 +263,8 @@ namespace Shop.Controllers
             var properties = _signinmanager.ConfigureExternalAuthenticationProperties(provider, redirectUri);
             return Challenge(properties, provider);
         }
+
+
         public async Task<IActionResult> ExternalLoginCallback(string returnUri)
         {
             var info = await _signinmanager.GetExternalLoginInfoAsync();
