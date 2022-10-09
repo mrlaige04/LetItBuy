@@ -93,25 +93,12 @@ namespace Shop.Controllers
 
 
 
-
-        [HttpGet]
-        public IActionResult Index (string q)
+        public IActionResult Filter(FilterViewModel filter)
         {
-            var query = _db.Items.AsQueryable();
-            query = query.Where(x => x.Characteristics.Any(x => x.CriteriaName == q && x.Value == "3"));
-            var items = query.Skip(1).Take(1).ToList();
-            return Ok();
+            
+            filterService.Filter()
+            return View("SearchPage");
         }
 
-
-
-
-
-
-
-
-        
-
-        
     }
 }

@@ -8,13 +8,11 @@ namespace Shop.BLL.Services
 {
     public class FilterService
     {
-        //private IEnumerable<Item> items { get; set; }
-        //private Category category { get; set; }
-        //private ApplicationDBContext db { get; set; }
-        //public FilterService(ApplicationDBContext db)
-        //{
-        //    this.db = db;
-        //}
+        private ApplicationDBContext db { get; set; }
+        public FilterService(ApplicationDBContext db)
+        {
+            this.db = db;
+        }
 
         //public void SetData(IEnumerable<Item> items, Guid categoryID)
         //{
@@ -78,5 +76,31 @@ namespace Shop.BLL.Services
         //    #endregion
         //    return items;
         //}
+
+
+        public IEnumerable<Item> Filter(FilterDTO filterModel)
+        {
+            IQueryable<Item> items = db.Items.Where(x => x.Category_ID == filterModel.CategoryID);
+
+            items = items
+                .Where(x => x.ItemPrice >= filterModel.minPrice && 
+                    x.ItemPrice <= filterModel.maxPrice);
+
+            foreach (var criteria in filterModel.NumberFilters)
+            {
+                if (criteria.minValue != null)
+                {
+                    items = items.Where(x => x.ItemCriterias
+                        .FirstOrDefault(y => y.Criteria_ID == criteria.ID)
+                        .Value >= criteria.minValue);
+                }
+                if (criteria.maxValue != null)
+                {
+                    items = items.Where(x => x.ItemCriterias
+                        .FirstOrDefault(y => y.Criteria_ID == criteria.ID)
+                        .Value <= criteria.maxValue);
+                }
+            }
+        }
     }
 }

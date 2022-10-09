@@ -28,10 +28,10 @@ namespace Shop.DAL.Data.Entities
         public ICollection<Characteristic> Characteristics { get; set; }
 
 
-        public string this[string criteriaName]
-        {
-            get => Characteristics.Where(c => c.CriteriaName == criteriaName).FirstOrDefault().Value;
-        }
+        //public string this[string criteriaName]
+        //{
+        //    get => Characteristics.Where(c => c.CriteriaName == criteriaName).FirstOrDefault().ValueId;
+        //}
     }
 
     public enum Currency

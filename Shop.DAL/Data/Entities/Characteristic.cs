@@ -13,7 +13,7 @@ namespace Shop.DAL.Data.Entities
         public Guid ID { get; set; }
         public Guid CriteriaID { get; set; }
         public string CriteriaName { get; set; }
-        public string Value { get; set; }
+        public Guid ValueId { get; set; }
 
         public Item Item { get; set; }
         public Guid ItemID { get; set; }

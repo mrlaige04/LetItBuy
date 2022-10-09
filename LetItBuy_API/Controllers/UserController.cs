@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Shop.API.Providers;
+
+using Shop.Core.Providers;
 using Shop.DAL.Data.EF;
 
 namespace Shop.API.Controllers
@@ -24,7 +25,7 @@ namespace Shop.API.Controllers
         public async Task<IActionResult> Token(string userId)
         {
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(_db, _env);
-            var token = await jwtTokenProvider.GenerateToken(userId);
+            var token = await jwtTokenProvider.GenerateTokenAsync(userId);
             return Content(token);
         }
 

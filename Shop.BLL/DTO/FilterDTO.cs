@@ -1,8 +1,12 @@
-﻿using Shop.DAL.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Shop.UI.Models.ViewDTO
+namespace Shop.BLL.DTO
 {
-    public class FilterViewModel
+    public class FilterDTO
     {
         public decimal minPrice { get; set; } = 0;
         public decimal maxPrice { get; set; } = decimal.MaxValue;

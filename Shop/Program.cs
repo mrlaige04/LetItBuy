@@ -17,6 +17,10 @@ using Shop.UI;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Shop.Core;
+using Shop.Core.Providers;
+using Shop.Core.Providers.Interfaces;
+using Shop.UI.Clients.APICLIENTS;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +108,8 @@ builder.Services.AddScoped<PhotoService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<FilterService>();
+builder.Services.AddScoped<IJwtTokenProvider, JwtTokenProvider>();
+builder.Services.AddScoped<AdvertApiClient>();
 
 
 // Logging and Configuration

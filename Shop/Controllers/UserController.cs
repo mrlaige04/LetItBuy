@@ -8,6 +8,7 @@ using Shop.DAL.Data.Entities;
 using Shop.DAL.Data.EF;
 using Shop.BLL.Services;
 using Shop.BLL.Models;
+using Shop.UI.Clients.APICLIENTS;
 
 namespace Shop.Controllers
 {
@@ -20,13 +21,16 @@ namespace Shop.Controllers
         private readonly ApplicationDBContext _db;
         private readonly UserService _userService;
         private readonly PhotoService _photoService;
-        public UserController(UserManager<User> userManager, IWebHostEnvironment webHostEnvironment, ApplicationDBContext db, UserService userService, PhotoService photoService)
+        private readonly AdvertApiClient _apiClient;
+        public UserController(UserManager<User> userManager, IWebHostEnvironment webHostEnvironment, ApplicationDBContext db, UserService userService, PhotoService photoService, AdvertApiClient advertApiClient)
         {
             _userManager = userManager;
             _webHost = webHostEnvironment;
             _db = db;
             _userService = userService;
             _photoService = photoService;
+
+            _apiClient = advertApiClient;
         }
 
         [HttpGet]
@@ -84,7 +88,14 @@ namespace Shop.Controllers
             return View();
         }
 
-
+        [HttpGet]
+        [Authorize]
+        public IActionResult TestApiCreate()
+        {
+            var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _apiClient.Add(userID);
+            return Ok();
+        }
 
         [HttpGet]
         public IActionResult MyItems()

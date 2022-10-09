@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Shop.DAL.Data.Entities
 {
@@ -17,8 +14,6 @@ namespace Shop.DAL.Data.Entities
         public Category? Category { get; set; }
         [Display(Name = "CategoryName")]
         public Guid CategoryID { get; set; }
-
-        
     }
     public enum CriteriaTypes
     {

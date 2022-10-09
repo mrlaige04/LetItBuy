@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Shop.Core.Providers;
 using Shop.DAL.Data.EF;
-using Shop.API.Providers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,9 +15,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "JwtBearer";
+    options.DefaultChallengeScheme = "JwtBearer";
+})
 .AddJwtBearer("JwtBearer", jwtOptions =>
 {
+    jwtOptions.SaveToken = false;
     jwtOptions.TokenValidationParameters = new TokenValidationParameters()
     {
         IssuerSigningKey = JwtTokenProvider.SIGNIN_KEY,
@@ -27,6 +34,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateLifetime = true
     };
 });
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -41,6 +49,9 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
