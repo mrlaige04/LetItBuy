@@ -21,8 +21,8 @@ namespace Shop.Controllers
         private readonly ApplicationDBContext _db;
         private readonly UserService _userService;
         private readonly PhotoService _photoService;
-        private readonly AdvertApiClient _apiClient;
-        public UserController(UserManager<User> userManager, IWebHostEnvironment webHostEnvironment, ApplicationDBContext db, UserService userService, PhotoService photoService, AdvertApiClient advertApiClient)
+        private readonly ItemApiClient _apiClient;
+        public UserController(UserManager<User> userManager, IWebHostEnvironment webHostEnvironment, ApplicationDBContext db, UserService userService, PhotoService photoService, ItemApiClient advertApiClient)
         {
             _userManager = userManager;
             _webHost = webHostEnvironment;
@@ -150,7 +150,7 @@ namespace Shop.Controllers
                     {
                         ID = Guid.NewGuid(),
                         CriteriaID = criteria.ID,
-                        Value = str,
+                        //Value = str,
                         Item = item,
                         ItemID = item.ItemId,
                         Name = criteria.Name,

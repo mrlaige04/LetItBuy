@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-
 using System.Globalization;
 using Microsoft.AspNetCore.SignalR;
 using Shop.Hubs;
@@ -21,6 +20,7 @@ using Shop.Core;
 using Shop.Core.Providers;
 using Shop.Core.Providers.Interfaces;
 using Shop.UI.Clients.APICLIENTS;
+using Shop.UI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +59,11 @@ builder.Services.AddAuthentication(options =>
 }).AddCookie(x =>
 {
     x.LoginPath = "/Account/google-login";
+})
+.AddTwitter(x=>
+{
+    x.ConsumerKey = builder.Configuration["Auth:Twitter:ConsumerKey"];
+    x.ConsumerSecret = builder.Configuration["Auth:Twitter:ConsumerSecret"];
 })
 .AddGoogle(config =>
 {
@@ -109,7 +114,7 @@ builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<FilterService>();
 builder.Services.AddScoped<IJwtTokenProvider, JwtTokenProvider>();
-builder.Services.AddScoped<AdvertApiClient>();
+builder.Services.AddScoped<ItemApiClient>();
 
 
 // Logging and Configuration
@@ -145,6 +150,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=GetWelcomePage}/{id?}");
 
 app.MapHub<ChatHub>("/chatHub");
+app.MapHub<ContactHub>("/contact");
 
 app.MapRazorPages();
 

@@ -6,22 +6,32 @@ using System.Net.Http.Json;
 
 namespace Shop.UI.Clients.APICLIENTS
 {
-    public class AdvertApiClient
+    public class ItemApiClient
     {
-        private readonly string baseUrl;
+        private readonly string baseUrl = "https://localhost:7102/api/items";
         private readonly IJwtTokenProvider _jwtTokenProvider;
         private readonly HttpClient _httpClient;
         private readonly HttpRequestMessage requestMessage;
-        public AdvertApiClient(IJwtTokenProvider tokenProvider)
+        public ItemApiClient(IJwtTokenProvider tokenProvider)
         {
-            this.baseUrl = baseUrl;
             _jwtTokenProvider = tokenProvider;
             _httpClient = new HttpClient();
             requestMessage = new HttpRequestMessage();
         }
-        public void Get(Guid id)
+        public async Task<Item?> Get(Guid id)
         {
-
+            var path = $"{baseUrl}/{id}";
+            requestMessage.RequestUri = new Uri(path);
+            var response = await _httpClient.GetAsync(requestMessage.RequestUri);
+            if (response.IsSuccessStatusCode)
+            {
+                var item = await response.Content.ReadFromJsonAsync<Item>();
+                return item;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public void GetAll()

@@ -95,8 +95,8 @@ namespace Shop.Controllers
 
         public IActionResult Filter(FilterViewModel filter)
         {
-            
-            filterService.Filter()
+
+            //filterService.Filter();
             return View("SearchPage");
         }
 

@@ -78,29 +78,18 @@ namespace Shop.BLL.Services
         //}
 
 
-        public IEnumerable<Item> Filter(FilterDTO filterModel)
-        {
-            IQueryable<Item> items = db.Items.Where(x => x.Category_ID == filterModel.CategoryID);
+        //public IEnumerable<Item> Filter(FilterDTO filterModel)
+        //{
+        //    IQueryable<Item> items = db.Items.Where(x => x.Category_ID == filterModel.CategoryID);
 
-            items = items
-                .Where(x => x.ItemPrice >= filterModel.minPrice && 
-                    x.ItemPrice <= filterModel.maxPrice);
+        //    items = items
+        //        .Where(x => x.ItemPrice >= filterModel.minPrice &&
+        //            x.ItemPrice <= filterModel.maxPrice);
 
-            foreach (var criteria in filterModel.NumberFilters)
-            {
-                if (criteria.minValue != null)
-                {
-                    items = items.Where(x => x.ItemCriterias
-                        .FirstOrDefault(y => y.Criteria_ID == criteria.ID)
-                        .Value >= criteria.minValue);
-                }
-                if (criteria.maxValue != null)
-                {
-                    items = items.Where(x => x.ItemCriterias
-                        .FirstOrDefault(y => y.Criteria_ID == criteria.ID)
-                        .Value <= criteria.maxValue);
-                }
-            }
-        }
+        //    foreach (var criteria in filterModel.NumberFilters)
+        //    {
+                
+        //    }
+        //}
     }
 }
