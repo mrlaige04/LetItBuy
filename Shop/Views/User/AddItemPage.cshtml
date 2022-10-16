@@ -133,27 +133,3 @@
 </script>
 
     
-@functions {
-    IEnumerable<SelectListItem> GetSubcategories(string id)
-    {
-        var categories = CategoryService.GetSubCategories(id);
-        var list = categories.ToList().Select(x => new SelectListItem
-        {
-            Text = x.Name,
-            Value = x.Id.ToString()
-        });
-        return list;
-    }
-
-    //IEnumerable<SelectListItem> GetCriterias(string id)
-    //{
-    //    var criterias = db.Criterias.Where(x => x.CategoryID.ToString() == id).ToList();
-    //    var list = criterias.Select(x => new SelectListItem
-    //        {
-    //            Text = x.Name,
-    //            Value = x.Id.ToString()
-    //        });
-    //    return list;
-    //}
-    
-}

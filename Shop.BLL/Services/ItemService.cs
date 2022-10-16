@@ -54,7 +54,7 @@ namespace Shop.BLL.Services
                 result.Errors.Add("Item is null");
                 return result;
             }
-            var itemFromDb = await _db.Items.FindAsync(item.ItemId);
+            var itemFromDb = await _db.Items.FindAsync(item.ID);
             if (itemFromDb == null)
             {
                 result.ResultCode = ResultCodes.Fail;
@@ -74,7 +74,7 @@ namespace Shop.BLL.Services
                 result.Errors.Add("Item is null");
                 return result;
             }
-            var itemFromDb = await _db.Items.FindAsync(item.ItemId);
+            var itemFromDb = await _db.Items.FindAsync(item.ID);
             if (itemFromDb == null)
             {
                 result.Errors.Add("Item not found");

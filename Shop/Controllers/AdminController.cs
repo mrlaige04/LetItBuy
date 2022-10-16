@@ -40,49 +40,86 @@ namespace Shop.Controllers
         [HttpGet]
         public IActionResult CreateCategory()
         {
-            return View();
+            return View(new CreateCatalogViewModel()
+            {
+                
+            });
         }
-        
-        
+
+
 
         [HttpPost]
-        public async Task<IActionResult> CreateCategoryAsync()
+        public async Task<IActionResult> CreateCategoryAsync(CreateCatalogViewModel model)
         {
-            Category category = new Category
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var category = new Category()
             {
                 Id = Guid.NewGuid(),
-                Criterias = new List<Criteria>()
+                Name = model.Name,
+                NumberCriterias = new List<NumberCriteria>(),
+                StringCriterias = new List<StringCriteria>(),
+                DateCriterias = new List<DateCriteria>()
             };
-            var categoryName = Request.Form["categoryName"];
-            var criteriaNames = Request.Form["criteriaName"];
-            var criteriaTypes = Request.Form["criteriaType"];
-            if (categoryName.ToString() == null || (criteriaNames.Count != criteriaTypes.Count)) return BadRequest("Incorrect data");
-            category.Name = categoryName[0];
-            for (int i = 0; i < criteriaNames.Count; i++)
-            {
-                category.Criterias.Add(new Criteria()
-                {
-                    ID = Guid.NewGuid(),
-                    Name = criteriaNames[i].ToString(),
-                    Type = (CriteriaTypes)Enum.Parse(typeof(CriteriaTypes), criteriaTypes[i]),
-                    Category = category,
-                    CategoryID = category.Id
-                });
-            }
-            try
-            {
-                _db.Categories.Add(category);
-                await _db.SaveChangesAsync();
 
-            } catch (Exception e)
+            if (model.numbers != null)
             {
-                return Problem(e.Message);
+                foreach (var number in model.numbers)
+                {
+                    var numberCriteria = new NumberCriteria()
+                    {
+                        ID = Guid.NewGuid(),
+                        Name = number.name,
+                        DefaultValues = number.values.Select(x => new NumberValue() { ValueID = Guid.NewGuid(), Value = x }).ToList(),
+                    };
+                    category.NumberCriterias.Add(numberCriteria);
+                }
             }
-            return RedirectToAction("ManageCategories");
+
+            if (model.strings != null)
+            {
+                foreach (var str in model.strings)
+                {
+                    var stringCriteria = new StringCriteria()
+                    {
+                        ID = Guid.NewGuid(),
+                        Name = str.name,
+                        DefaultValues = str.values.Select(x => new StringValue() { ValueID = Guid.NewGuid(), Value = x }).ToList(),
+                    };
+                    category.StringCriterias.Add(stringCriteria);
+                }
+            }
+
+            if (model.dates != null)
+            {
+                foreach (var date in model.dates)
+                {
+                    var dateCriteria = new DateCriteria()
+                    {
+                        ID = Guid.NewGuid(),
+                        Name = date.name,
+                        DefaultValues = date.values.Select(x => new DateValue() { ValueID = Guid.NewGuid(), Value = x }).ToList(),
+                    };
+                    category.DateCriterias.Add(dateCriteria);
+                }
+            }
+
+            //try
+            //{
+            //    await _db.Categories.AddAsync(category);
+            //    await _db.SaveChangesAsync();
+            //}
+            //catch (Exception ex)
+            //{
+            //    ModelState.AddModelError("", ex.Message);
+            //    return View(model);
+            //}
+            return Content(JsonConvert.SerializeObject(category));
         }
-        
-        
-        public async void RemoveAllUsers()
+
+        public async Task RemoveAllUsers()
         {
             try
             {
@@ -103,10 +140,8 @@ namespace Shop.Controllers
             {
                 var category = _db.Categories.FirstOrDefault(x => x.Id.ToString() == id);
                 try
-                {
-                    
-                    _db.Categories.Remove(category);
-                    
+                {    
+                    _db.Categories.Remove(category);                 
                     await _db.SaveChangesAsync();
                     return RedirectToAction("ManageCategories");
                 } catch (Exception e)
@@ -117,51 +152,9 @@ namespace Shop.Controllers
             else return BadRequest("Invalid id");
         }
 
-        [HttpGet]
-        public IActionResult EditCategory(string id)
-        {
-            var category = _db.Categories
-                .Include(x => x.Criterias)
-                .FirstOrDefault(x => x.Id.ToString() == id);
-            return View(category);
-        }
+        
 
-        [HttpPost] 
-        public async Task<IActionResult> EditCategory(Category category)
-        {
-            var categoryFromDB = await _db.Categories.Include(x => x.Criterias).FirstOrDefaultAsync(x => x.Id == category.Id);
-            if (categoryFromDB == null) return NotFound();
-            categoryFromDB.Criterias.Clear();
-            _db.Criterias.RemoveRange(_db.Criterias.Where(x => x.CategoryID == categoryFromDB.Id));
-            await _db.SaveChangesAsync();
-
-            var categoryName = Request.Form["categoryName"];
-            var criteriaNames = Request.Form["criteriaName"];
-            var criteriaTypes = Request.Form["criteriaType"];
-            if (categoryName.ToString() == null || (criteriaNames.Count != criteriaTypes.Count)) return BadRequest("Incorrect data");
-            categoryFromDB.Name = categoryName[0];
-            for (int i = 0; i < criteriaNames.Count; i++)
-            {
-                _db.Criterias.Add(new Criteria()
-                {
-                    ID = Guid.NewGuid(),
-                    Name = criteriaNames[i].ToString(),
-                    Type = (CriteriaTypes)Enum.Parse(typeof(CriteriaTypes), criteriaTypes[i]),
-                    Category = categoryFromDB,
-                    CategoryID = categoryFromDB.Id
-                });
-            }
-
-            try
-            {
-                _db.Categories.Update(categoryFromDB);
-                await _db.SaveChangesAsync();
-            } catch (Exception e)
-            {
-                return Problem(e.Message);
-            }
-            return Ok();
-        }
+        
 
         [HttpGet]
         public IActionResult ManageCategories()
@@ -179,12 +172,7 @@ namespace Shop.Controllers
         [HttpGet]
         public IActionResult GetAllUsers()
         {
-            var users = _userManager.Users.ToList().Select(x=> new UserDTO { 
-                Username = x.UserName,
-                Email = x.Email,
-                IsAdmin = _userManager.IsInRoleAsync(x, "Admin").Result
-            }).ToList();
-            
+            var users = _userManager.Users.Skip(0).Take(10).ToList();
             return View("Users", users);
         }
         

@@ -283,7 +283,8 @@ namespace Shop.Controllers
             {
                 UserName = userName + userSurname,
                 Email = userEmail,
-                PhoneNumber = userPhoneNumber
+                PhoneNumber = userPhoneNumber,
+                ReturnUrl = returnUri
             });
         }
 

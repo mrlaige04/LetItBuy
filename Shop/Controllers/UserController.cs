@@ -110,67 +110,67 @@ namespace Shop.Controllers
         [HttpPost]
         public async Task<IActionResult> AddItem(ItemAddViewModel viewItem)
         {
-            if (ModelState.IsValid)
-            {
-                var isnew = Request.Form["IsNew"];
-                var image = Request.Form.Files["itemImage"];
-                var user = await _userManager.GetUserAsync(User);
-                if (user == null) return RedirectToAction("Logout", "Account");
-                Category? category = _db.Categories
-                    .Include(x=>x.Criterias)
-                    .FirstOrDefault(x => x.Id.ToString() == viewItem.CategoryID);
+            //if (ModelState.IsValid)
+            //{
+            //    var isnew = Request.Form["IsNew"];
+            //    var image = Request.Form.Files["itemImage"];
+            //    var user = await _userManager.GetUserAsync(User);
+            //    if (user == null) return RedirectToAction("Logout", "Account");
+            //    Category? category = _db.Categories
+            //        .Include(x=>x.Criterias)
+            //        .FirstOrDefault(x => x.Id.ToString() == viewItem.CategoryID);
                 
-                Item item = new Item
-                {
-                    ItemId = Guid.NewGuid(),
-                    Description = viewItem.Description,
-                    ItemName = viewItem.Name,
-                    ItemPrice = viewItem.Price,
-                    Currency = viewItem.Currency,
-                    Category = category,
-                    Category_ID = category.Id,
-                    CategoryName = category.Name,
-                    Characteristics = new List<Characteristic>(),  
-                    IsNew = viewItem.IsNew
-                };
-                if (image != null)
-                {
-                    string path = Path.Combine("wwwroot\\ItemPhotos\\", item.ItemId.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.')));
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await image.CopyToAsync(stream);
-                    }
-                    item.ImageUrl = item.ItemId.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.'));
-                }
-                for (int i = 0; i < category?.Criterias.Count; i++)
-                {
-                    var criteria = category.Criterias.ToList()[i];
-                    var str = Request.Form[$"x{criteria.Name}"];
-                    item.Characteristics.Add(new Characteristic()
-                    {
-                        ID = Guid.NewGuid(),
-                        CriteriaID = criteria.ID,
-                        //Value = str,
-                        Item = item,
-                        ItemID = item.ItemId,
-                        Name = criteria.Name,
-                        CriteriaName = criteria.Name
-                    });
-                }
+            //    Item item = new Item
+            //    {
+            //        ID = Guid.NewGuid(),
+            //        Description = viewItem.Description,
+            //        Name = viewItem.Name,
+            //        Price = viewItem.Price,
+            //        Currency = viewItem.Currency,
+            //        Category = category,
+            //        CategoryID = category.Id,
+            //        CategoryName = category.Name,
+            //        Characteristics = new List<Characteristic>(),  
+            //        IsNew = viewItem.IsNew
+            //    };
+            //    if (image != null)
+            //    {
+            //        string path = Path.Combine("wwwroot\\ItemPhotos\\", item.ID.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.')));
+            //        using (var stream = new FileStream(path, FileMode.Create))
+            //        {
+            //            await image.CopyToAsync(stream);
+            //        }
+            //        item.ImageUrl = item.ID.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.'));
+            //    }
+            //    for (int i = 0; i < category?.Criterias.Count; i++)
+            //    {
+            //        var criteria = category.Criterias.ToList()[i];
+            //        var str = Request.Form[$"x{criteria.Name}"];
+            //        item.Characteristics.Add(new Characteristic()
+            //        {
+            //            ID = Guid.NewGuid(),
+            //            CriteriaID = criteria.ID,
+            //            //Value = str,
+            //            Item = item,
+            //            ItemID = item.ID,
+            //            Name = criteria.Name,
+            //            CriteriaName = criteria.Name
+            //        });
+            //    }
                 
-                var addItem_Result = await _userService.AddItemAsync(user, item);
-                if (addItem_Result.ResultCode == ResultCodes.Success)
-                {
-                    return RedirectToAction("MyItems");
-                }
-                else
-                {
-                    foreach (var error in addItem_Result.Errors)
-                    {
-                        ModelState.AddModelError("", error);
-                    }
-                }
-            }
+            //    var addItem_Result = await _userService.AddItemAsync(user, item);
+            //    if (addItem_Result.ResultCode == ResultCodes.Success)
+            //    {
+            //        return RedirectToAction("MyItems");
+            //    }
+            //    else
+            //    {
+            //        foreach (var error in addItem_Result.Errors)
+            //        {
+            //            ModelState.AddModelError("", error);
+            //        }
+            //    }
+            //}
             
             return View("AddItemPage");
             
@@ -180,14 +180,14 @@ namespace Shop.Controllers
         [HttpGet]
         public IActionResult EditItem(Guid ItemId)
         {
-            var item = _db.Items.FirstOrDefault(x => x.ItemId == ItemId);
+            var item = _db.Items.FirstOrDefault(x => x.ID == ItemId);
             if (item == null) return RedirectToAction("MyItems");
             return View(new EditItemViewModel
             {
                 Description = item.Description,
-                Name = item.ItemName,
-                Price = item.ItemPrice,
-                ItemId = item.ItemId
+                Name = item.Name,
+                Price = item.Price,
+                ItemId = item.ID
             });
         }
 
@@ -202,9 +202,9 @@ namespace Shop.Controllers
                 var editItem_Result = await _userService.EditItemAsync(user, new Item
                 {
                     Description = item.Description,
-                    ItemName = item.Name,
-                    ItemPrice = item.Price,
-                    ItemId = item.ItemId,
+                    Name = item.Name,
+                    Price = item.Price,
+                    ID = item.ItemId,
                     Currency = item.Currency
                 });
                 if (editItem_Result.ResultCode == ResultCodes.Success) return RedirectToAction("MyItems");
@@ -261,7 +261,7 @@ namespace Shop.Controllers
         {
             if (ModelState.IsValid)
             {
-                var ownerId = _db.Items.FirstOrDefault(x => x.ItemId.ToString() == itemId).OwnerID;
+                var ownerId = _db.Items.FirstOrDefault(x => x.ID.ToString() == itemId).OwnerID;
                 var buyerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
 
@@ -303,7 +303,7 @@ namespace Shop.Controllers
             var user = await _userManager.GetUserAsync(User);
             var cart = _db.Carts.Include(x=>x.ItemsInCart).FirstOrDefault(x => x.UserID == user.Id);
             if (user == null) return RedirectToAction("Logout", "Account");
-            var item = _db.Items.FirstOrDefault(x => x.ItemId.ToString() == itemId);
+            var item = _db.Items.FirstOrDefault(x => x.ID.ToString() == itemId);
             if (item == null) return BadRequest();
             cart.ItemsInCart.Add(new CartItem()
             {

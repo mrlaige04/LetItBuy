@@ -8,19 +8,16 @@ using Shop.Hubs;
 using Shop.DAL.Data.EF;
 using Shop.DAL.Data.Entities;
 using Shop.BLL.Services;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.Facebook;
-using Microsoft.AspNetCore.Authentication.Twitter;
-using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
+
 using Shop.UI;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
-using Shop.Core;
-using Shop.Core.Providers;
-using Shop.Core.Providers.Interfaces;
+
+
+
 using Shop.UI.Clients.APICLIENTS;
 using Shop.UI.Hubs;
+using Shop.BLL.Providers.Interfaces;
+using Shop.BLL.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +42,7 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
     options.Password.RequireDigit = true;
     options.User.RequireUniqueEmail = true;
     options.Password.RequireNonAlphanumeric = false;
-    options.User.AllowedUserNameCharacters = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzÀàÁáÂâÃãÄäÅå¨¸ÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ²³¯¿";
+    options.User.AllowedUserNameCharacters = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzÀàÁáÂâÃãÄäÅå¨¸ÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ²³¯¿-_1234567890";
 })
 .AddEntityFrameworkStores<ApplicationDBContext>()
 .AddDefaultTokenProviders()

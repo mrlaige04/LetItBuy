@@ -14,7 +14,7 @@ namespace Shop.BLL.Services
         }
 
         public List<Category> GetCategories() => _context.Categories.ToList();
-        public List<Category> GetSubCategories(string currentCategoryID) => _context.Categories.Where(x => x.Parent.Id.ToString() == currentCategoryID).ToList();
+        
         public async Task<ServicesResultModel> AddCategoryAsync(Category category)
         {
             try

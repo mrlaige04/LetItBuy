@@ -43,26 +43,42 @@ namespace Shop.Controllers
         {
             return View("WelcomePage");
         }
+        //[HttpGet]
+        //public IActionResult ItemPage(string id)
+        //{
+        //    var item = _db.Items.Include(x => x.Characteristics).AsEnumerable().FirstOrDefault(x => x.ID.ToString() == id);
+        //    return View("ItemPage", item);
+        //}
+        //[HttpGet]
+        //public IActionResult GetCriterias(string categoryId)
+        //{
+        //    var criterias = _db.Criterias.Where(x => x.CategoryID.ToString() == categoryId).ToList();
+        //    return Json(criterias);
+        //}
+
+
+
         [HttpGet]
-        public IActionResult ItemPage(string id)
+        public IActionResult SearchPage() => View(new SearchViewModel() { Filter = new FilterViewModel()});
+
+
+        [HttpGet]
+        public async Task<IActionResult> Index(SearchViewModel q)
         {
-            var item = _db.Items.Include(x => x.Characteristics).AsEnumerable().FirstOrDefault(x => x.ItemId.ToString() == id);
-            return View("ItemPage", item);
+            if (q.Filter.maxPrice < q.Filter.minPrice)
+            {
+                q.Filter.maxPrice = decimal.MaxValue;
+            }
+            //var items = await filterService.Filter(new FilterDTO()
+            //{
+            //    CategoryID = q.Filter.CategoryID,
+            //    maxPrice = q.Filter.maxPrice,
+            //    minPrice = q.Filter.minPrice,
+            //    query = q.query
+            //});
+            //q.items = await items.ToListAsync();
+            return View("SearchPage", q);
         }
-        [HttpGet]
-        public IActionResult GetCriterias(string categoryId)
-        {
-            var criterias = _db.Criterias.Where(x => x.CategoryID.ToString() == categoryId).ToList();
-            return Json(criterias);
-        }
-
-
-
-        [HttpGet]
-        public IActionResult SearchPage() => View(new SearchViewModel() { PageSize = 10 });
-
-
-        
         
 
         public IActionResult BuyItemByPhone(string itemId) // TODO :BUY BY PHONE
@@ -70,7 +86,7 @@ namespace Shop.Controllers
             var item = Request.Form["itemId"];
             var phone = Request.Form["phonenumber"];
 
-            var sellerID = _db.Items.FirstOrDefault(x => x.ItemId.ToString() == itemId)?.OwnerID;
+            var sellerID = _db.Items.FirstOrDefault(x => x.ID.ToString() == itemId)?.OwnerID;
             if(sellerID != null)
             {
                 Sell sell = new Sell

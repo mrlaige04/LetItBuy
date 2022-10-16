@@ -10,28 +10,22 @@ namespace Shop.DAL.Data.Entities
     [Table("Items")]
     public class Item
     {
-        public Guid ItemId { get; set; }
+        public Guid ID { get; set; }
         public User OwnerUser { get; set; }
-        public string ItemName { get; set; }
+        public string Name { get; set; }
 
         public Guid OwnerID { get; set; }
         public string? Description { get; set; }
         public Category? Category { get; set; }
-        public decimal ItemPrice { get; set; }
+        public decimal Price { get; set; }
         public Currency Currency { get; set; }
 
-        public Guid? Category_ID { get; set; }
+        public Guid? CategoryID { get; set; }
         public string CategoryName { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsNew { get; set; }
 
-        public ICollection<Characteristic> Characteristics { get; set; }
-
-
-        //public string this[string criteriaName]
-        //{
-        //    get => Characteristics.Where(c => c.CriteriaName == criteriaName).FirstOrDefault().ValueId;
-        //}
+        public Characteristic Characteristic { get; set; }
     }
 
     public enum Currency

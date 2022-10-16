@@ -9,9 +9,11 @@ namespace Shop.DAL.Data.Entities
         [Key]
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public Category? Parent { get; set; }
 
-        public ICollection<Criteria> Criterias { get; set; }
+
+        public ICollection<NumberCriteria>? NumberCriterias { get; set; }
+        public ICollection<StringCriteria>? StringCriterias { get; set; }
+        public ICollection<DateCriteria>? DateCriterias { get; set; }
 
         public ICollection<Item> Items { get; set; }
     }

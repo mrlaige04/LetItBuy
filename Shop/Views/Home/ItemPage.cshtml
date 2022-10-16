@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
+﻿@*@using Microsoft.AspNetCore.Mvc.Localization
 @using Shop.DAL.Data.Entities;
 @model Item;
 
@@ -26,16 +26,16 @@
                     }
                 </div>
                 <div class="col-md-6">
-                    <h1 class="display-5 fw-bolder">@Model.ItemName</h1>
+                    <h1 class="display-5 fw-bolder">@Model.Name</h1>
                     <div class="fs-5 mb-5">
-                        <span>@Model.Currency @Model.ItemPrice</span>
+                        <span>@Model.Currency @Model.Price</span>
                     </div>
                     <p class="lead">@Model.Description</p>
                     <div class="d-flex">
-                        <a style="margin-right: 5px;" asp-action="BuyItem" asp-controller="User" asp-route-itemId="@Model.ItemId" class="btn btn-outline-dark flex-shrink-0"> 
+                        <a style="margin-right: 5px;" asp-action="BuyItem" asp-controller="User" asp-route-itemId="@Model.ID" class="btn btn-outline-dark flex-shrink-0"> 
                                 Buy
                             </a>
-                        <a asp-action="AddToCart" asp-controller="User" asp-route-itemId="@Model.ItemId" class="btn btn-outline-dark flex-shrink-0">
+                        <a asp-action="AddToCart" asp-controller="User" asp-route-itemId="@Model.ID" class="btn btn-outline-dark flex-shrink-0">
                                 <i class="bi-cart-fill me-1"></i>
                                 Add to cart
                             </a>
@@ -56,7 +56,7 @@
                         {
                             <tr>
                                 <th>@charact.Name</th>
-                                <th>@*@charact.Value*@</th>
+                                <th>@*charact.Value</th>
                             </tr>
                         }
                     </tbody>
@@ -65,4 +65,4 @@
         </div>
     </section>
 
-} 
+} *@

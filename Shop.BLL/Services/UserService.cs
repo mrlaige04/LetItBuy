@@ -44,12 +44,12 @@ namespace Shop.BLL.Services
         public async Task<ServicesResultModel> EditItemAsync(User user, Item item)
         {
             if (user == null) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "User not found" } };
-            var itemFromDb = await _db.Items.FirstOrDefaultAsync(i => i.ItemId == item.ItemId);
+            var itemFromDb = await _db.Items.FirstOrDefaultAsync(i => i.ID == item.ID);
             if (itemFromDb == null) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "Item not found" } };
             if (itemFromDb.OwnerID != user.Id) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "You can't edit this item" } };
-            itemFromDb.ItemName = item.ItemName;
+            itemFromDb.Name = item.Name;
             itemFromDb.Description = item.Description;
-            itemFromDb.ItemPrice = item.ItemPrice;
+            itemFromDb.Price = item.Price;
             itemFromDb.Currency = item.Currency;
             //itemFromDb.Category = item.Category;
             //itemFromDb.Image = item.Image;
@@ -67,7 +67,7 @@ namespace Shop.BLL.Services
         public async Task<ServicesResultModel> DeleteItemAsync(User user, Guid itemId)
         {
             if (user == null) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "User not found" } };
-            var itemFromDb = await _db.Items.FirstOrDefaultAsync(i => i.ItemId == itemId);
+            var itemFromDb = await _db.Items.FirstOrDefaultAsync(i => i.ID == itemId);
             if (itemFromDb == null) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "Item not found" } };
             if (itemFromDb.OwnerID != user.Id) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "You can't delete this item" } };
             try

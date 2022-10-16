@@ -10,8 +10,8 @@ namespace Shop.BLL.DTO
     {
         public decimal minPrice { get; set; } = 0;
         public decimal maxPrice { get; set; } = decimal.MaxValue;
-
-        public Guid CategoryID { get; set; }
+        public string? query = string.Empty;
+        public Guid CategoryID { get; set; } = Guid.Empty;
 
         public IEnumerable<NumberFilterDTO>? NumberFilters { get; set; }
         public IEnumerable<StringFilterDTO>? StringFilters { get; set; }

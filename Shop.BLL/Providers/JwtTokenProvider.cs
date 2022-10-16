@@ -2,15 +2,13 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Shop.Core.Providers.Interfaces;
+using Shop.BLL.Providers.Interfaces;
 using Shop.DAL.Data.EF;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-
 using System.Text;
 
 
-namespace Shop.Core.Providers
+namespace Shop.BLL.Providers
 {
     public class JwtTokenProvider : IJwtTokenProvider
     {

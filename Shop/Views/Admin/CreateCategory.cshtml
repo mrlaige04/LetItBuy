@@ -1,78 +1,129 @@
-﻿@using Shop.DAL.Data.Entities
-@section Styles {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-}
-
+﻿@model CreateCatalogViewModel;
 @{
-    var criteriaTypes = @Html.GetEnumSelectList(typeof(CriteriaTypes));  
-}
-
-<form asp-action="CreateCategory" id="mainForm" asp-controller="Admin" method="post">
-    <div class="form-group">
-        <label for="categoryName">Category Name</label>
-        <input class="form-control" type="text" id="categoryName" required name="categoryName"/>
-    </div>
-
-    <p>Criterias</p>
-    <div class="border-top my-3"></div>
-
     
-
-
-    <div class="form-group mt-3">
-        
-        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group me-2" role="group" aria-label="First group">
-                <button onclick="appendField()" type="button" class="btn btn-secondary">Add field</button>
+    
+}
+<div class="pagetitle">
+    <h1>Home</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Admin</a></li>
+            <li class="breadcrumb-item active">Create Category</li>
+        </ol>
+    </nav>
+</div>
+<section>
+    <div class="row">
+        <div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Create Category</h5>
+                    <div class="categoryform">
+                        <form id="cat-form" asp-controller="Admin" asp-action="CreateCategory" method="post">
+                            <div class="form-group">
+                                <div class="category-name">
+                                    <label for="cat_name">Name</label>
+                                    <input asp-for="Name" type="text" required name="Name" id="cat-name" class="form-control">
+                                </div>
+                                <div class="border-top my-3"></div>
+                                <div class="category-criterias">
+                                    <div class="add-criteria">
+                                        <button class="btn btn-primary" onclick="appendCriteria('number')">Add number</button>
+                                        <button class="btn btn-primary" onclick="appendCriteria('string')">Add string</button>
+                                        <button class="btn btn-primary" onclick="appendCriteria('date')">Add date</button>
+                                    </div>
+                                    <div class="criterias-list mt-3">
+                                        <div class="criteria">
+                                            <div class="row">
+                                                <div class="col-md-4 criteria-name">
+                                                    <input asp-for="numbers[0].name" type="text" class="form-control" name="numbers[0].name" />
+                                                </div>
+                                            </div>
+                                            <div class="criteria-defvalues">
+                                                <p>Default Values:</p>
+                                                <ul class="list-unstyled list-group">
+                                                    <li class="col-md-8"><input asp-for="numbers[0].values[0]" type="number" class="form-control" name="numbers[0].values[0]" value="" id=""></li>
+                                                    <li class="col-md-8"><input asp-for="numbers[0].values[1]" type="number" class="form-control" name="numbers[0].values[1]" value="" id=""></li>
+                                                    <li class="col-md-8"><input asp-for="numbers[0].values[2]" type="number" class="form-control" name="numbers[0].values[2]" value="" id=""></li>
+                                                    <li class="col-md-8"><input asp-for="numbers[0].values[3]" type="number" class="form-control" name="numbers[0].values[3]" value="" id=""></li>
+                                                </ul>
+                                            </div>
+                                        </div> 
+                                        <div class="criteria">
+                                            <div class="row">
+                                                <div class="col-md-4 criteria-name">
+                                                    <input asp-for="strings[0].name" type="text" class="form-control" name="strings[0].name" />
+                                                </div>
+                                            </div>
+                                            <div class="criteria-defvalues">
+                                                <p>Default Values:</p>
+                                                <ul class="list-unstyled list-group">
+                                                    <li class="col-md-8"><input asp-for="strings[0].values[0]" type="text" class="form-control" name="strings[0].values[0]" id=""></li>
+                                                    <li class="col-md-8"><input asp-for="strings[0].values[1]" type="text" class="form-control" name="strings[0].values[1]" id=""></li>
+                                                    <li class="col-md-8"><input asp-for="strings[0].values[2]" type="text" class="form-control" name="strings[0].values[2]" id=""></li>
+                                                    <li class="col-md-8"><input asp-for="strings[0].values[3]" type="text" class="form-control" name="strings[0].values[3]" id=""></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary mt-3" type="submit">s</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-      
-    
-        <div id="characteristics">
-        
-        </div>
     </div>
+</section>
 
-    <button class="btn mt-3 btn-primary" type="submit">Submit</button>
-</form>
-
-
-
-<script type="text/javascript">
-    var category = {
-    categoryName: "aboba",
-    characteristics: [],
-};
-
-function appendField() {
-    var div = document.createElement('div');
-    div.className = "criteriaForms mt-3 mb-3";
-    var divInner = document.createElement('div');
-    divInner.className = "d-flex justify-content-center";
-    var inputNameField = document.createElement('input');
-    inputNameField.name = "criteriaName";
-    inputNameField.className = "form-control me-2";
-    inputNameField.type = "text";
-    inputNameField.placeholder = "Characteristic name";
-    inputNameField.required = true;
-    divInner.appendChild(inputNameField);
-    var select = document.createElement('select');
-    select.required = true;
-    select.className = "form-select";
-    select.name = "criteriaType";
-    select.innerHTML = `@Html.DropDownList("Criteria", criteriaTypes, new { @class = "form-control", @name = "criteriaType", @required = "required" })`;
-    divInner.appendChild(select);
-    div.innerHTML = "<label for='itemName'>Criteria</label>";
-    var i = document.createElement('i');
-    i.className = "fa fa-trash";
-    i.setAttribute("aria-hidden", "true");
-    i.onclick = function () {
-        div.remove();
+<script>
+    var data = {
+        name:string;
+        criterias:[];
     }
-    i.style.fontSize = "xxx-large";
-    i.style.cursor = "pointer";
-    divInner.appendChild(i);
-    div.appendChild(divInner);
-    document.getElementById('characteristics').appendChild(div);
-}
+    var criteriaList = document.querySelector('.criterias-list');
+    function appendCriteria(type) {
+        if (type==null) {
+            alert("invalid type");
+        }
+        var criteria = document.createElement('div'); // Create div criteria
+        criteria.classList.add('criteria');
+        
+        var row = document.createElement('div'); // Create row with criteria name
+        row.classList.add('row');
+        
+        var col1 = document.createElement('div');  // Create div-col with criteria name
+        col1.classList.add('col-md-4');
+        col1.classList.add('criteria-name');
+
+        var input = document.createElement('input'); // Criteria name input field
+        input.type = 'text';
+        input.classList.add('form-control');
+        input.name = 'strings[0].name';
+        
+        col1.appendChild(input); // Append input to col1
+        criteria.appendChild(col1); // Append col1 to criteria
+
+        
+
+        
+        var defvalues = document.createElement('div'); // Create div with default values
+        defvalues.classList.add('criteria-defvalues');
+        var p = document.createElement('p'); // Create p with default values
+        p.innerText = 'Default Values:';
+        defvalues.appendChild(p); // Append p to defvalues
+        var ul = document.createElement('ul'); // Create ul with default values
+        ul.classList.add('list-unstyled');
+        ul.classList.add('list-group');
+        
+        
+        if (type=="number") {
+            
+        } else if (type=="string") {
+            
+        } else if (type=="date") {
+            
+        }
+    }
 </script>

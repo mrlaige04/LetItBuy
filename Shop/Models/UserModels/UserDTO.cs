@@ -4,6 +4,7 @@
     {
         public string Email { get; set; }
         public string Username { get; set; }
+        public Guid ID { get; set; }
         public bool IsAdmin { get; set; }
     }
 }

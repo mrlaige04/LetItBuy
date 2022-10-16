@@ -1,5 +1,5 @@
-﻿using Shop.Core.Providers;
-using Shop.Core.Providers.Interfaces;
+﻿using Shop.BLL.Providers.Interfaces;
+
 using Shop.DAL.Data.Entities;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -51,9 +51,9 @@ namespace Shop.UI.Clients.APICLIENTS
             Item item = new Item()
             {
                 
-                ItemName = "Test",
+                Name = "Test",
                 Description = "Test",
-                ItemPrice = 100,
+                Price = 100,
                 ImageUrl = "Test",
                 OwnerID = new Guid("c9c9c9c9-c9c9-c9c9-c9c9-c9c9c9c9c9c9")
             };

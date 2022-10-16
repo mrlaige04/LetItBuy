@@ -29,7 +29,7 @@ namespace LetItBuy_API.Controllers
         public async Task<IActionResult> Get(Guid id)
         {
             if (id == Guid.Empty) return BadRequest("Invalid id");
-            var advert = await _db.Items.Where(x => x.ItemId == id).FirstOrDefaultAsync();
+            var advert = await _db.Items.Where(x => x.ID == id).FirstOrDefaultAsync();
             if (advert == null) return NotFound();
             return Ok(advert);
         }
@@ -76,7 +76,7 @@ namespace LetItBuy_API.Controllers
             {
                 return BadRequest("Invalid item");
             }
-            var itemFromDB = await _db.Items.FirstAsync(x => x.ItemId == id);
+            var itemFromDB = await _db.Items.FirstAsync(x => x.ID == id);
             if (itemFromDB == null) return NotFound();
             try
             {
@@ -98,7 +98,7 @@ namespace LetItBuy_API.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             if (id == Guid.Empty) return BadRequest("Invalid id");
-            var item = await _db.Items.FirstAsync(x => x.ItemId == id);
+            var item = await _db.Items.FirstAsync(x => x.ID == id);
             if (item == null) return NotFound();
             try
             {
