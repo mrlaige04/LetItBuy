@@ -22,11 +22,11 @@ namespace Shop.Controllers
     {       
         private readonly ILogger<AccountController> _logger;
         
-        private readonly SignInManager<User> _signinmanager;
+        private readonly SignInManager<ApplicationUser> _signinmanager;
         private readonly AccountService _accountService;
         private readonly IConfiguration _config;
         private readonly IStringLocalizer<SharedResource> _localizer;
-        public AccountController(AccountService accountClient, ILogger<AccountController> logger, SignInManager<User> signInManager, IConfiguration config, IStringLocalizer<SharedResource> localizer)
+        public AccountController(AccountService accountClient, ILogger<AccountController> logger, SignInManager<ApplicationUser> signInManager, IConfiguration config, IStringLocalizer<SharedResource> localizer)
         {
             _accountService = accountClient;
             _logger = logger;
@@ -165,11 +165,7 @@ namespace Shop.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public IActionResult ChangePassword(string OldPassword, string NewPassword, string ConfirmPassword)
-        {
-            return Ok();
-        }
+        
 
         
 

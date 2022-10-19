@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Localization;
+﻿using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Shop.BLL.DTO;
-using Shop.BLL.Models;
 using Shop.BLL.Services;
 using Shop.DAL.Data.EF;
 using Shop.DAL.Data.Entities;
@@ -11,7 +7,10 @@ using Shop.Models.ViewDTO;
 using Shop.UI.Models.ViewDTO;
 using System.Security.Claims;
 
-
+using AutoMapper;
+using Shop.BLL.DTO;
+using AutoMapper.Configuration.Annotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Shop.Controllers
 {
@@ -19,12 +18,14 @@ namespace Shop.Controllers
     {
         private readonly ICustomEmailSender _sender;
         private readonly ApplicationDBContext _db;
+        private readonly IMapper _mapper;
         private FilterService filterService { get; set; }
-        public HomeController(ICustomEmailSender sender, ApplicationDBContext db, FilterService filterService)
+        public HomeController(ICustomEmailSender sender, ApplicationDBContext db, FilterService filterService, IMapper mapper)
         {
             _sender = sender;
             _db = db;
             this.filterService = filterService;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -43,12 +44,25 @@ namespace Shop.Controllers
         {
             return View("WelcomePage");
         }
-        //[HttpGet]
-        //public IActionResult ItemPage(string id)
-        //{
-        //    var item = _db.Items.Include(x => x.Characteristics).AsEnumerable().FirstOrDefault(x => x.ID.ToString() == id);
-        //    return View("ItemPage", item);
-        //}
+        [HttpGet]
+        public IActionResult ItemPage(string id)
+        {
+            var item = _db.Items
+                .Include(x => x.OwnerUser)
+                .FirstOrDefault(x => x.ID.ToString() == id);
+
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+
+
+            var itemdto = _mapper.Map<Item, ItemDTO>(item);
+
+            if (item != null) return View("ItemPage", itemdto);
+            else return NotFound();
+        }
         //[HttpGet]
         //public IActionResult GetCriterias(string categoryId)
         //{

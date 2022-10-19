@@ -1261,3 +1261,10 @@ h6 {
   font-size: 13px;
   color: #012970;
 }
+
+
+@media screen and (max-width:567px) {
+    .item-info {
+        margin-top: 12px;
+    }
+}

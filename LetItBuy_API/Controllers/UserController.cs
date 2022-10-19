@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-using Shop.Core.Providers;
+using Shop.BLL.Providers;
 using Shop.DAL.Data.EF;
 
 namespace Shop.API.Controllers
@@ -16,14 +15,13 @@ namespace Shop.API.Controllers
         public UserController(ApplicationDBContext db, IWebHostEnvironment env)
         {
             _db = db;
+            _env = env;
         }
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
+
         [HttpGet("Token")]
         public async Task<IActionResult> Token(string userId)
         {
+            
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(_db, _env);
             var token = await jwtTokenProvider.GenerateTokenAsync(userId);
             return Content(token);

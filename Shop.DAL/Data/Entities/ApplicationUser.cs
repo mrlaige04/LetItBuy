@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Shop.DAL.Data.Entities
 {
     [Table("Users")]
-    public class User : IdentityUser<Guid>
+    public class ApplicationUser : IdentityUser<Guid>
     {
         public ICollection<Item>? Items { get; set; }
         public Cart Cart { get; set; }

@@ -5,9 +5,9 @@ namespace Shop.BLL.Services
 {
     public class RoleService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-        public RoleService(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+        public RoleService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -20,7 +20,7 @@ namespace Shop.BLL.Services
                 return new ServicesResultModel { ResultCode = ResultCodes.Success };
             return new ServicesResultModel { ResultCode = ResultCodes.Fail, Errors = delRes.Errors.Select(x => x.Description).ToList() };
         }
-        public async Task<ServicesResultModel> AddUserToRoles(User user, params string[] roles)
+        public async Task<ServicesResultModel> AddUserToRoles(ApplicationUser user, params string[] roles)
         {
             foreach (var item in roles)
             {
@@ -31,7 +31,7 @@ namespace Shop.BLL.Services
                 return new ServicesResultModel { ResultCode = ResultCodes.Success };
             return new ServicesResultModel { ResultCode = ResultCodes.Fail, Errors = res.Errors.Select(x => x.Description).ToList() };
         }
-        public async Task<ServicesResultModel> DeleteUserFromRoles(User user, params string[] roles)
+        public async Task<ServicesResultModel> DeleteUserFromRoles(ApplicationUser user, params string[] roles)
         {
             var res = await _userManager.RemoveFromRolesAsync(user, roles);
             if (res.Succeeded)

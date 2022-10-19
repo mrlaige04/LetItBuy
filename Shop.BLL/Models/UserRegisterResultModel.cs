@@ -4,6 +4,6 @@ namespace Shop.BLL.Models
 {
     public class UserRegisterResultModel : ServicesResultModel
     {
-        public User User { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

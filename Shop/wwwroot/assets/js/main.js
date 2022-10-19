@@ -1,3 +1,4 @@
+
 /**
 * Template Name: NiceAdmin - v2.4.0
 * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -36,7 +37,7 @@
   const onscroll = (el, listener) => {
     el.addEventListener('scroll', listener)
   }
-
+  
   /**
    * Sidebar toggle
    */
@@ -323,3 +324,15 @@ function changePassword() {
         }
     })
 }
+
+
+
+
+document.onload(function () {
+    let form = document.getElementById("testinputtagify");
+    let tagify = new Tagify(form);
+});
+
+
+
+

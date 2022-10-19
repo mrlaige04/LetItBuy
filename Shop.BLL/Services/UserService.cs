@@ -14,17 +14,17 @@ namespace Shop.BLL.Services
 {
     public class UserService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDBContext _db;
         private readonly IWebHostEnvironment _webHost;
-        public UserService(UserManager<User> userManager, ApplicationDBContext db, IWebHostEnvironment webhost)
+        public UserService(UserManager<ApplicationUser> userManager, ApplicationDBContext db, IWebHostEnvironment webhost)
         {
             _userManager = userManager;
             _db = db;
             _webHost = webhost;
         }
 
-        public async Task<ServicesResultModel> AddItemAsync(User user, Item item)
+        public async Task<ServicesResultModel> AddItemAsync(ApplicationUser user, Item item)
         {
             if (user == null) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "User not found" } };
             item.OwnerUser = user;
@@ -41,7 +41,7 @@ namespace Shop.BLL.Services
             }
         }
 
-        public async Task<ServicesResultModel> EditItemAsync(User user, Item item)
+        public async Task<ServicesResultModel> EditItemAsync(ApplicationUser user, Item item)
         {
             if (user == null) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "User not found" } };
             var itemFromDb = await _db.Items.FirstOrDefaultAsync(i => i.ID == item.ID);
@@ -64,7 +64,7 @@ namespace Shop.BLL.Services
             }
         }
 
-        public async Task<ServicesResultModel> DeleteItemAsync(User user, Guid itemId)
+        public async Task<ServicesResultModel> DeleteItemAsync(ApplicationUser user, Guid itemId)
         {
             if (user == null) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "User not found" } };
             var itemFromDb = await _db.Items.FirstOrDefaultAsync(i => i.ID == itemId);

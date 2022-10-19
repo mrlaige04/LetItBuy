@@ -1,24 +1,24 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Shop.DAL.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shop.BLL.Services
 {
-    public class AdminInitializer
+    public class AdminInitializer : IDisposable
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IConfiguration _configuration;
-        public AdminInitializer(UserManager<User> userManamer, RoleManager<IdentityRole<Guid>> roleManager, IConfiguration configuration)
+        public AdminInitializer(UserManager<ApplicationUser> userManamer, RoleManager<IdentityRole<Guid>> roleManager, IConfiguration configuration)
         {
             _userManager = userManamer;
             _roleManager = roleManager;
             _configuration = configuration;
+        }
+
+        public void Dispose()
+        {
+            
         }
 
         public async Task InitializeAdminAsync()
@@ -33,7 +33,7 @@ namespace Shop.BLL.Services
             {
                 CartID = cartId
             };
-            User user = new User()
+            ApplicationUser user = new ApplicationUser()
             {
                 Email = _configuration["Admin:Email"],
                 UserName = _configuration["Admin:UserName"],

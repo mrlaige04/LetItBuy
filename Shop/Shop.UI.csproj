@@ -4,12 +4,26 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>d5b86b31-4544-4a53-8f1c-2fd90f15056e</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\node_modules\**" />
+    <Content Remove="wwwroot\node_modules\**" />
+    <EmbeddedResource Remove="wwwroot\node_modules\**" />
+    <None Remove="wwwroot\node_modules\**" />
+  </ItemGroup>
 
  
 
   <ItemGroup>
     <Content Remove="wwwroot\favicon.ico" />
+  </ItemGroup>
+
+ 
+
+  <ItemGroup>
+    <Content Include="node_modules\%40yaireo\tagify\src\tagify.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +55,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     
     <PackageReference Include="MailKit" Version="3.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.9" />

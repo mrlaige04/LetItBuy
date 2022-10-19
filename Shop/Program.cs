@@ -18,7 +18,8 @@ using Shop.UI.Clients.APICLIENTS;
 using Shop.UI.Hubs;
 using Shop.BLL.Providers.Interfaces;
 using Shop.BLL.Providers;
-
+using Microsoft.EntityFrameworkCore.Internal;
+using AutoMapper;
 var builder = WebApplication.CreateBuilder(args);
 
 // MVC Services
@@ -28,14 +29,14 @@ builder.Services.AddControllersWithViews()
 
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
-
+builder.Services.AddAutoMapper(typeof(Program));
 
 
 // DB and Identity
 builder.Services.AddDbContext<ApplicationDBContext>(options=>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),b=>b.MigrationsAssembly("Shop.UI")));
 
-builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 {
     options.SignIn.RequireConfirmedEmail = true;
     options.Password.RequiredLength = 7;
@@ -88,7 +89,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         new CultureInfo("uk"),
         new CultureInfo("de")
     };
-    options.DefaultRequestCulture = new RequestCulture("ua");
+    options.DefaultRequestCulture = new RequestCulture("uk");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 });
@@ -118,23 +119,32 @@ builder.Services.AddScoped<ItemApiClient>();
 builder.Logging.AddConsole();
 builder.Configuration.AddJsonFile("emailsmtpconfig.json");
 builder.Configuration.AddJsonFile("admininitialize.json");
-builder.Configuration.AddJsonFile("secrets.json");
+
 
 
 var app = builder.Build();
-
-app.UseStaticFiles(new StaticFileOptions
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.UseFileServer(new FileServerOptions()
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"))
+    FileProvider = new PhysicalFileProvider(
+                    Path.Combine(builder.Environment.ContentRootPath, "node_modules")
+                ),
+    RequestPath = "/node_modules",
+    EnableDirectoryBrowsing = false
 });
 
-
-using (var scope = app.Services.CreateScope())
+var serviceProvider = app.Services.CreateScope().ServiceProvider;
+using (var adminInitializer = serviceProvider.GetRequiredService<AdminInitializer>())
 {
-    var services = scope.ServiceProvider;
-    var adminInitializer = services.GetRequiredService<AdminInitializer>();
-    await adminInitializer.InitializeAdminAsync();
+    if (adminInitializer != null)
+    {
+        await adminInitializer.InitializeAdminAsync();
+    }
 }
+
+
+
 app.UseRequestLocalization();
 
 app.UseRouting();

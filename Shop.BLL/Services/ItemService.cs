@@ -12,7 +12,7 @@ namespace Shop.BLL.Services
             _db = db;
         }
 
-        public async Task<ServicesResultModel> CreateItem(Item item, User user)
+        public async Task<ServicesResultModel> CreateItem(Item item, ApplicationUser user)
         {
             var result = new ServicesResultModel();
             if (item == null)

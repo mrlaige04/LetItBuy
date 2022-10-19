@@ -13,15 +13,15 @@ namespace Shop.BLL.Services
 {
     public class AccountService
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<AccountService> _logger;
         private readonly ICustomEmailSender _emailSender;
         private readonly RoleService _roleClient;
 
         
         public IUrlHelper urlHelper;
-        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<AccountService> logger, ICustomEmailSender emailSender, RoleService roleClient)
+        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AccountService> logger, ICustomEmailSender emailSender, RoleService roleClient)
         {
             _roleClient = roleClient;
             _userManager = userManager;
@@ -35,7 +35,7 @@ namespace Shop.BLL.Services
             var cartId = Guid.NewGuid();
             var userId = Guid.NewGuid();
 
-            User user = new User
+            ApplicationUser user = new ApplicationUser
             {
                 Email = reg_dto.Email,
                 UserName = reg_dto.Username,
@@ -229,7 +229,7 @@ namespace Shop.BLL.Services
                 await _signInManager.SignInAsync(user, false);
                 return new ServicesResultModel { ResultCode = ResultCodes.Success };
             }
-            var newUser = new User
+            var newUser = new ApplicationUser
             {
                 Id = Guid.NewGuid(),
                 Email = externalLoginDTO.Email,

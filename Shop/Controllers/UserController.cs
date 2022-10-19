@@ -9,6 +9,9 @@ using Shop.DAL.Data.EF;
 using Shop.BLL.Services;
 using Shop.BLL.Models;
 using Shop.UI.Clients.APICLIENTS;
+using AutoMapper;
+using Shop.BLL.DTO;
+using Shop.UI.Models.ViewDTO;
 
 namespace Shop.Controllers
 {
@@ -16,13 +19,14 @@ namespace Shop.Controllers
     
     public class UserController : Controller
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _webHost;
         private readonly ApplicationDBContext _db;
         private readonly UserService _userService;
         private readonly PhotoService _photoService;
         private readonly ItemApiClient _apiClient;
-        public UserController(UserManager<User> userManager, IWebHostEnvironment webHostEnvironment, ApplicationDBContext db, UserService userService, PhotoService photoService, ItemApiClient advertApiClient)
+        private readonly IMapper _mapper;
+        public UserController(UserManager<ApplicationUser> userManager, IWebHostEnvironment webHostEnvironment, ApplicationDBContext db, UserService userService, PhotoService photoService, ItemApiClient advertApiClient, IMapper mapper)
         {
             _userManager = userManager;
             _webHost = webHostEnvironment;
@@ -31,16 +35,32 @@ namespace Shop.Controllers
             _photoService = photoService;
 
             _apiClient = advertApiClient;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetProfile()
         {
             var user = await _userManager.GetUserAsync(User);
-            var returlUrl = Request.Path + Request.QueryString;
-            if (user == null) return RedirectToAction("Logout", "Account", returlUrl);
+            if (user == null) return Unauthorized();
+            var userDTO = _mapper.Map<ApplicationUser, ProfileViewModel>(user);
             ViewData["webrootpath"] = Request.Host.Value;
-            return View("MyProfile", new ProfileViewModel { UserName = user.UserName, Email = user.Email, ImageUrl = user.ImageURL });
+            return View("MyProfile", userDTO);
+        }
+
+
+        [HttpPost]
+
+        public async Task<IActionResult> EditProfile(EditProfileViewModel editModel)
+        {
+            if (!ModelState.IsValid) return View("MyProfile", editModel);
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+            user.AboutMe = editModel.AboutMe;
+            user.PhoneNumber = editModel.PhoneNumber;
+            user.UserName = editModel.UserName;
+            await _userManager.UpdateAsync(user);
+            return View("MyProfile");
         }
 
         
@@ -190,7 +210,6 @@ namespace Shop.Controllers
                 ItemId = item.ID
             });
         }
-
 
         [HttpPost]
         public async Task<IActionResult> EditItem(EditItemViewModel item)

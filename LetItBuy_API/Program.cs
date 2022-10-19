@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Shop.Core.Providers;
+using Shop.BLL.Providers;
 using Shop.DAL.Data.EF;
 
 var builder = WebApplication.CreateBuilder(args);

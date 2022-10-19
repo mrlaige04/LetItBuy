@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Shop.DAL.Data.EF;
 using Shop.DAL.Data.Entities;
-using System.Runtime.InteropServices;
-using System.Security.Claims;
 
 namespace LetItBuy_API.Controllers
 {

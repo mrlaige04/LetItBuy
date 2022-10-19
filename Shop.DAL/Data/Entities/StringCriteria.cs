@@ -11,9 +11,16 @@ namespace Shop.DAL.Data.Entities
     {
         public Guid ID { get; set; }
         public string Name { get; set; }
-        
+
+        public StringCriteria()
+        {
+            ID = Guid.NewGuid();
+        }
         public ICollection<Category>? Categories { get; set; }
         public IEnumerable<StringValue>? DefaultValues { get; set; }
-        public ICollection<Characteristic>? Characteristics { get; set; }
+        public ICollection<StringCharacteristic>? Characteristics { get; set; }
+        
+
+        
     }
 }

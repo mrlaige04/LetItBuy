@@ -6,10 +6,14 @@ namespace Shop.DAL.Data.Entities
     {
         public Guid ID { get ; set; }
         public string Name { get ; set ; }
+        public NumberCriteria()
+        {
+            ID = Guid.NewGuid();
+        }
         public ICollection<Category>? Categories { get; set; }
 
-        public IEnumerable<NumberValue>? DefaultValues { get; set; }
+        public ICollection<NumberValue>? DefaultValues { get; set; }
 
-        public ICollection<Characteristic>? Characteristics { get; set; }
+        public ICollection<NumberCharacteristic>? Characteristics { get; set; }
     }
 }

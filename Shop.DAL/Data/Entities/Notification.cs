@@ -6,7 +6,7 @@ namespace Shop.DAL.Data.Entities
     public class Notification
     {
         public Guid Id { get; set; }
-        public User User { get; set; }
+        public ApplicationUser User { get; set; }
         public Guid UserID { get; set; }
 
 

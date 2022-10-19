@@ -10,8 +10,8 @@ namespace Shop.BLL.Services
     {
         private string userImages_FolderPath;
         private string advertImages_FolderPath;
-        private readonly UserManager<User> userManager;
-        public PhotoService(UserManager<User> _userManager, IWebHostEnvironment webHostEnvironment)
+        private readonly UserManager<ApplicationUser> userManager;
+        public PhotoService(UserManager<ApplicationUser> _userManager, IWebHostEnvironment webHostEnvironment)
         {
             userManager = _userManager;
             Console.WriteLine(webHostEnvironment.WebRootPath);

@@ -11,7 +11,7 @@ namespace Shop.DAL.Data.Entities
     public class Item
     {
         public Guid ID { get; set; }
-        public User OwnerUser { get; set; }
+        public ApplicationUser OwnerUser { get; set; }
         public string Name { get; set; }
 
         public Guid OwnerID { get; set; }
@@ -25,7 +25,12 @@ namespace Shop.DAL.Data.Entities
         public string? ImageUrl { get; set; }
         public bool IsNew { get; set; }
 
-        public Characteristic Characteristic { get; set; }
+        public ICollection<NumberCharacteristic> NumberCharacteristics { get; set; } = null!;
+        public ICollection<StringCharacteristic> StringCharacteristics { get; set; } = null!;
+
+
+
+        public ICollection<ItemPhoto> Photos { get; set; } = null!;
     }
 
     public enum Currency

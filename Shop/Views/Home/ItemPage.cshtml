@@ -1,68 +1,98 @@
-﻿@*@using Microsoft.AspNetCore.Mvc.Localization
-@using Shop.DAL.Data.Entities;
-@model Item;
-
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Shop.BLL.DTO
+@model ItemDTO;
 @inject IViewLocalizer Localizer;
-@{
-    var imgUrlCorrect = string.Format("\\ItemPhotos\\" + Model?.ImageUrl);
-}
-
 @section Styles {
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-    <link href="~/css/ItemPage.css" rel="stylesheet" />
+    <title>@Model.Name</title>
 }
-@if(Model!=null) {
-
-    <!-- Product section-->
-    <section class="py-5">
-        <div class="container px-4 px-lg-5 my-5">
-            <div class="row gx-4 gx-lg-5 align-items-center">
-                <div class="col-md-6">
-                    @if(imgUrlCorrect != null)
-                    {
-                        <img class="card-img-top mb-5 mb-md-0" src="@imgUrlCorrect">
-                    } else {        
-                        <img class="card-img-top mb-5 mb-md-0" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="..." />
-                    }
-                </div>
-                <div class="col-md-6">
-                    <h1 class="display-5 fw-bolder">@Model.Name</h1>
-                    <div class="fs-5 mb-5">
-                        <span>@Model.Currency @Model.Price</span>
+<div class="pagetitle">
+    <h1>@Localizer["Home"]</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">@Localizer["Item"]</a></li>
+            <li class="breadcrumb-item active">@Model.Name</li>
+        </ol>
+    </nav>
+</div>
+<section>
+    <div class="row">
+        <div class="col-md-4">
+            @if (Model.Photos != null && Model.Photos.Count() > 0)
+            {
+                @for (int i = 0; i < Model.Photos.Count(); i++)
+                {
+                    <div id="carouselExampleIndicators" class="carousel" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            if (i == 0) {
+                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" class="active" aria-label="Slide @i" aria-current="true"></button>
+                            }
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" aria-label="Slide @i" class=""></button>
                     </div>
-                    <p class="lead">@Model.Description</p>
-                    <div class="d-flex">
-                        <a style="margin-right: 5px;" asp-action="BuyItem" asp-controller="User" asp-route-itemId="@Model.ID" class="btn btn-outline-dark flex-shrink-0"> 
-                                Buy
-                            </a>
-                        <a asp-action="AddToCart" asp-controller="User" asp-route-itemId="@Model.ID" class="btn btn-outline-dark flex-shrink-0">
-                                <i class="bi-cart-fill me-1"></i>
-                                Add to cart
-                            </a>
+                    <div class="carousel-inner">
+                        <div class="carousel-item carousel-item-next carousel-item-start">
+                            <img src="@string.Format(Model.Photos.ElementAt(i).FileName)" class="img img-fluid rounded d-block w-100" alt="...">
+                        </div> 
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">@Localizer["Previous"]</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">@Localizer["Next"]</span>
+                    </button>
+                    </div>
+                }
+            } else {
+                <img class="img img-fluid rounded-1" src="https://www.elegantthemes.com/blog/wp-content/uploads/2020/02/000-404.png?w=1024" />
+            }
+        </div>
+        <div class="col-md-8">
+            <div class="card item-info">
+                <div class="card-body">
+                    <h5 class="card-title mb-0" style="font-size: larger !important;">@Model.Name</h5>
+                    <div class="mainiteminfo">
+                        <small><b> Code:</b><code> @Model.ID</code></small>
+                        <p>@Model.Description</p>
+                        @Localizer["State"]: @if (Model.IsNew) { <b>@Localizer["NEW"]</b> } else {<b>@Localizer["USED"]</b>}
+                        <p class="display-6"><b>@Model.Price @Model.Currency</b></p>
+                        <button class="btn btn-dark">Buy <i class="bi bi-shop"></i></button>
+                        <button class="btn btn-dark">Add to cart <i class="bi bi-cart"></i></button>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Specs section -->
-    <section class="py-5 bg-light">
-        <div class="container px-4 px-lg-5 mt-7">
-            <h2 class="fw-bolder mb-4">Specifications</h2>
-            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                <table class="table table-responsive "  style="box-shadow:none;">
-                    <tbody>
-                        @foreach (var charact in Model.Characteristics)
-                        {
-                            <tr>
-                                <th>@charact.Name</th>
-                                <th>@*charact.Value</th>
-                            </tr>
+        <div class="col-md-12 mt-3">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">@Localizer["Specifications"]</h3>
+                    brand - apple
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 owner-info">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">@Localizer["Contact"]</h3>
+                    <div class="ownerinfocontact">
+                        @if (Model.OwnerUser.PhoneNumber != null) {
+                            <i class="bi bi-telephone"></i>
+                            <span>@Localizer["Owner phone"]: </span>
+                            <a href="tel:+380987654321">@Model.OwnerUser.PhoneNumber</a><br>
                         }
-                    </tbody>
-                </table>
+                        @if (Model.OwnerUser.Email != null)
+                        {
+                            <i class="bi bi-envelope"></i>
+                            <span>@Localizer["Email"]: </span>
+                            <a href="mailto:sdfV@mail.com">@Model.OwnerUser.Email</a>
+                        }
+                        <button class="btn mt-3 w-100 btn-dark">@Localizer["Start chat"]</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
-
-} *@
+    </div>
+</section>

@@ -14,12 +14,12 @@ namespace Shop.Controllers
     [Authorize(Roles="Admin")]
     public class AdminController : Controller
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly ApplicationDBContext _db;
-        private readonly SignInManager<User> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _config;
-        public AdminController(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager, ApplicationDBContext dBContext, SignInManager<User> signInManager, IConfiguration config)
+        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, ApplicationDBContext dBContext, SignInManager<ApplicationUser> signInManager, IConfiguration config)
         {
             _config = config;
             _userManager = userManager;
@@ -48,76 +48,65 @@ namespace Shop.Controllers
 
 
 
-        [HttpPost]
-        public async Task<IActionResult> CreateCategoryAsync(CreateCatalogViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-            var category = new Category()
-            {
-                Id = Guid.NewGuid(),
-                Name = model.Name,
-                NumberCriterias = new List<NumberCriteria>(),
-                StringCriterias = new List<StringCriteria>(),
-                DateCriterias = new List<DateCriteria>()
-            };
+        //[HttpPost]
+        //public async Task<IActionResult> CreateCategoryAsync(CreateCatalogViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
+            
+        //    var category = new Category()
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        Name = model.Name,
+        //        NumberCriterias = new List<NumberCriteria>(),
+        //        StringCriterias = new List<StringCriteria>(),
+               
+        //    };
 
-            if (model.numbers != null)
-            {
-                foreach (var number in model.numbers)
-                {
-                    var numberCriteria = new NumberCriteria()
-                    {
-                        ID = Guid.NewGuid(),
-                        Name = number.name,
-                        DefaultValues = number.values.Select(x => new NumberValue() { ValueID = Guid.NewGuid(), Value = x }).ToList(),
-                    };
-                    category.NumberCriterias.Add(numberCriteria);
-                }
-            }
+        //    if (model.numbers != null)
+        //    {
+        //        foreach (var number in model.numbers)
+        //        {
+        //            var numberCriteria = new NumberCriteria()
+        //            {
+        //                ID = Guid.NewGuid(),
+        //                Name = number.name,
+        //                DefaultValues = number.values.Select(x => new NumberValue(x)),
+        //            };
+        //            category.NumberCriterias.Add(numberCriteria);
+        //        }
+        //    }
 
-            if (model.strings != null)
-            {
-                foreach (var str in model.strings)
-                {
-                    var stringCriteria = new StringCriteria()
-                    {
-                        ID = Guid.NewGuid(),
-                        Name = str.name,
-                        DefaultValues = str.values.Select(x => new StringValue() { ValueID = Guid.NewGuid(), Value = x }).ToList(),
-                    };
-                    category.StringCriterias.Add(stringCriteria);
-                }
-            }
+        //    if (model.strings != null)
+        //    {
+        //        foreach (var str in model.strings)
+        //        {
+        //            var stringCriteria = new StringCriteria()
+        //            {
+        //                ID = Guid.NewGuid(),
+        //                Name = str.name,
+        //                DefaultValues = str.values.Select(x => new StringValue() { ValueID = Guid.NewGuid(), Value = x }).ToList(),
+        //            };
+        //            category.StringCriterias.Add(stringCriteria);
+        //        }
+        //    }
 
-            if (model.dates != null)
-            {
-                foreach (var date in model.dates)
-                {
-                    var dateCriteria = new DateCriteria()
-                    {
-                        ID = Guid.NewGuid(),
-                        Name = date.name,
-                        DefaultValues = date.values.Select(x => new DateValue() { ValueID = Guid.NewGuid(), Value = x }).ToList(),
-                    };
-                    category.DateCriterias.Add(dateCriteria);
-                }
-            }
+            
 
-            //try
-            //{
-            //    await _db.Categories.AddAsync(category);
-            //    await _db.SaveChangesAsync();
-            //}
-            //catch (Exception ex)
-            //{
-            //    ModelState.AddModelError("", ex.Message);
-            //    return View(model);
-            //}
-            return Content(JsonConvert.SerializeObject(category));
-        }
+        //    //try
+        //    //{
+        //    //    await _db.Categories.AddAsync(category);
+        //    //    await _db.SaveChangesAsync();
+        //    //}
+        //    //catch (Exception ex)
+        //    //{
+        //    //    ModelState.AddModelError("", ex.Message);
+        //    //    return View(model);
+        //    //}
+        //    return Content(JsonConvert.SerializeObject(category));
+        //}
 
         public async Task RemoveAllUsers()
         {
@@ -181,7 +170,7 @@ namespace Shop.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User()
+                ApplicationUser user = new ApplicationUser()
                 {
                     Email = addAdminViewModel.Email,
                     UserName = addAdminViewModel.UserName,

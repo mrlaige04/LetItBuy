@@ -9,7 +9,7 @@ namespace Shop.DAL.Data.Entities
         [Key]
         public Guid CartID { get; set; }
         public Guid UserID { get; set; }
-        public User UserOwner { get; set; }
+        public ApplicationUser UserOwner { get; set; }
         public ICollection<CartItem>? ItemsInCart { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace Shop.DAL.Data.Entities
 
         public ICollection<NumberCriteria>? NumberCriterias { get; set; }
         public ICollection<StringCriteria>? StringCriterias { get; set; }
-        public ICollection<DateCriteria>? DateCriterias { get; set; }
+       
 
         public ICollection<Item> Items { get; set; }
     }
