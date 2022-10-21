@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Shop.BLL\Shop.BLL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="BLL\" />
+  </ItemGroup>
+
 </Project>

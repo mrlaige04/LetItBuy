@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shop.DAL.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace Shop.BLL.DTO
         public string? query = string.Empty;
         public Guid CategoryID { get; set; } = Guid.Empty;
 
-        public IEnumerable<NumberFilterDTO>? NumberFilters { get; set; }
-        public IEnumerable<StringFilterDTO>? StringFilters { get; set; }
+        public IEnumerable<NumberCriteriaValue>? NumberFilters { get; set; }
+        public IEnumerable<StringCriteriaValue>? StringFilters { get; set; }
     }
 }

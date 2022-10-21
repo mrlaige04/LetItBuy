@@ -15,22 +15,33 @@ namespace Shop.BLL.Services
             this.db = db;
         }
 
-        //public async Task<IQueryable<Item>> Filter(FilterDTO dto)
-        //{
-        //    IQueryable<Item> items = db.Items.Include(x=>x.Characteristics);
-        //    if (dto.CategoryID != Guid.Empty)
-        //    {
-        //        items = items.Where(x => x.CategoryID == dto.CategoryID);
-        //    }
-        //    if (dto.query != string.Empty && !string.IsNullOrEmpty(dto.query))
-        //    {
-        //        items = items.Where(x => x.Name.ToLower().Contains(dto.query.ToLower()));
-        //        //items = items.Where(x => Regex.IsMatch(x.Name, $".*{dto.query}.*", RegexOptions.IgnoreCase));
-        //    }
-        //    items = items.Where(x => x.Price >= dto.minPrice && x.Price <= dto.maxPrice);
-
-        //    return items;
-        //    // TODO : EXception - Make Filtering
-        //}
+        public async Task<IQueryable<Item>> Filter(FilterDTO dto)
+        {
+            IQueryable<Item> items = db.Items.Include(i => i.NumberCriteriaValues)
+                                        .Include(i => i.StringCriteriaValues);
+            items = items.Where(i => i.Category_Id == dto.CategoryID);
+            items = items.Where(i => i.Price >= dto.minPrice && i.Price <= dto.maxPrice);
+            if (dto.NumberFilters != null) {
+                foreach (var nfilter in dto.NumberFilters)
+                {
+                    items = items.Where(i => i.NumberCriteriaValues
+                        .Any(n => n.CriteriaID == nfilter.CriteriaID && n.ValueID == nfilter.ValueID));
+                }
+            }
+            if (dto.StringFilters != null)
+            {
+                foreach (var sfilter in dto.StringFilters)
+                {
+                    items = items.Where(i => i.StringCriteriaValues
+                        .Any(s => s.CriteriaID == sfilter.CriteriaID && s.ValueID == sfilter.ValueID));
+                }
+            }
+            if (dto.query != null)
+            {
+                items = items.Where(i => Regex.IsMatch(i.Name, dto.query, RegexOptions.IgnoreCase));
+            }
+            return items;
+            // TODO : EXception - Make Filtering
+        }
     }
 }

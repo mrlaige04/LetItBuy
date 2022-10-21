@@ -50,6 +50,7 @@ namespace LetItBuy_API.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromBody] Item item)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
                 await _db.Items.AddAsync(item);
