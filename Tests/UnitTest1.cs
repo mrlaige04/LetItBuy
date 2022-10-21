@@ -1,5 +1,7 @@
+using Bogus;
 using Moq;
 using NUnit;
+using Shop.BLL.DTO;
 
 namespace Tests
 {
@@ -9,6 +11,7 @@ namespace Tests
         [SetUp]
         public void Setup()
         {
+            
         }
 
         [Test]

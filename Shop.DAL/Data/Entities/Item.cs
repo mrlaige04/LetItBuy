@@ -16,19 +16,24 @@ namespace Shop.DAL.Data.Entities
 
         public Guid OwnerID { get; set; }
         public string? Description { get; set; }
-        public Category? Category { get; set; }
+        
         public decimal Price { get; set; }
         public Currency Currency { get; set; }
 
-        public Guid? CategoryID { get; set; }
+        
+        
+
+        
+        public Guid? Category_Id { get; set; }
         public string CategoryName { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsNew { get; set; }
 
-        public ICollection<NumberCharacteristic> NumberCharacteristics { get; set; } = null!;
-        public ICollection<StringCharacteristic> StringCharacteristics { get; set; } = null!;
 
 
+
+        public ICollection<NumberCriteriaValue>? NumberCriteriaValues { get; set; } = null!;
+        public ICollection<StringCriteriaValue>? StringCriteriaValues { get; set; } = null!;
 
         public ICollection<ItemPhoto> Photos { get; set; } = null!;
     }

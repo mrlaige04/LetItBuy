@@ -10,11 +10,11 @@ namespace Shop.DAL.Data.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
 
+        public ICollection<NumberCriteriaValue> NumberCriteriasValues { get; set; } = null!;
+        public ICollection<StringCriteriaValue> StringCriteriasValues { get; set; } = null!;
 
-        public ICollection<NumberCriteria>? NumberCriterias { get; set; }
-        public ICollection<StringCriteria>? StringCriterias { get; set; }
-       
 
-        public ICollection<Item> Items { get; set; }
+
+        
     }
 }

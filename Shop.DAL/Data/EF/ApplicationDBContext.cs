@@ -22,19 +22,8 @@ namespace Shop.DAL.Data.EF
 
 
 
-        public DbSet<StringCriteria> StringCriterias { get; set; } = null!;
-        public DbSet<NumberCriteria> NumberCriterias { get; set; } = null!;
-        
-
-
-
-        public DbSet<NumberValue> NumberValues { get; set; } = null!;
-        public DbSet<StringValue> StringValues { get; set; } = null!;
-        
-        
-
-        public DbSet<StringCharacteristic> StringCharacteristics { get; set; } = null!;
-        public DbSet<NumberCharacteristic> NumberCharacteristics { get; set; } = null!;
+        public DbSet<NumberCriteriaValue> NumberCriteriaValues { get; set; } = null!;
+        public DbSet<StringCriteriaValue> StringCriteriaValues { get; set; } = null!;
         protected  override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -72,11 +61,7 @@ namespace Shop.DAL.Data.EF
                 .HasForeignKey(x => x.UserID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Category>()
-                .HasMany(x => x.Items)
-                .WithOne(x => x.Category)
-                .HasForeignKey(x => x.CategoryID)
-                .OnDelete(DeleteBehavior.Cascade);
+            
 
 
 
@@ -84,71 +69,48 @@ namespace Shop.DAL.Data.EF
                 .HasMany(x => x.ItemsInCart)
                 .WithOne(x => x.Cart)
                 .HasForeignKey(x => x.CartItemID)
-                .OnDelete(DeleteBehavior.Restrict)
-                ;
-
-            builder.Entity<NumberValue>()
-                .HasKey(x => x.Value );
-            builder.Entity<StringValue>()
-                .HasKey(x => x.Value );
-            #endregion
-
-            #region Criterias
-            builder.Entity<NumberCriteria>()
-                .HasMany(x => x.DefaultValues)
-                .WithMany(x => x.numberCriterias)
-                .UsingEntity("NumberCriteriasDefaultValues");
-                
-            
-            builder.Entity<StringCriteria>()
-                .HasMany(x=>x.DefaultValues)
-                .WithMany(x=>x.stringCriterias)
-                .UsingEntity("StringCriteriasDefaultValues");
-
-           
-
-            
-            builder.Entity<Category>()
-                .HasMany(x => x.NumberCriterias)
-                .WithMany(x => x.Categories)
-                .UsingEntity("CategoriesNumberCriterias");
-            builder.Entity<Category>()
-                .HasMany(x => x.StringCriterias)
-                .WithMany(x => x.Categories)
-                .UsingEntity("CategoriesStringCriterias");
-
-
-
-            #endregion
-
-
-
-            builder.Entity<NumberCharacteristic>()
-                .HasOne(x => x.Criteria)
-                .WithMany(x => x.Characteristics)
-                .HasForeignKey(x => x.CriteriaID);
-
-            builder.Entity<StringCharacteristic>()
-                .HasOne(x => x.Criteria)
-                .WithMany(x => x.Characteristics)
-                .HasForeignKey(x => x.CriteriaID);
-
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Item>()
-                .HasMany(x => x.NumberCharacteristics)
-                .WithMany(x => x.Items)
-                .UsingEntity("ItemNumberCharacteristic");
-
-            builder.Entity<Item>()
-                .HasMany(x => x.StringCharacteristics)
-                .WithMany(x => x.Items)
-                .UsingEntity("ItemStringCharacteristic");
-
-            builder.Entity<Item>()
-                .HasMany(x=>x.Photos)
-                .WithOne(x=>x.Item)
+                .HasMany(x => x.Photos)
+                .WithOne(x => x.Item)
                 .HasForeignKey(x => x.ItemID)
                 .OnDelete(DeleteBehavior.Cascade);
+            #endregion
+
+
+            builder.Entity<StringCriteriaValue>().HasKey(x => new { x.CriteriaID, x.ValueID });
+            builder.Entity<NumberCriteriaValue>().HasKey(x => new { x.CriteriaID, x.ValueID });
+
+
+            builder.Entity<Item>()
+                .HasMany(x => x.NumberCriteriaValues)
+                .WithMany(x => x.Items)
+                .UsingEntity("ItemNumberCriteriasValues");
+            builder.Entity<Item>()
+                .HasMany(x => x.StringCriteriaValues)
+                .WithMany(x => x.Items)
+                .UsingEntity("ItemStringCriteriasValues");
+
+
+            builder.Entity<Category>()
+                .HasMany(x=>x.NumberCriteriasValues)
+                .WithOne(x => x.Category)
+                .HasForeignKey(x => x.CategoryID)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Category>()
+                .HasMany(x => x.StringCriteriasValues)
+                .WithOne(x => x.Category)
+                .HasForeignKey(x => x.CategoryID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+
+
+            
+
+
+
 
             //Categories.AddRangeAsync(new List<Category>()
             //{
@@ -156,10 +118,10 @@ namespace Shop.DAL.Data.EF
             //    {
             //        Id = Guid.NewGuid(),
             //        Name = "Phone",
-            //        StringCriterias = new List<StringCriteria>()
+            //        StringCriteriasValues = new List<StringCriteriaValue>()
             //        {
-            //            new StringCriteria() {
-            //                Name = "Brand",
+            //            new StringCriteriaValue() {
+            //                CriteriaName = "Brand",
             //                DefaultValues = new List<StringValue>()
             //                {
             //                    "2E", "AGM", "ALCATEL", "ASUS",

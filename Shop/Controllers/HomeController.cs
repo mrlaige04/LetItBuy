@@ -40,8 +40,10 @@ namespace Shop.Controllers
             return LocalRedirect(returnUrl);
         }
         [HttpGet]
-        public IActionResult GetWelcomePage()
+        public  async Task<IActionResult> GetWelcomePage()
         {
+
+            
             return View("WelcomePage");
         }
         [HttpGet]

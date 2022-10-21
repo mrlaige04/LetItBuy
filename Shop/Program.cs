@@ -113,6 +113,9 @@ builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<FilterService>();
 builder.Services.AddScoped<IJwtTokenProvider, JwtTokenProvider>();
 builder.Services.AddScoped<ItemApiClient>();
+builder.Services.AddScoped<DBInitializer>();
+
+
 
 
 // Logging and Configuration
@@ -140,6 +143,14 @@ using (var adminInitializer = serviceProvider.GetRequiredService<AdminInitialize
     if (adminInitializer != null)
     {
         await adminInitializer.InitializeAdminAsync();
+    }
+}
+
+using (var dbinitializer = serviceProvider.GetRequiredService<DBInitializer>())
+{
+    if (dbinitializer != null)
+    { // INIT DB BY JSON LIKE [{category:name, id, numbercritvalue:[{name, list<double> values}]}] and by foreach do it
+        await dbinitializer.InitializeAsync();
     }
 }
 
