@@ -11,6 +11,7 @@ using AutoMapper;
 using Shop.BLL.DTO;
 using AutoMapper.Configuration.Annotations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Shop.Controllers
 {
@@ -19,13 +20,21 @@ namespace Shop.Controllers
         private readonly ICustomEmailSender _sender;
         private readonly ApplicationDBContext _db;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
         private FilterService filterService { get; set; }
-        public HomeController(ICustomEmailSender sender, ApplicationDBContext db, FilterService filterService, IMapper mapper)
+        public HomeController(
+            ICustomEmailSender sender, 
+            ApplicationDBContext db, 
+            FilterService filterService, 
+            IMapper mapper, 
+            UserManager<ApplicationUser> userManager
+        )
         {
             _sender = sender;
             _db = db;
             this.filterService = filterService;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         [HttpPost]
@@ -39,98 +48,120 @@ namespace Shop.Controllers
 
             return LocalRedirect(returnUrl);
         }
+        
         [HttpGet]
-        public  async Task<IActionResult> GetWelcomePage()
-        {
-
-            
-            return View("WelcomePage");
-        }
-        [HttpGet]
-        public IActionResult ItemPage(string id)
-        {
-            var item = _db.Items
-                .Include(x => x.OwnerUser)
-                .FirstOrDefault(x => x.ID.ToString() == id);
-
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-
-
-            var itemdto = _mapper.Map<Item, ItemDTO>(item);
-
-            if (item != null) return View("ItemPage", itemdto);
-            else return NotFound();
-        }
-        //[HttpGet]
-        //public IActionResult GetCriterias(string categoryId)
-        //{
-        //    var criterias = _db.Criterias.Where(x => x.CategoryID.ToString() == categoryId).ToList();
-        //    return Json(criterias);
-        //}
-
-
-
-        [HttpGet]
-        public IActionResult SearchPage() => View(new SearchViewModel() { Filter = new FilterViewModel()});
-
-
-        [HttpGet]
-        public async Task<IActionResult> Index(SearchViewModel q)
-        {
-            if (q.Filter.maxPrice < q.Filter.minPrice)
-            {
-                q.Filter.maxPrice = decimal.MaxValue;
-            }
-            //var items = await filterService.Filter(new FilterDTO()
-            //{
-            //    CategoryID = q.Filter.CategoryID,
-            //    maxPrice = q.Filter.maxPrice,
-            //    minPrice = q.Filter.minPrice,
-            //    query = q.query
-            //});
-            //q.items = await items.ToListAsync();
-            return View("SearchPage", q);
-        }
+        public IActionResult GetWelcomePage() => View("WelcomePage");
         
 
-        public IActionResult BuyItemByPhone(string itemId) // TODO :BUY BY PHONE
-        {
-            var item = Request.Form["itemId"];
-            var phone = Request.Form["phonenumber"];
 
-            var sellerID = _db.Items.FirstOrDefault(x => x.ID.ToString() == itemId)?.OwnerID;
-            if(sellerID != null)
+        [HttpGet]
+        public async Task<IActionResult> Index(SearchViewModel search) // TODO : FILTRATION BY FILTER DTO, PAGINATION, SORTING
+        {
+            var items = await filterService.Filter(search.Filter);
+            var categories = await _db.Categories.Include(x=>x.NumberCriteriasValues)
+                    .Include(x=>x.StringCriteriasValues)
+                    .ToListAsync();
+            return View("Index", categories);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Categories()
+        {
+            var categories = await _db.Categories.ToListAsync();
+            return View("Categories", categories);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchByCategory(Guid categoryId)
+        {
+            if (!ModelState.IsValid) return BadRequest("Invalid categoryId");
+            Category? category = await _db.Categories
+                .Include(x => x.NumberCriteriasValues)
+                .Include(x => x.StringCriteriasValues)
+                .FirstOrDefaultAsync(x => x.Id == categoryId);
+            
+            if (category == null) return NotFound("Category not found");
+            var categotyDTO = _mapper.Map<Category, CategoryDTO>(category);
+            var items = _db.Items.Where(x => x.Category_Id == categoryId);
+            
+
+            
+            return View("SearchPage", new SearchViewModel() { items = items.ToList(), Category = categotyDTO, Filter = new FilterDTO()  });
+        }
+
+        [HttpGet]
+        public IActionResult SearchPage() => View(new SearchViewModel() { });
+
+
+        [HttpGet]
+        public async Task<IActionResult> AllItems()
+        {
+            var items = await _db.Items
+                .Include(x=>x.NumberCriteriaValues)
+                .Include(x=>x.StringCriteriaValues)
+                .ToListAsync();
+            return View("Allitems", items);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> BuyItem(BuyViewModel model)
+        {
+            var item = await _db.Items.FirstOrDefaultAsync(x => x.ID == model.ItemID);
+            if (item == null) return RedirectToAction("NotFoundPage", "Home");
+
+            var sell = _mapper.Map<BuyViewModel, Order>(model);
+            sell.SellID = Guid.NewGuid();
+            sell.DeliveryInfo = _mapper.Map<BuyViewModel, DeliveryInfo>(model);
+            sell.DeliveryInfo.DeliveryID = Guid.NewGuid();
+            sell.DeliveryInfo.Sell = sell;
+            sell.DeliveryInfo.SellID = sell.SellID;   
+            sell.Status = OrderStatus.Created;
+            sell.ItemName = item.Name;
+            
+            if (User.Identity.IsAuthenticated)
             {
-                Sell sell = new Sell
-                {
-                    Id = Guid.NewGuid(),
-                    PhoneNumber = phone,
-                    Status = SellStatus.WaitForOwner,
-                    ItemId = Guid.Parse(itemId),
-                    SellerID = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
-                    Date = DateTime.Now
-                };
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                sell.BuyerID = Guid.Parse(userId);
             }
-            throw new NotImplementedException();
+
+            try
+            {
+                await _db.Sells.AddAsync(sell);
+                await _db.SaveChangesAsync();
+                return RedirectToAction("GetWelcomePage");
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
         }
 
 
         public IActionResult NotFoundPage() => View("NotFound");
 
 
-
-
-
-        public IActionResult Filter(FilterViewModel filter)
+        [HttpGet]
+        public async Task<IActionResult> GetCriterias(Guid categoryId)
         {
+            var category = await _db.Categories
+                .Include(x => x.NumberCriteriasValues)
+                .Include(x => x.StringCriteriasValues)
+                .FirstOrDefaultAsync(x=>x.Id == categoryId);
 
-            //filterService.Filter();
-            return View("SearchPage");
+            if (category == null) return NotFound("Category not found");
+
+            var numCrits = category.NumberCriteriasValues
+                                .DistinctBy(x => x.CriteriaName)
+                                .Select(x => x.CriteriaName)
+                                .ToList();
+            var strCrits = category.StringCriteriasValues
+                                .DistinctBy(x => x.CriteriaName)
+                                .Select(x => x.CriteriaName)
+                                .ToList();
+
+            return Json(new CategoryCriterias (numCrits,strCrits));
         }
-
     }
+    public record CategoryCriterias ( List<string> numCriterias, List<string> strCriteriass );
 }

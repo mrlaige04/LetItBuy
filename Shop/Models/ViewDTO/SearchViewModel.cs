@@ -1,12 +1,14 @@
-﻿using Shop.DAL.Data.Entities;
+﻿using Shop.BLL.DTO;
+using Shop.DAL.Data.Entities;
 using Shop.UI.Models.ViewDTO;
 
 namespace Shop.Models.ViewDTO
 {
     public class SearchViewModel
     {
-        public string? query { get; set; }
+        public Guid? CategoryID { get; set; }
         public IEnumerable<Item>? items { get; set; }
-        public FilterViewModel Filter { get; set; }
+        public CategoryDTO? Category { get; set; }
+        public FilterDTO Filter { get; set; } = new FilterDTO();
     }
 }

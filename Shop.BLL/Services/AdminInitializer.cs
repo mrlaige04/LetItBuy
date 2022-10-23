@@ -27,24 +27,34 @@ namespace Shop.BLL.Services
             {
                 await _roleManager.CreateAsync(new IdentityRole<Guid>("Admin"));
             }
-            var cartId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
-            Cart cart = new Cart()
+            if (!await _roleManager.RoleExistsAsync("simpleUser"))
             {
-                CartID = cartId
-            };
+                await _roleManager.CreateAsync(new IdentityRole<Guid>("simpleUser"));
+            }
+
+            var userId = Guid.NewGuid();
+            
             ApplicationUser user = new ApplicationUser()
             {
                 Email = _configuration["Admin:Email"],
                 UserName = _configuration["Admin:UserName"],
                 EmailConfirmed = true,
-                Id = userId,
-                Cart = cart,
-                CartID = cartId
+                Id = userId
             };
 
             var createAdmin_Result = await _userManager.CreateAsync(user, _configuration["Admin:Password"]);
             if (createAdmin_Result.Succeeded) await _userManager.AddToRoleAsync(user, "Admin");
+
+
+            var user2 = new ApplicationUser()
+            {
+                Email = "sabfasvf2b@gmail.com",
+                UserName = "TestUser",
+                EmailConfirmed = true,
+                Id = Guid.NewGuid()
+            };
+            var createAdmin_Result2 = await _userManager.CreateAsync(user2, "Laige123");
+            if (createAdmin_Result2.Succeeded) await _userManager.AddToRoleAsync(user2, "simpleUser");
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Shop.Models.UserModels
         public string CategoryID { get; set; }
         [Required]
         public bool IsNew { get; set; }
+        
+        
     }
-
-    
 }

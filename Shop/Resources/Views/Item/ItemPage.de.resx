@@ -117,102 +117,94 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Account" xml:space="preserve">
-    <value>Акаунт</value>
-    <comment>Account</comment>
+  <data name="Buy" xml:space="preserve">
+    <value>Besorgen</value>
   </data>
-  <data name="AccountSettings" xml:space="preserve">
-    <value>Налаштування акаунта</value>
+  <data name="Buying" xml:space="preserve">
+    <value>Kauf</value>
   </data>
-  <data name="Admin" xml:space="preserve">
-    <value>Адмін</value>
+  <data name="City" xml:space="preserve">
+    <value>Stadt</value>
   </data>
-  <data name="Adminpanel" xml:space="preserve">
-    <value>Адмін панель</value>
-    <comment>Admin panel</comment>
+  <data name="Close" xml:space="preserve">
+    <value>Nah dran</value>
   </data>
-  <data name="Categories" xml:space="preserve">
-    <value>Каталоги</value>
-    <comment>Catalogs button</comment>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Bestätigen</value>
   </data>
   <data name="Contact" xml:space="preserve">
-    <value>Підтримка</value>
+    <value>Kontakt</value>
   </data>
-  <data name="Dashboard" xml:space="preserve">
-    <value>Статистика</value>
+  <data name="Delivery data" xml:space="preserve">
+    <value>Lieferung</value>
   </data>
-  <data name="Entersomewords" xml:space="preserve">
-    <value>Введіть декілька слів</value>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
   </data>
-  <data name="Home" xml:space="preserve">
-    <value>Головна</value>
+  <data name="Item" xml:space="preserve">
+    <value>Artikel</value>
   </data>
-  <data name="Login" xml:space="preserve">
-    <value>Увійти</value>
-    <comment>Login</comment>
+  <data name="LastName" xml:space="preserve">
+    <value>Nachname</value>
   </data>
-  <data name="Logout" xml:space="preserve">
-    <value>Вийти</value>
-    <comment>Logout</comment>
+  <data name="Main info" xml:space="preserve">
+    <value>Hauptinfo</value>
   </data>
-  <data name="My items" xml:space="preserve">
-    <value>Мої товари</value>
+  <data name="Meest Express" xml:space="preserve">
+    <value>Meest Express</value>
   </data>
-  <data name="My orders" xml:space="preserve">
-    <value>Мої покупки</value>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
   </data>
-  <data name="My sells" xml:space="preserve">
-    <value>Мої продажі</value>
+  <data name="NEW" xml:space="preserve">
+    <value>Neu</value>
   </data>
-  <data name="Myaccount" xml:space="preserve">
-    <value>Мій аккаунт</value>
-    <comment>My account</comment>
+  <data name="Next" xml:space="preserve">
+    <value>Nächste</value>
   </data>
-  <data name="Mycart" xml:space="preserve">
-    <value>Моя корзина</value>
-    <comment>My cart</comment>
+  <data name="Nova Posta" xml:space="preserve">
+    <value>Nova Poshta</value>
   </data>
-  <data name="Myitems" xml:space="preserve">
-    <value>Мої товари</value>
-    <comment>My items</comment>
+  <data name="Other" xml:space="preserve">
+    <value>Sonstiges</value>
   </data>
-  <data name="MyOrders" xml:space="preserve">
-    <value>Мої покупки</value>
-    <comment>MyOrders</comment>
+  <data name="Owner phone" xml:space="preserve">
+    <value>Telefon des Besitzers</value>
   </data>
-  <data name="Mysells" xml:space="preserve">
-    <value>Мої продажі</value>
-    <comment>Mysells</comment>
+  <data name="phonenumber" xml:space="preserve">
+    <value>Telefonnummer</value>
   </data>
-  <data name="Pages" xml:space="preserve">
-    <value>Сторінки</value>
+  <data name="Post address viddilennia" xml:space="preserve">
+    <value>Anschrift der Filiale</value>
   </data>
-  <data name="Profile" xml:space="preserve">
-    <value>Профіль</value>
+  <data name="Post number viddilennia" xml:space="preserve">
+    <value>Zweig-Nummer</value>
   </data>
-  <data name="Register" xml:space="preserve">
-    <value>Зареєструватися</value>
-    <comment>Register</comment>
+  <data name="Postname" xml:space="preserve">
+    <value>Anschriftname</value>
   </data>
-  <data name="SearchButton" xml:space="preserve">
-    <value>Пошук</value>
-    <comment>Search button</comment>
+  <data name="Previous" xml:space="preserve">
+    <value>Vorherige</value>
   </data>
-  <data name="SearchPlaceholder" xml:space="preserve">
-    <value>Пошук</value>
-    <comment>SearchPlaceholder</comment>
+  <data name="Select post service" xml:space="preserve">
+    <value>Postdienst auswählen</value>
   </data>
-  <data name="SelectLanguage" xml:space="preserve">
-    <value>Оберіть мову</value>
-    <comment>Select Language</comment>
+  <data name="Specifications" xml:space="preserve">
+    <value>Spezifikationen</value>
   </data>
-  <data name="Settings" xml:space="preserve">
-    <value>Налаштування</value>
+  <data name="Start chat" xml:space="preserve">
+    <value>Chat beginnen</value>
   </data>
-  <data name="User" xml:space="preserve">
-    <value>Користувач</value>
+  <data name="State" xml:space="preserve">
+    <value>Bundesland</value>
   </data>
-  <data name="Users" xml:space="preserve">
-    <value>Користувачі</value>
+  <data name="Ukrposhta" xml:space="preserve">
+    <value>Ukrposhta</value>
+  </data>
+  <data name="USED" xml:space="preserve">
+    <value>Gebraucht</value>
   </data>
 </root>

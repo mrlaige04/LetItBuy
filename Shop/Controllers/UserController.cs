@@ -16,7 +16,6 @@ using Shop.UI.Models.ViewDTO;
 namespace Shop.Controllers
 {
     [Authorize(Roles="simpleUser, Admin")]
-    
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -102,20 +101,10 @@ namespace Shop.Controllers
             return RedirectToAction("GetProfile");
         }
 
-        [HttpGet]
-        public IActionResult AddItemPage()
-        {
-            return View();
-        }
+        [HttpGet] public IActionResult AddItemPage() => View();
 
-        [HttpGet]
-        [Authorize]
-        public IActionResult TestApiCreate()
-        {
-            var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            _apiClient.Add(userID);
-            return Ok();
-        }
+        
+        
 
         [HttpGet]
         public IActionResult MyItems()
@@ -261,91 +250,17 @@ namespace Shop.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return RedirectToAction("Logout", "Account");
-            var sells = _db.Sells.Where(x => x.SellerID.ToString() == userId).ToList();
+            var sells = _db.Sells.Include(x=>x.DeliveryInfo).Where(x => x.OwnerID.ToString() == userId).ToList();
             return View(sells);
         }
 
         [HttpGet]
-        public IActionResult MyOrders()
+        public async Task<IActionResult> MyOrders()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return RedirectToAction("Logout", "Account");
-            var orders = _db.Sells.Where(x => x.BuyerID.ToString() == userId).ToList();
+            var orders = await _db.Orders.Include(x=>x.DeliveryInfo).Where(x => x.BuyerID.ToString() == userId).ToListAsync();
             return View(orders);
         }
-
-        [HttpGet]
-        [HttpPost]
-        public async Task<IActionResult> BuyItem(string itemId)
-        {
-            if (ModelState.IsValid)
-            {
-                var ownerId = _db.Items.FirstOrDefault(x => x.ID.ToString() == itemId).OwnerID;
-                var buyerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-
-
-                if (ownerId.ToString() == buyerId)
-                {
-                    return BadRequest("You cannot order your item!");
-                }
-
-
-                Sell sell = new Sell
-                {
-                    Id = Guid.NewGuid(),
-                    BuyerID = Guid.Parse(buyerId),
-                    ItemId = Guid.Parse(itemId),
-                    SellerID = ownerId,
-                    Date = DateTime.Now,
-                    Status = SellStatus.WaitForOwner
-                };
-                try
-                {
-                    _db.Sells.Add(sell);
-                    await _db.SaveChangesAsync();
-                }
-                catch (Exception e)
-                {
-                    return BadRequest(e.Message);
-                }
-            }
-            else return BadRequest();
-            return RedirectToAction("MyOrders", "User");
-        } // TODO : BUY
-
-
-        [HttpGet]
-        [HttpPost]
-        public async Task<IActionResult> AddToCart(string itemId) // TODO :CART
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var cart = _db.Carts.Include(x=>x.ItemsInCart).FirstOrDefault(x => x.UserID == user.Id);
-            if (user == null) return RedirectToAction("Logout", "Account");
-            var item = _db.Items.FirstOrDefault(x => x.ID.ToString() == itemId);
-            if (item == null) return BadRequest();
-            cart.ItemsInCart.Add(new CartItem()
-            {
-                Cart = cart,
-                CartItemID = cart.CartID,
-                Item = item,
-            });
-            _db.Carts.Update(cart);
-            await _db.SaveChangesAsync();
-            return Ok();
-        }
-
-
-        [HttpGet]
-        public IActionResult Cart() // TODO : CART VIEW
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var cart = _db.Carts
-                .Include(x => x.ItemsInCart)
-                    .ThenInclude(x=>x.Item)
-                .FirstOrDefault(x => x.UserID.ToString() == userId);
-            return View(cart);
-        }
     }  
-
 }

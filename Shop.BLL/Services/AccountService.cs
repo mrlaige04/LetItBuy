@@ -39,18 +39,12 @@ namespace Shop.BLL.Services
             {
                 Email = reg_dto.Email,
                 UserName = reg_dto.Username,
-                Cart = new Cart()
-                {
-                    CartID = cartId,
-                    UserID = userId,
-                    ItemsInCart = new List<CartItem>() { }
-                },
-                CartID = cartId,
+                
                 Items = new List<Item>(),
                 Id = userId,
                 PhoneNumber = reg_dto.PhoneNumber,
             };
-            user.Cart.UserOwner = user;
+            
 
 
 

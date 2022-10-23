@@ -124,16 +124,22 @@
   <data name="AccountSettings" xml:space="preserve">
     <value>Account Einstellungen</value>
   </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
   <data name="Adminpanel" xml:space="preserve">
     <value>Administrationsmenü</value>
     <comment>Adminpanel</comment>
   </data>
-  <data name="Catalogs" xml:space="preserve">
+  <data name="Categories" xml:space="preserve">
     <value>Kataloge</value>
     <comment>Catalogs</comment>
   </data>
   <data name="Contact" xml:space="preserve">
     <value>Kontakt</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Armaturenbrett</value>
   </data>
   <data name="Entersomewords" xml:space="preserve">
     <value>Geben Sie einige Wörter ein</value>
@@ -148,6 +154,15 @@
   <data name="Logout" xml:space="preserve">
     <value>Ausloggen</value>
     <comment>Logout</comment>
+  </data>
+  <data name="My items" xml:space="preserve">
+    <value>Meine Sachen</value>
+  </data>
+  <data name="My orders" xml:space="preserve">
+    <value>Meine Bestellungen</value>
+  </data>
+  <data name="My sells" xml:space="preserve">
+    <value>Meine verkauft</value>
   </data>
   <data name="Myaccount" xml:space="preserve">
     <value>Mein Konto</value>
@@ -193,5 +208,11 @@
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Einstellungen</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Benutzer</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Benutzer</value>
   </data>
 </root>

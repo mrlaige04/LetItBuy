@@ -92,34 +92,7 @@
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                var characteristics = document.getElementById("CharacteristicsFields");
-                characteristics.innerHTML = "";
-                data.forEach(x => {
-                    var div = document.createElement("div");
-                    div.classList.add("form-group");
-                    var label = document.createElement("label");
-                    label.innerHTML = x.name;
-                    div.appendChild(label);
-
-                    var input = document.createElement("input");
-                    input.classList.add("form-control");
-                    input.name = "x" + x.name;
-                    
-                    if (x.type == "2") {            
-                        input.type = "number";                       
-                    } else if (x.type=="1") {                     
-                        input.type = "number";
-                        input.min = "0";
-                    } else if (x.type == "0") {
-                        input.type = "text";
-                    } else if (x.type == "4") {
-                        input.type = "checkbox";
-                    } else if (x.type == "3") {
-                        input.type = "date";
-                    }
-                    
-                    div.appendChild(input);
-                    characteristics.appendChild(div);
+                
                 });     
             });
     }

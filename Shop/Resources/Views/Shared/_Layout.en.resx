@@ -124,16 +124,22 @@
   <data name="AccountSettings" xml:space="preserve">
     <value>Account Settings</value>
   </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
   <data name="Adminpanel" xml:space="preserve">
     <value>Admin Panel</value>
     <comment>Admin panel</comment>
   </data>
-  <data name="Catalogs" xml:space="preserve">
+  <data name="Categories" xml:space="preserve">
     <value>Catalogs</value>
     <comment>Catalogs</comment>
   </data>
   <data name="Contact" xml:space="preserve">
     <value>Contact</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
   </data>
   <data name="Entersomewords" xml:space="preserve">
     <value>Enter Some Words</value>
@@ -148,6 +154,15 @@
   <data name="Logout" xml:space="preserve">
     <value>Logout</value>
     <comment>Logout</comment>
+  </data>
+  <data name="My items" xml:space="preserve">
+    <value>My Items</value>
+  </data>
+  <data name="My orders" xml:space="preserve">
+    <value>My Orders</value>
+  </data>
+  <data name="My sells" xml:space="preserve">
+    <value>My Sells</value>
   </data>
   <data name="Myaccount" xml:space="preserve">
     <value>My account</value>
@@ -193,5 +208,11 @@
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Users</value>
   </data>
 </root>

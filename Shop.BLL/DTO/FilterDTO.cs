@@ -1,9 +1,4 @@
 ﻿using Shop.DAL.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shop.BLL.DTO
 {
@@ -11,10 +6,13 @@ namespace Shop.BLL.DTO
     {
         public decimal minPrice { get; set; } = 0;
         public decimal maxPrice { get; set; } = decimal.MaxValue;
-        public string? query = string.Empty;
-        public Guid CategoryID { get; set; } = Guid.Empty;
+        public string query { get; set; }
+        public Guid? CategoryID { get; set; }
 
-        public IEnumerable<NumberCriteriaValue>? NumberFilters { get; set; }
-        public IEnumerable<StringCriteriaValue>? StringFilters { get; set; }
+        public List<NumberFilterCriteriaModel>? NumberFilters { get; set; } = new List<NumberFilterCriteriaModel>();
+        public List<StringFilterCriteriaModel>? StringFilters { get; set; } = new List<StringFilterCriteriaModel>();
     }
+
+    public record NumberFilterCriteriaModel(Guid CriteriaID, IEnumerable<Guid>? ValueIDS);
+    public record StringFilterCriteriaModel(Guid CriteriaID, IEnumerable<Guid>? ValueIDS);
 }

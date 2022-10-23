@@ -29,7 +29,9 @@ namespace LetItBuy_API.Controllers
         public async Task<IActionResult> Get(Guid id)
         {
             if (id == Guid.Empty) return BadRequest("Invalid id");
-            var advert = await _db.Items.Where(x => x.ID == id).FirstOrDefaultAsync();
+            var advert = await _db.Items
+                .Include(x=>x.OwnerUser)
+                .FirstOrDefaultAsync(x => x.ID.ToString() == id.ToString());
             if (advert == null) return NotFound();
             return Ok(advert);
         }

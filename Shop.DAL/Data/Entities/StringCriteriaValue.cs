@@ -12,7 +12,14 @@ namespace Shop.DAL.Data.Entities
         public Guid CriteriaID { get; set; }
 
         public Category Category { get; set; }
+        [Key]
         public Guid CategoryID { get; set; }
+        public string CategoryName { get; set; }
+
+        
+        public bool multiple { get; set; }
+
+        
         public ICollection<Item> Items { get; set; } = null!;
     }
 }

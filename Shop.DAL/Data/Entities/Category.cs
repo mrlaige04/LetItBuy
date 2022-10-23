@@ -8,13 +8,10 @@ namespace Shop.DAL.Data.Entities
     {
         [Key]
         public Guid Id { get; set; }
+        [Key]
         public string Name { get; set; }
 
         public ICollection<NumberCriteriaValue> NumberCriteriasValues { get; set; } = null!;
-        public ICollection<StringCriteriaValue> StringCriteriasValues { get; set; } = null!;
-
-
-
-        
+        public ICollection<StringCriteriaValue> StringCriteriasValues { get; set; } = null!;  
     }
 }

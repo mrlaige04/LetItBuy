@@ -1,23 +1,30 @@
-﻿@using Shop.DAL.Data.Entities
-@model IEnumerable<Sell>;
+﻿@using Shop.DAL.Data.Entities;
+@model List<Order>;
 
 
-@if (Model!=null) {
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-4 item">
-                @foreach (var item in Model)
-                {
-                    <a class="product-item" asp-action="ItemPage" asp-controller="Home" asp-route-id="@item.ItemId">
-                        
-                        <div class="product-item__info">
-                            <h3 class="product-item__title">@item.Id</h3>
-                            <p class="product-item__price">@item.BuyerID</p>
-                            <p>@item.SellerID</p>
+<div class="row">
+    @if(Model != null) {
+        @foreach (var order in Model)
+        {
+            <div class="card">
+                <div class="card-body mt-3">
+                    <a asp-controller="Item" asp-action="GetItem" asp-route-id="@order.ItemID" class="card-title">@order.ItemName</a>
+                    <p>Status : @order.Status</p>
+                    <div class="row">
+                        <div>
+                            <h4>Delivery</h4>
+                            <p>Deliver to city: @order.DeliveryInfo.City</p>
+                            <p>Deliver by '@order.DeliveryInfo.PostName' POST</p>
+                            <p>Branch : #@order.DeliveryInfo.PostNumber, @order.DeliveryInfo.PostAddress street</p>
                         </div>
-                    </a>
-                }
+                    </div>
+                    @if (order.Status != OrderStatus.Canceled)
+                    {
+                        <a asp-route-returnUri="@string.Format( Context.Request.Path + Context.Request.QueryString )" asp-controller="Item" asp-action="CancelSell" asp-route-id="@order.SellID" class="btn btn-dark col-12 mb-3">Cancel order</a>
+                    }
+                    <a asp-route-returnUri="@string.Format( Context.Request.Path + Context.Request.QueryString )" asp-controller="Item" asp-action="DeleteSell" asp-route-id="@order.SellID" class="btn btn-dark col-12 mb-3">Delete<i class="bi bi-trash"></i></a>
+                </div>
             </div>
-        </div>
-    </div>
-}
+        }
+    }
+</div>

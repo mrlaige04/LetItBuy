@@ -137,6 +137,8 @@ app.UseFileServer(new FileServerOptions()
     EnableDirectoryBrowsing = false
 });
 
+
+/// Default initialize
 var serviceProvider = app.Services.CreateScope().ServiceProvider;
 using (var adminInitializer = serviceProvider.GetRequiredService<AdminInitializer>())
 {
@@ -149,7 +151,7 @@ using (var adminInitializer = serviceProvider.GetRequiredService<AdminInitialize
 using (var dbinitializer = serviceProvider.GetRequiredService<DBInitializer>())
 {
     if (dbinitializer != null)
-    { // INIT DB BY JSON LIKE [{category:name, id, numbercritvalue:[{name, list<double> values}]}] and by foreach do it
+    {
         await dbinitializer.InitializeAsync();
     }
 }

@@ -1,6 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
 @using Shop.Models.ViewDTO;
+@using Shop.UI
 @model SearchViewModel;
+@inject IStringLocalizer<LocalizeCriteria> CriteriaLocalizer;
 @inject IViewLocalizer Localizer;
 
 <div class="pagetitle">
@@ -19,8 +22,10 @@
                 <h5 class="card-title">@Localizer["Enterquery"]</h5>
                 <div class="filter">
                     <form asp-controller="Home" asp-action="Index" method="get">
+                        <input asp-for="@Model.CategoryID" value="@Model.Category?.Id" type="text" name="CategoryID" class="d-none"/>
+                        <input asp-for="@Model.Filter.CategoryID" value="@Model.Category?.Id" type="text" class="d-none" />
                         <div class="col mb-3">
-                            <input asp-for="query" class="form-control" name="query" title="EnterSomeText" id="">
+                            <input value="@Model.Filter.query" asp-for="@Model.Filter.query"  class="form-control">
                         </div>
                         <div class="accordion mb-3" id="accordionExample">
                             <div class="accordion-item">
@@ -45,6 +50,37 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            @if (Model.Category != null && Model.Category.NumberCriterias != null) {
+                                                @foreach (var numGroup in Model.Category.NumberCriterias)
+                                                {
+                                                    <div class="numGroup col-md-3">
+                                                        <select multiple class="form-select" id="@numGroup.key.CriteriaName">
+                                                            <option selected disabled>@numGroup.key.CriteriaName</option>
+                                                            @foreach (var num in numGroup.value)
+                                                            {
+                                                                <option value="@num.ValueID">@num.Value</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                }
+                                            }
+                                            @if (Model.Category != null && Model.Category.StringCriterias != null)
+                                            {
+                                                @foreach (var strGroup in Model.Category.StringCriterias)
+                                                {
+                                                     <div class="numGroup col-md-3 mt-3">
+                                                        <select multiple class="form-select" id="@strGroup.key.CriteriaName">
+                                                            <option selected disabled>@strGroup.key.CriteriaName</option>
+                                                            @foreach (var num in strGroup.value)
+                                                            {
+                                                                <option value="@num.ValueID">@num.Value</option>
+                                                            }
+                                                        </select>
+                                                     </div>
+                                                }
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -66,13 +102,13 @@
             </div>
             @foreach (var item in Model.items) {
                 <div class="card mb-3">
-                    <div class="row g-0">
+                    <div class="row g-0 mt-3">
                         <div class="col-md-4">
                             <img src="@item.ImageUrl" alt="itemimage">
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
-                                <h5 class="card-title">@item.Name</h5>
+                                <a class="card-title" asp-controller="Item" asp-action="GetItem" asp-route-id="@item.ID">@item.Name</a>
                                 <p class="card-text">@item.Description</p>
                                 <div class="card-text"><strong>@item.Price @item.Currency</strong></div>
                             </div>

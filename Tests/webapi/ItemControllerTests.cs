@@ -74,7 +74,7 @@ namespace Shop.Tests.webapi
         
 
         [Test]
-        public async void CreateSuccess()
+        public async Task CreateSuccess()
         {
             var userID = new Guid();
             Item item = new Item();
@@ -87,7 +87,7 @@ namespace Shop.Tests.webapi
         [Test]
         public void CreateUnauthorized()
         {
-
+            
         }
 
         [Test]
