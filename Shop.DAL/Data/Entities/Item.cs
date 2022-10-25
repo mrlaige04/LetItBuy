@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Shop.DAL.Data.Entities
 {
@@ -16,14 +11,14 @@ namespace Shop.DAL.Data.Entities
 
         public Guid OwnerID { get; set; }
         public string? Description { get; set; }
-        
+
         public decimal Price { get; set; }
         public Currency Currency { get; set; }
 
-        
-        
 
-        
+
+
+
         public Guid? Category_Id { get; set; }
         public string CategoryName { get; set; }
         public string? ImageUrl { get; set; }
@@ -40,8 +35,6 @@ namespace Shop.DAL.Data.Entities
 
     public enum Currency
     {
-        USD,
-        UAH,
-        EUR
+        UAH
     }
 }

@@ -10,7 +10,7 @@ namespace Shop.DAL.Data.Entities
         public Guid ID { get; set; }
         public string FileName { get; set; }
         public Item Item { get; set; }
-        
+
         public Guid ItemID { get; set; }
         public Guid OwnerID { get; set; }
     }

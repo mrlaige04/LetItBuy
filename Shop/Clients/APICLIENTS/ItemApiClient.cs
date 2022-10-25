@@ -2,7 +2,6 @@
 
 using Shop.DAL.Data.Entities;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 
 namespace Shop.UI.Clients.APICLIENTS
 {
@@ -36,12 +35,12 @@ namespace Shop.UI.Clients.APICLIENTS
 
         public void GetAll()
         {
-            
+
         }
 
         public void Take(int skip, int n)
         {
-            
+
         }
 
         public async void Add(string userId)
@@ -50,7 +49,7 @@ namespace Shop.UI.Clients.APICLIENTS
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             Item item = new Item()
             {
-                
+
                 Name = "Test",
                 Description = "Test",
                 Price = 100,
@@ -63,12 +62,12 @@ namespace Shop.UI.Clients.APICLIENTS
 
         public void Delete()
         {
-            
+
         }
 
         public void Update()
         {
-            
+
         }
     }
 }

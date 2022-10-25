@@ -1,15 +1,7 @@
 ﻿using Bogus;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Moq;
 using Newtonsoft.Json;
-using NUnit;
-using Shop.DAL.Data.EF;
 using Shop.DAL.Data.Entities;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 
 namespace Shop.Tests.webapi
 {
@@ -44,14 +36,14 @@ namespace Shop.Tests.webapi
             Item item = JsonConvert.DeserializeObject<Item>(response);
             Assert.IsNotNull(item);
         }
-        
+
         [Test]
         public async Task GetNotFound()
         {
             var guidFake = new Faker().Random.Guid();
 
             var response = await _client.GetAsync($"{baseUrl}/{guidFake}");
-            
+
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
         [Test]
@@ -64,14 +56,14 @@ namespace Shop.Tests.webapi
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
 
-        
+
         //////////////////////////////////////////////////
 
 
 
-        
+
         //////////////////////////////////////////////////
-        
+
 
         [Test]
         public async Task CreateSuccess()
@@ -87,7 +79,7 @@ namespace Shop.Tests.webapi
         [Test]
         public void CreateUnauthorized()
         {
-            
+
         }
 
         [Test]
@@ -103,10 +95,10 @@ namespace Shop.Tests.webapi
         }
 
 
-        
+
         /////////////////////////////////////////////////
-        
-        
+
+
 
         [Test]
         public void EditSuccess()
@@ -134,10 +126,10 @@ namespace Shop.Tests.webapi
 
         }
 
-        
-        
+
+
         //////////////////////////////////////////////////
-       
+
 
 
         [Test]
@@ -153,12 +145,12 @@ namespace Shop.Tests.webapi
         [Test]
         public void DeleteUnauthorized()
         {
-            
+
         }
         [Test]
         public void DeleteServerError()
         {
-            
+
         }
     }
 }

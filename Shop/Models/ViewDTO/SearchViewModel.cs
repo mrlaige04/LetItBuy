@@ -1,6 +1,5 @@
 ﻿using Shop.BLL.DTO;
 using Shop.DAL.Data.Entities;
-using Shop.UI.Models.ViewDTO;
 
 namespace Shop.Models.ViewDTO
 {

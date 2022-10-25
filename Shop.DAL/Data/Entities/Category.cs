@@ -12,6 +12,6 @@ namespace Shop.DAL.Data.Entities
         public string Name { get; set; }
 
         public ICollection<NumberCriteriaValue> NumberCriteriasValues { get; set; } = null!;
-        public ICollection<StringCriteriaValue> StringCriteriasValues { get; set; } = null!;  
+        public ICollection<StringCriteriaValue> StringCriteriasValues { get; set; } = null!;
     }
 }

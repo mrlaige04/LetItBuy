@@ -20,17 +20,9 @@
     });
 }
 <form asp-action="AddItem" asp-controller="User" method="post" enctype="multipart/form-data">
-    <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <a class="nav-link active" data-bs-toggle="tab" href="#maininfo" aria-selected="false" role="tab" tabindex="-1">@Localizer["MainInfo"]</a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link" data-bs-toggle="tab" href="#CharacteristicsFields" aria-selected="false" role="tab" tabindex="-1">@Localizer["Characteristics"]</a>
-        </li>
-    </ul>
+    
 
-    <div id="myTabContent" class="tab-content">
-        <div class="tab-pane fade active show" id="maininfo" role="tabpanel">
+
             <div class="form-group">
                 <label for="itemName">@Localizer["ItemName"]</label>
                 <input asp-for="Name" type="text" class="form-control" required id="itemName">
@@ -55,8 +47,8 @@
                 <input asp-for="Description" type="text" class="form-control" required id="itemName">
             </div>
             <div class="form-group">
-              <label for="formFile" class="form-label mt-4">@Localizer["SelectItemImage"]</label>
-              <input class="form-control" name="itemImage" type="file" id="itemImage">
+              <label for="formFile"  class="form-label mt-4">@Localizer["SelectItemImage"]</label>
+              <input class="form-control" multiple name="photos" type="file" id="itemImage">
             </div>
             
             <div class="form-check">
@@ -70,11 +62,15 @@
                 })
             </div>
            
-        </div>
         
-        <div class="tab-pane fade" id="CharacteristicsFields" role="tabpanel"> 
-        </div>
-    </div>
+        
+            <div class="col-6" id="containernumberCrits">
+      
+            </div>
+            <div class="col-6" id="containerstringCrits">
+            </div>
+
+
         
 
 
@@ -86,23 +82,71 @@
 
 
 <script>
+    var containernumberCrits = document.getElementById("containernumberCrits");
+    var containerstringCrits = document.getElementById("containerstringCrits");
+
     function loadCriterias(categoryId) {
-        
+
         var url = "/Home/GetCriterias?categoryId=" + categoryId;
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                
-                });     
+                containerstringCrits.innerHTML = "";
+                containernumberCrits.innerHTML = "";
+                data.numCrits.forEach(function (item) {
+                    var select = document.createElement("select");
+                    select.classList.add("form-select");
+                    select.classList.add("mb-3");
+                    select.name = item.CriteriaID;
+                    select.setAttribute("required", "required");
+                    if (item.Multiple == true) {
+                        select.setAttribute("multiple", "multiple");
+                    }
+                    var defaultdisabled = document.createElement("option");
+                    defaultdisabled.setAttribute("disabled","disabled");
+                    defaultdisabled.setAttribute("selected", "selected");
+                    defaultdisabled.innerHTML = `${item.Name}`;
+                    select.appendChild(defaultdisabled);
+                    item.Values.forEach(function(value) {
+                        var option = document.createElement("option");
+                        option.setAttribute("value", value.valueid);
+                        option.innerHTML = value.value;
+                        select.appendChild(option);
+                    });
+                    containernumberCrits.appendChild(select);
+                });
+                data.strCrits.forEach(function (item) {
+                    var select = document.createElement("select");
+                    select.classList.add("form-select");
+                    select.classList.add("mb-3");
+                    select.name = item.CriteriaID;
+                    select.setAttribute("required", "required");
+                    if (item.Multiple == true) {
+                        select.setAttribute("multiple", "multiple");
+                    }
+                    var defaultdisabled = document.createElement("option");
+                    defaultdisabled.setAttribute("disabled", "disabled");
+                    defaultdisabled.setAttribute("selected", "selected");
+                    defaultdisabled.innerHTML = `${item.Name}`;
+                    select.appendChild(defaultdisabled);
+                    item.Values.forEach(function (value) {
+                        var option = document.createElement("option");
+                        option.setAttribute("value", value.valueid);
+                        option.innerHTML = value.value;
+                        select.appendChild(option);
+                    });
+                    containerstringCrits.appendChild(select);
+                });
             });
     }
+    var select = document.getElementsByClassName("categorySelect")[0];
     document.getElementsByClassName("categorySelect")[0].onchange = function (x) {
-            loadCriterias(x.target.value);
+        loadCriterias(x.target.value);
     }
     document.addEventListener("DOMContentLoaded", ready);
     function ready() {
         loadCriterias(document.getElementById("categorySelectID").value);
     }
-</script>
 
+</script>
     

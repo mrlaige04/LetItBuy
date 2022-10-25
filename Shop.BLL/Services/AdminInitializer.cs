@@ -18,7 +18,7 @@ namespace Shop.BLL.Services
 
         public void Dispose()
         {
-            
+
         }
 
         public async Task InitializeAdminAsync()
@@ -33,7 +33,7 @@ namespace Shop.BLL.Services
             }
 
             var userId = Guid.NewGuid();
-            
+
             ApplicationUser user = new ApplicationUser()
             {
                 Email = _configuration["Admin:Email"],

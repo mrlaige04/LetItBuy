@@ -1,21 +1,21 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Shop.Models.UserModels;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
-using Shop.DAL.Data.Entities;
-using Shop.DAL.Data.EF;
-using Shop.BLL.Services;
+using NuGet.Packaging;
 using Shop.BLL.Models;
+using Shop.BLL.Services;
+using Shop.DAL.Data.EF;
+using Shop.DAL.Data.Entities;
+using Shop.Models.UserModels;
 using Shop.UI.Clients.APICLIENTS;
-using AutoMapper;
-using Shop.BLL.DTO;
 using Shop.UI.Models.ViewDTO;
+using System.Security.Claims;
 
 namespace Shop.Controllers
 {
-    [Authorize(Roles="simpleUser, Admin")]
+    [Authorize(Roles = "simpleUser, Admin")]
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -50,7 +50,7 @@ namespace Shop.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> EditProfile(EditProfileViewModel editModel)
+        public async Task<IActionResult> EditProfile(EditProfileViewModel editModel) // TODO : Upload user image
         {
             if (!ModelState.IsValid) return View("MyProfile", editModel);
             var user = await _userManager.GetUserAsync(User);
@@ -58,53 +58,80 @@ namespace Shop.Controllers
             user.AboutMe = editModel.AboutMe;
             user.PhoneNumber = editModel.PhoneNumber;
             user.UserName = editModel.UserName;
+
+            var photo = editModel.Image;
+            if (photo != null) {
+                var ext = photo.FileName.Substring(photo.FileName.LastIndexOf('.'));
+                var path = string.Format(_webHost.WebRootPath + "\\UserPhotos\\" + user.Id + ext);
+                using (var str = new FileStream(Path.Combine(_webHost.WebRootPath, "\\UserPhotos\\", photo.FileName), FileMode.Create))
+                {
+                    await str.CopyToAsync(photo.OpenReadStream());
+                }
+                user.ImageURL = user.Id + ext;
+            }
             await _userManager.UpdateAsync(user);
             return View("MyProfile");
         }
 
-        
+
         [HttpPost]
-        public async Task<IActionResult> SetUserImage(IFormFile photo)
-        {        
+        public async Task<IActionResult> SetProfilePhoto(IFormFile photo)
+        {
             if (ModelState.IsValid)
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (userId == null)
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
                 {
                     ModelState.AddModelError("", "No user found");
                     return RedirectToAction("Logout", "Account");
                 }
-                var setUserPhoto_Result = await _photoService.SetUserProfileImage(photo, userId);
-                if (setUserPhoto_Result.ResultCode == ResultCodes.Fail)
+                var ext = photo.FileName.Substring(photo.FileName.LastIndexOf('.'));
+                var path = string.Format(_webHost.WebRootPath + "\\UserPhotos\\" + user.Id + ext);
+                using (var str = new FileStream(Path.Combine(_webHost.WebRootPath, "\\UserPhotos\\", photo.FileName), FileMode.Create))
                 {
-                    foreach (var error in setUserPhoto_Result.Errors)
-                    {
-                        ModelState.AddModelError("", error);
-                    }
+                    await str.CopyToAsync(photo.OpenReadStream());
+                }
+                try
+                {
+                    user.ImageURL = user.Id + ext;
+                    _db.Users.Update(user);
+                    await _db.SaveChangesAsync();
+                    return Ok();
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("", e.Message);
                 }
             }
             return RedirectToAction("GetProfile");
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteUserImage()
+        [HttpDelete]
+        [HttpGet]
+        public async Task<IActionResult> DeleteImagePhoto()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var deleteUserImage = await _photoService.DeleteUserImage(userId);
-            if (deleteUserImage.ResultCode == ResultCodes.Fail)
+            var user = await _userManager.GetUserAsync(User);
+            System.IO.File.Delete(string.Format("..\\UserPhotos\\" + user.ImageURL));
+            user.ImageURL = null;
+            try
             {
-                foreach (var error in deleteUserImage.Errors)
-                {
-                    ModelState.AddModelError("", error);
-                }
+                _db.Users.Update(user);
+                await _db.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", e.Message);
             }
             return RedirectToAction("GetProfile");
         }
 
         [HttpGet] public IActionResult AddItemPage() => View();
 
-        
-        
+
+
 
         [HttpGet]
         public IActionResult MyItems()
@@ -112,80 +139,92 @@ namespace Shop.Controllers
             var user = _userManager.GetUserAsync(User).Result;
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (id == null) return RedirectToAction("Logout", "Account");
-            var items = _db.Items.Where(x=>x.OwnerID.ToString() == id).ToList();
+            var items = _db.Items.Where(x => x.OwnerID.ToString() == id).ToList();
             return View(items);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddItem(ItemAddViewModel viewItem)
+        public async Task<IActionResult> AddItem(ItemAddViewModel viewItem, IFormFileCollection photos)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    var isnew = Request.Form["IsNew"];
-            //    var image = Request.Form.Files["itemImage"];
-            //    var user = await _userManager.GetUserAsync(User);
-            //    if (user == null) return RedirectToAction("Logout", "Account");
-            //    Category? category = _db.Categories
-            //        .Include(x=>x.Criterias)
-            //        .FirstOrDefault(x => x.Id.ToString() == viewItem.CategoryID);
-                
-            //    Item item = new Item
-            //    {
-            //        ID = Guid.NewGuid(),
-            //        Description = viewItem.Description,
-            //        Name = viewItem.Name,
-            //        Price = viewItem.Price,
-            //        Currency = viewItem.Currency,
-            //        Category = category,
-            //        CategoryID = category.Id,
-            //        CategoryName = category.Name,
-            //        Characteristics = new List<Characteristic>(),  
-            //        IsNew = viewItem.IsNew
-            //    };
-            //    if (image != null)
-            //    {
-            //        string path = Path.Combine("wwwroot\\ItemPhotos\\", item.ID.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.')));
-            //        using (var stream = new FileStream(path, FileMode.Create))
-            //        {
-            //            await image.CopyToAsync(stream);
-            //        }
-            //        item.ImageUrl = item.ID.ToString() + image.FileName.Substring(image.FileName.LastIndexOf('.'));
-            //    }
-            //    for (int i = 0; i < category?.Criterias.Count; i++)
-            //    {
-            //        var criteria = category.Criterias.ToList()[i];
-            //        var str = Request.Form[$"x{criteria.Name}"];
-            //        item.Characteristics.Add(new Characteristic()
-            //        {
-            //            ID = Guid.NewGuid(),
-            //            CriteriaID = criteria.ID,
-            //            //Value = str,
-            //            Item = item,
-            //            ItemID = item.ID,
-            //            Name = criteria.Name,
-            //            CriteriaName = criteria.Name
-            //        });
-            //    }
-                
-            //    var addItem_Result = await _userService.AddItemAsync(user, item);
-            //    if (addItem_Result.ResultCode == ResultCodes.Success)
-            //    {
-            //        return RedirectToAction("MyItems");
-            //    }
-            //    else
-            //    {
-            //        foreach (var error in addItem_Result.Errors)
-            //        {
-            //            ModelState.AddModelError("", error);
-            //        }
-            //    }
-            //}
-            
-            return View("AddItemPage");
-            
+            if (ModelState.IsValid)
+            {
+                var category = await _db.Categories.Include(x => x.NumberCriteriasValues)
+                    .Include(x => x.StringCriteriasValues)
+                    .FirstOrDefaultAsync(x => x.Id == viewItem.CategoryID);
+
+                if (category == null) return NotFound();
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return Unauthorized();
+                Item item = new Item()
+                {
+                    ID = Guid.NewGuid(),
+                    Category_Id = category.Id,
+                    CategoryName = category.Name,
+                    Currency = viewItem.Currency,
+                    Description = viewItem.Description,
+                    IsNew = viewItem.IsNew,
+                    Name = viewItem.Name,
+                    Price = viewItem.Price,
+                    OwnerUser = user,
+                    OwnerID = user.Id,
+                    NumberCriteriaValues = new List<NumberCriteriaValue>(),
+                    StringCriteriaValues = new List<StringCriteriaValue>(),
+                    Photos = new List<ItemPhoto>()
+                };
+
+                await Parallel.ForEachAsync(photos, async (photo, y) =>
+                {
+                    ItemPhoto itemPhoto = new ItemPhoto()
+                    {
+                        Item = item,
+                        ItemID = item.ID,
+                        FileName = photo.FileName,
+                        OwnerID = user.Id,
+                        ID = Guid.NewGuid()
+                    };
+                    var path = _webHost.WebRootPath + "\\ItemPhotos\\" + photo.FileName;
+                    using (var fs = new FileStream(path, FileMode.Create))
+                    {
+                        await photo.CopyToAsync(fs);
+                    }
+                    item.Photos.Add(itemPhoto);
+                });
+
+
+                var numCriteriasIDS = category.NumberCriteriasValues.Select(x => x.CriteriaID);
+                var strCriteriasIDS = category.StringCriteriasValues.Select(x => x.CriteriaID);
+
+                foreach (var numCrit in numCriteriasIDS)
+                {
+                    var valuesIDS = Request.Form[numCrit.ToString()].ToList();
+                    var values = category.NumberCriteriasValues.Where(x => valuesIDS.Contains(x.ValueID.ToString()) && x.CriteriaID == numCrit).ToList();
+                    item.NumberCriteriaValues.AddRange(values);
+                }
+
+                foreach (var strCrit in strCriteriasIDS)
+                {
+                    var valuesIDS = Request.Form[strCrit.ToString()].ToList();
+                    var values = category.StringCriteriasValues.Where(x => valuesIDS.Contains(x.ValueID.ToString()) && x.CriteriaID == strCrit).ToList();
+                    item.StringCriteriaValues.AddRange(values);
+                }
+                item.NumberCriteriaValues = item.NumberCriteriaValues.DistinctBy(x => new { x.CriteriaID, x.ValueID }).ToList();
+                item.StringCriteriaValues = item.StringCriteriaValues.DistinctBy(x => new { x.CriteriaID, x.ValueID }).ToList();
+                try
+                {
+                    await _db.Items.AddAsync(item);
+                    await _db.SaveChangesAsync();
+                    return Ok();
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("", e.Message);
+                    return BadRequest(ModelState);
+                }
+            }
+            else return View("AddItemPage", viewItem);
         }
 
-        
+
         [HttpGet]
         public IActionResult EditItem(Guid ItemId)
         {
@@ -250,7 +289,7 @@ namespace Shop.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return RedirectToAction("Logout", "Account");
-            var sells = _db.Sells.Include(x=>x.DeliveryInfo).Where(x => x.OwnerID.ToString() == userId).ToList();
+            var sells = _db.Sells.Include(x => x.DeliveryInfo).Where(x => x.OwnerID.ToString() == userId).ToList();
             return View(sells);
         }
 
@@ -259,8 +298,8 @@ namespace Shop.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return RedirectToAction("Logout", "Account");
-            var orders = await _db.Orders.Include(x=>x.DeliveryInfo).Where(x => x.BuyerID.ToString() == userId).ToListAsync();
+            var orders = await _db.Orders.Include(x => x.DeliveryInfo).Where(x => x.BuyerID.ToString() == userId).ToListAsync();
             return View(orders);
         }
-    }  
+    }
 }

@@ -28,11 +28,16 @@ namespace Shop.UI.Controllers
         {
             if (Guid.TryParse(id, out Guid itemId))
             {
-                var item = await _db.Items.Include(x => x.OwnerUser).FirstOrDefaultAsync(x => x.ID.ToString() == itemId.ToString());//await itemApiClient.Get(itemId);
+                var item = await _db.Items
+                    .Include(x => x.Photos)
+                    .Include(x => x.NumberCriteriaValues)
+                    .Include(x => x.StringCriteriaValues)
+                    .Include(x => x.OwnerUser).FirstOrDefaultAsync(x => x.ID.ToString() == itemId.ToString());//await itemApiClient.Get(itemId);
                 if (item == null) return RedirectToAction("NotFoundPage", "Home");
                 var itemDTO = _mapper.Map<ItemDTO>(item);
                 return View("ItemPage", new ItemViewModel() { Item = itemDTO });
-            } else
+            }
+            else
             {
                 return BadRequest("Invalid id");
             }
@@ -61,7 +66,7 @@ namespace Shop.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> ConfirmSell(Guid id)
         {
-            var sell = await _db.Sells.Where(x => x.SellID == id).FirstOrDefaultAsync();
+            var sell = await _db.Sells.Where(x => x.OrderID == id).FirstOrDefaultAsync();
             if (sell == null) return RedirectToAction("NotFoundPage", "Home");
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId != sell.OwnerID.ToString()) return Unauthorized();
@@ -71,7 +76,8 @@ namespace Shop.UI.Controllers
                 _db.Sells.Update(sell);
                 await _db.SaveChangesAsync();
                 return RedirectToAction("MySells", "User");
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, e.Message);
             }
@@ -81,18 +87,19 @@ namespace Shop.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> CancelSell(Guid id, string returnUri)
         {
-            var sell = await _db.Sells.Where(x => x.SellID == id).FirstOrDefaultAsync();
+            var sell = await _db.Sells.Where(x => x.OrderID == id).FirstOrDefaultAsync();
             if (sell == null) return RedirectToAction("MySells", "User");
             var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
-            if (Guid.Parse(userid) != sell.BuyerID && Guid.Parse(userid) != sell.OwnerID ) return Unauthorized();
+
+            if (Guid.Parse(userid) != sell.BuyerID && Guid.Parse(userid) != sell.OwnerID) return Unauthorized();
             sell.Status = OrderStatus.Canceled;
             try
             {
                 _db.Sells.Update(sell);
                 await _db.SaveChangesAsync();
                 return LocalRedirect(returnUri);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, e.Message);
             }
@@ -103,7 +110,7 @@ namespace Shop.UI.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteSell(Guid id, string returnUri)
         {
-            var sell = await _db.Sells.Where(x => x.SellID == id).FirstOrDefaultAsync();
+            var sell = await _db.Sells.Where(x => x.OrderID == id).FirstOrDefaultAsync();
             if (sell == null) return RedirectToAction("MySells", "User");
             var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -115,7 +122,8 @@ namespace Shop.UI.Controllers
                 _db.Sells.Remove(sell);
                 await _db.SaveChangesAsync();
                 return LocalRedirect(returnUri);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, e.Message);
             }
@@ -126,7 +134,7 @@ namespace Shop.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddDeliveryInfo(Guid id, string tracknumber)
         {
-            var sell = await _db.Sells.Include(x=>x.DeliveryInfo).Where(x => x.SellID == id).FirstOrDefaultAsync();
+            var sell = await _db.Sells.Include(x => x.DeliveryInfo).Where(x => x.OrderID == id).FirstOrDefaultAsync();
             if (sell == null) return RedirectToAction("MySells", "User");
             var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userid != sell.OwnerID.ToString()) return Unauthorized();

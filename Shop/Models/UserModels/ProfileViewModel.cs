@@ -1,6 +1,4 @@
-﻿
-using Shop.BLL.DTO;
-using Shop.UI.Models.Identity;
+﻿using Shop.UI.Models.Identity;
 using Shop.UI.Models.ViewDTO;
 
 namespace Shop.Models.UserModels

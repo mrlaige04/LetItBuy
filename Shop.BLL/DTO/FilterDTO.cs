@@ -1,6 +1,4 @@
-﻿using Shop.DAL.Data.Entities;
-
-namespace Shop.BLL.DTO
+﻿namespace Shop.BLL.DTO
 {
     public class FilterDTO
     {
@@ -12,7 +10,7 @@ namespace Shop.BLL.DTO
         public List<NumberFilterCriteriaModel>? NumberFilters { get; set; } = new List<NumberFilterCriteriaModel>();
         public List<StringFilterCriteriaModel>? StringFilters { get; set; } = new List<StringFilterCriteriaModel>();
     }
-
-    public record NumberFilterCriteriaModel(Guid CriteriaID, IEnumerable<Guid>? ValueIDS);
-    public record StringFilterCriteriaModel(Guid CriteriaID, IEnumerable<Guid>? ValueIDS);
+    
+    public record NumberFilterCriteriaModel(Guid CriteriaID, IEnumerable<string>? ValueIDS);
+    public record StringFilterCriteriaModel(Guid CriteriaID, IEnumerable<string>? ValueIDS);
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shop.BLL.Providers.Interfaces;
@@ -27,7 +26,7 @@ namespace Shop.BLL.Providers
         {
             if (string.IsNullOrEmpty(userId))
                 throw new Exception("User id can't be null");
-            
+
             Guid idUser = Guid.Empty;
             if (Guid.TryParse(userId, out idUser) == false)
             {
@@ -44,7 +43,7 @@ namespace Shop.BLL.Providers
 
             DateTime Expiry = DateTime.UtcNow.AddMinutes(1);
             int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
-            
+
             var payload = new JwtPayload
             {
                 { "name", currentUser.UserName },
@@ -55,7 +54,7 @@ namespace Shop.BLL.Providers
                 { "aud","https://localhost:7117"}
             };
             var jwtsecToken = new JwtSecurityToken(header, payload);
-            
+
             var jwtSecTokenHandler = new JwtSecurityTokenHandler();
 
             var token = jwtSecTokenHandler.WriteToken(jwtsecToken);

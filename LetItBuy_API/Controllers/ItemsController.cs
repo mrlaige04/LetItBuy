@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
-using Moq;
-using Shop.BLL.DTO;
 using Shop.DAL.Data.EF;
 using Shop.DAL.Data.Entities;
 
@@ -30,13 +26,13 @@ namespace LetItBuy_API.Controllers
         {
             if (id == Guid.Empty) return BadRequest("Invalid id");
             var advert = await _db.Items
-                .Include(x=>x.OwnerUser)
+                .Include(x => x.OwnerUser)
                 .FirstOrDefaultAsync(x => x.ID.ToString() == id.ToString());
             if (advert == null) return NotFound();
             return Ok(advert);
         }
 
-        
+
         [HttpGet]
         [Route("api/[controller]")]
         public async Task<IActionResult> GetAll()
@@ -57,7 +53,8 @@ namespace LetItBuy_API.Controllers
             {
                 await _db.Items.AddAsync(item);
                 await _db.SaveChangesAsync();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
@@ -65,7 +62,7 @@ namespace LetItBuy_API.Controllers
         }
 
 
-        
+
         [HttpPost]
         [Authorize]
         [Route("api/[controller]/{id:Guid}")]
@@ -87,7 +84,8 @@ namespace LetItBuy_API.Controllers
                 _db.Items.Update(itemFromDB);
                 await _db.SaveChangesAsync();
                 return Ok();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
@@ -108,7 +106,8 @@ namespace LetItBuy_API.Controllers
                 _db.Items.Remove(item);
                 await _db.SaveChangesAsync();
                 return Ok();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }

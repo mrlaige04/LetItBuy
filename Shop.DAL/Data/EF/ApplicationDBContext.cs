@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Shop.Core.Classes;
 using Shop.DAL.Data.Entities;
 
 
@@ -19,6 +18,7 @@ namespace Shop.DAL.Data.EF
         public DbSet<Order> Sells { get; set; } = null!;
         public DbSet<DeliveryInfo> Deliveries { get; set; } = null!;
         public DbSet<Order> Orders { get; set; } = null!;
+        public DbSet<ItemPhoto> ItemPhotos { get; set; } = null!;
 
         public DbSet<NumberCriteriaValue> NumberCriteriaValues { get; set; } = null!;
         public DbSet<StringCriteriaValue> StringCriteriaValues { get; set; } = null!;
@@ -44,10 +44,10 @@ namespace Shop.DAL.Data.EF
                 .HasForeignKey(x => x.OwnerID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            
-            
 
-            
+
+
+
 
             builder.Entity<ApplicationUser>()
                 .HasMany(x => x.Notifications)
@@ -55,11 +55,11 @@ namespace Shop.DAL.Data.EF
                 .HasForeignKey(x => x.UserID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            
+
             builder.Entity<Order>()
                 .HasOne(x => x.DeliveryInfo)
-                .WithOne(x => x.Sell)
-                .HasForeignKey<DeliveryInfo>(x => x.SellID)
+                .WithOne(x => x.Order)
+                .HasForeignKey<DeliveryInfo>(x => x.OrderID)
                 .OnDelete(DeleteBehavior.Cascade);
 
 
@@ -88,9 +88,9 @@ namespace Shop.DAL.Data.EF
 
 
             builder.Entity<Category>()
-                .HasMany(x=>x.NumberCriteriasValues)
+                .HasMany(x => x.NumberCriteriasValues)
                 .WithOne(x => x.Category)
-                .HasForeignKey(x => new {x.CategoryID, x.CategoryName})
+                .HasForeignKey(x => new { x.CategoryID, x.CategoryName })
                 .OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Category>()
                 .HasMany(x => x.StringCriteriasValues)
@@ -98,6 +98,6 @@ namespace Shop.DAL.Data.EF
                 .HasForeignKey(x => new { x.CategoryID, x.CategoryName })
                 .OnDelete(DeleteBehavior.Cascade);
 
-        }       
+        }
     }
 }

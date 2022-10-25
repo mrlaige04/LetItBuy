@@ -6,7 +6,7 @@ namespace Shop.UI.Models.Identity
     {
         [Required]
         [EmailAddress]
-        [Display(Name="Email")]
+        [Display(Name = "Email")]
         public string Email { get; set; }
     }
 }

@@ -15,10 +15,10 @@ namespace Shop.Models.UserModels
         [Required]
         public Currency Currency { get; set; }
 
-        public string CategoryID { get; set; }
+        public Guid CategoryID { get; set; }
         [Required]
         public bool IsNew { get; set; }
-        
-        
+
+
     }
 }

@@ -8,16 +8,20 @@ namespace Shop.DAL.Data.Entities
     public class Order
     {
         [Key]
-        public Guid SellID { get; set; }
+        public Guid OrderID { get; set; }
 
+        [Required]
         public string ItemName { get; set; }
+
+        [Required]
         public Guid? ItemID { get; set; }
+
         public DeliveryInfo DeliveryInfo { get; set; }
 
         public OrderStatus Status { get; set; }
 
+        [Required]
         public Guid OwnerID { get; set; }
-
 
         public Guid? BuyerID { get; set; }
     }

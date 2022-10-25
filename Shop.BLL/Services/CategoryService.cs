@@ -14,7 +14,7 @@ namespace Shop.BLL.Services
         }
 
         public List<Category> GetCategories() => _context.Categories.ToList();
-        
+
         public async Task<ServicesResultModel> AddCategoryAsync(Category category)
         {
             try

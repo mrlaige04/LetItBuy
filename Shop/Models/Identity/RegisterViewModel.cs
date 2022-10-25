@@ -5,7 +5,7 @@ namespace Shop.UI.Models.Identity
 {
     public class RegisterViewModel
     {
-        [Required(ErrorMessage="EmailIsRequired")]
+        [Required(ErrorMessage = "EmailIsRequired")]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
@@ -22,7 +22,7 @@ namespace Shop.UI.Models.Identity
         public string UserName { get; set; }
 
         public string? ReturnUrl { get; set; }
- 
+
         public IEnumerable<AuthenticationScheme>? ExternalProviders { get; set; }
     }
 }

@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Shop.BLL.DTO;
 using Shop.BLL.Models;
 using Shop.DAL.Data.Entities;
-using Shop.BLL;
 using System.Text.RegularExpressions;
 
 
@@ -19,7 +17,7 @@ namespace Shop.BLL.Services
         private readonly ICustomEmailSender _emailSender;
         private readonly RoleService _roleClient;
 
-        
+
         public IUrlHelper urlHelper;
         public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AccountService> logger, ICustomEmailSender emailSender, RoleService roleClient)
         {
@@ -39,12 +37,12 @@ namespace Shop.BLL.Services
             {
                 Email = reg_dto.Email,
                 UserName = reg_dto.Username,
-                
+
                 Items = new List<Item>(),
                 Id = userId,
                 PhoneNumber = reg_dto.PhoneNumber,
             };
-            
+
 
 
 
@@ -233,7 +231,7 @@ namespace Shop.BLL.Services
             };
 
             var createUser_result = await _userManager.CreateAsync(newUser);
-            if(createUser_result.Succeeded)
+            if (createUser_result.Succeeded)
             {
                 var addToRole_Result = await _roleClient.AddUserToRoles(newUser, "simpleUser");
                 if (addToRole_Result.ResultCode == ResultCodes.Success)
@@ -244,7 +242,7 @@ namespace Shop.BLL.Services
                 else
                 {
                     return new ServicesResultModel { ResultCode = ResultCodes.Fail, Errors = addToRole_Result.Errors };
-                } 
+                }
             }
             else return new ServicesResultModel { ResultCode = ResultCodes.Fail, Errors = createUser_result.Errors.Select(x => x.Description).ToList() };
         }

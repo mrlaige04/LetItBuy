@@ -19,7 +19,7 @@ namespace Shop.Hubs
         }
 
         public override Task OnDisconnectedAsync(Exception? exception)
-        {      
+        {
             return base.OnDisconnectedAsync(exception);
         }
     }

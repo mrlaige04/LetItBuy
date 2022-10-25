@@ -9,11 +9,13 @@ namespace Shop.BLL.DTO
         public ICollection<ItemPhoto> Photos { get; set; } = null!;
         public string Name { get; set; }
         public string? Description { get; set; }
-        
+
         public Guid? CategoryID { get; set; }
         public decimal Price { get; set; }
         public Currency Currency { get; set; }
         public string CategoryName { get; set; }
+        public ICollection<NumberCriteriaValue> NumberCriteriaValues { get; set; } = null!;
+        public ICollection<StringCriteriaValue> StringCriteriaValues { get; set; } = null!;
 
         public bool IsNew { get; set; }
     }

@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
 
 namespace Shop.UI.Models.Identity
 {
     public class LoginViewModel
     {
-        
+
         [Required]
         [Display(Name = "Email")]
         public string Email { get; set; }

@@ -1,25 +1,18 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-using System.Globalization;
-using Microsoft.AspNetCore.SignalR;
-using Shop.Hubs;
+using Shop.BLL.Providers;
+using Shop.BLL.Providers.Interfaces;
+using Shop.BLL.Services;
 using Shop.DAL.Data.EF;
 using Shop.DAL.Data.Entities;
-using Shop.BLL.Services;
-
+using Shop.Hubs;
 using Shop.UI;
-using Microsoft.AspNetCore.Authentication.Cookies;
-
-
-
 using Shop.UI.Clients.APICLIENTS;
 using Shop.UI.Hubs;
-using Shop.BLL.Providers.Interfaces;
-using Shop.BLL.Providers;
-using Microsoft.EntityFrameworkCore.Internal;
-using AutoMapper;
+using System.Globalization;
 var builder = WebApplication.CreateBuilder(args);
 
 // MVC Services
@@ -33,8 +26,8 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 
 // DB and Identity
-builder.Services.AddDbContext<ApplicationDBContext>(options=>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),b=>b.MigrationsAssembly("Shop.UI")));
+builder.Services.AddDbContext<ApplicationDBContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Shop.UI")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 {
@@ -58,7 +51,7 @@ builder.Services.AddAuthentication(options =>
 {
     x.LoginPath = "/Account/google-login";
 })
-.AddTwitter(x=>
+.AddTwitter(x =>
 {
     x.ConsumerKey = builder.Configuration["Auth:Twitter:ConsumerKey"];
     x.ConsumerSecret = builder.Configuration["Auth:Twitter:ConsumerSecret"];
@@ -76,7 +69,7 @@ builder.Services.AddAuthentication(options =>
 }).AddMicrosoftAccount(x =>
 {
     x.ClientId = builder.Configuration["Auth:Microsoft:ClientId"];
-    x.ClientSecret = builder.Configuration["Auth:Microsoft:ClientSecret"];  
+    x.ClientSecret = builder.Configuration["Auth:Microsoft:ClientSecret"];
 });
 
 
@@ -103,7 +96,7 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 // Custom Services
 builder.Services.AddScoped<ICustomEmailSender, GmailSmtpSender>();
 builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<AccountService>(); 
+builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AdminInitializer>();
 builder.Services.AddScoped<UserService>();

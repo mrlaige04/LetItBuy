@@ -1,10 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR.Protocol;
+using Microsoft.EntityFrameworkCore;
 using Shop.BLL.DTO;
-using Shop.BLL.Models;
 using Shop.DAL.Data.EF;
 using Shop.DAL.Data.Entities;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 
 namespace Shop.BLL.Services
 {
@@ -18,48 +16,51 @@ namespace Shop.BLL.Services
 
         public async Task<IQueryable<Item>> Filter(FilterDTO dto)
         {
-            throw new NotImplementedException();
-            //IQueryable<Item> items = db.Items.Include(i => i.NumberCriteriaValues)
-            //                            .Include(i => i.StringCriteriaValues);
-            //items = items.Where(i => i.Category_Id == dto.CategoryID);
-            //items = items.Where(i => i.Price >= dto.minPrice && i.Price <= dto.maxPrice);
-            //if (dto.query != null)
-            //{
-            //    items = items.Where(i => Regex.IsMatch(i.Name, dto.query, RegexOptions.IgnoreCase));
-            //}
+            IQueryable<Item> items = db.Items
+                .Include(i => i.NumberCriteriaValues)
+                .Include(i => i.StringCriteriaValues);
 
-            //if (dto.NumberFilters != null)
-            //{
-            //    foreach (var nfilter in dto.NumberFilters)
-            //    {
-            //        // Variant 1
-            //        var a = items
-            //            .Where(x => x.NumberCriteriaValues
-            //                .Where(x => x.CriteriaID == nfilter.CriteriaID && x.CategoryID == nfilter.CategoryID)
-            //                .Select(x => new { x.ValueID, x.CategoryID, x.CriteriaID })
-            //                .Equals(nfilter.ValueIDS.Select(x => x)));
-            //        // Variant 2
-            //        var b = from item in items
-            //                from numbercrits in item.NumberCriteriaValues
-            //                from ValueID in nfilter.ValueIDS
-            //                where numbercrits.CriteriaID == nfilter.CriteriaID &&
-            //                      numbercrits.CategoryID == nfilter.CategoryID &&
-            //                      numbercrits.ValueID == ValueID
-            //                select item;
+            if (!string.IsNullOrEmpty(dto.query))
+            {
+                items = items.Where(x => x.Name.ToLower().Contains(dto.query.ToLower()));
+            }
+            if (dto.minPrice != 0 && dto.maxPrice != decimal.MaxValue)
+            {
+                items = items.Where(x => x.Price >= dto.minPrice && x.Price <= dto.maxPrice);
+            }
+            
+            
+            if (dto.CategoryID == null) return items;
+            
+            items = items.Where(x => x.Category_Id == dto.CategoryID);
+            
+            if (dto.NumberFilters != null && dto.NumberFilters.Count()>0)
+            {
+                foreach (var numFilter in dto.NumberFilters)
+                {
+                    if (numFilter.ValueIDS != null && numFilter.ValueIDS.Count() > 0)
+                    {
+                        items = items.Where(x =>
+                            x.NumberCriteriaValues
+                            .Any(x => x.CriteriaID == numFilter.CriteriaID && numFilter.ValueIDS.Contains(x.ValueID.ToString())));
+                    }
+                }
+            }
+            if (dto.StringFilters != null && dto.StringFilters.Count() > 0)
+            {
+                foreach (var strFilter in dto.StringFilters)
+                {
+                    if (strFilter.ValueIDS != null && strFilter.ValueIDS.Count() > 0)
+                    {
+                        items = items.Where(x =>
+                            x.StringCriteriaValues
+                            .Any(x => x.CriteriaID == strFilter.CriteriaID && strFilter.ValueIDS.Contains(x.ValueID.ToString())));
+                    }
+                }
+            }
 
-            //        Console.WriteLine(b.Count());
-            //    }
-            //}
-            //if (dto.StringFilters != null)
-            //{
-            //    foreach (var sfilter in dto.StringFilters)
-            //    {
-
-            //    }
-            //}
-
-
-            //return items;
+            return items;
+            
         }
     }
 }

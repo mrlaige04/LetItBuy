@@ -1,27 +1,23 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Shop.DAL.Data.Entities;
-using Shop.UI.Models;
-using Shop.UI.Models.Identity;
-using Shop.BLL.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Shop.BLL.DTO;
 using Shop.BLL.Models;
-using Microsoft.Extensions.Localization;
+using Shop.BLL.Services;
+using Shop.DAL.Data.Entities;
 using Shop.UI;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System.ComponentModel.DataAnnotations;
+using Shop.UI.Models;
+using Shop.UI.Models.Identity;
 using Shop.UI.Models.ViewDTO;
+using System.Security.Claims;
 
 namespace Shop.Controllers
 {
     public class AccountController : Controller
-    {       
+    {
         private readonly ILogger<AccountController> _logger;
-        
+
         private readonly SignInManager<ApplicationUser> _signinmanager;
         private readonly AccountService _accountService;
         private readonly IConfiguration _config;
@@ -44,9 +40,9 @@ namespace Shop.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
-        {           
+        {
             if (ModelState.IsValid)
-            {              
+            {
                 var register_result = await _accountService.RegisterAsync(new RegisterDTOModel { Email = model.Email, Password = model.Password, Username = model.UserName, HostUrl = Request.Host.Value });
                 if (register_result.ResultCode == ResultCodes.Fail)
                 {
@@ -54,8 +50,9 @@ namespace Shop.Controllers
                     {
                         _logger.LogError(item);
                         ModelState.AddModelError("", item);
-                    }                    
-                } else return Redirect(model.ReturnUrl ?? "/");
+                    }
+                }
+                else return Redirect(model.ReturnUrl ?? "/");
             }
             if (model.ExternalProviders == null) model.ExternalProviders = await _signinmanager.GetExternalAuthenticationSchemesAsync();
             return View(model);
@@ -66,7 +63,7 @@ namespace Shop.Controllers
         public async Task<IActionResult> ConfirmEmailAsync(string userId, string code)
         {
             if (ModelState.IsValid)
-            {                
+            {
                 var conf_em_res = await _accountService.ConfirmEmailAsync(userId, code);
                 if (conf_em_res.ResultCode == ResultCodes.Success)
                     return RedirectToAction("Login", "Account");
@@ -75,7 +72,7 @@ namespace Shop.Controllers
             }
             else return View("Error", new ErrorViewModel { Errors = new List<string> { "Invalid model state" } });
         }
- 
+
         [HttpGet]
         public async Task<IActionResult> Login(string returnUrl = null)
         {
@@ -119,7 +116,7 @@ namespace Shop.Controllers
         {
             return View();
         }
-        
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -140,7 +137,7 @@ namespace Shop.Controllers
             }
             return View(model);
         }
-        
+
         [HttpGet]
         [Authorize]
         public IActionResult ChangePassword() => View("ChangePassword");
@@ -165,9 +162,9 @@ namespace Shop.Controllers
             return View(model);
         }
 
-        
 
-        
+
+
 
         [HttpPost]
         public async Task<IActionResult> DeleteMyAccount(string password)
@@ -175,7 +172,7 @@ namespace Shop.Controllers
             if (ModelState.IsValid)
             {
                 var userEmail = User.FindFirstValue(ClaimTypes.Email);
-                if(userEmail == _config["Admin:Email"])
+                if (userEmail == _config["Admin:Email"])
                 {
                     ModelState.AddModelError("", "You can't delete admin account");
                     return View("Error", new ErrorViewModel { Errors = new List<string> { "You can't delete admin account" } });
@@ -189,7 +186,8 @@ namespace Shop.Controllers
                 else
                     return View("Error", new ErrorViewModel { Errors = del_ac_res.Errors });
             }
-            else {
+            else
+            {
                 return View("Error", new ErrorViewModel { Errors = new List<string> { "Invalid password" } });
             }
         }
@@ -216,7 +214,7 @@ namespace Shop.Controllers
                     return View("ChangeEmailConfirmation");
                 else
                 {
-                    
+
                     foreach (var item in changeemail_result.Errors)
                     {
                         ModelState.AddModelError("", item);
@@ -236,7 +234,7 @@ namespace Shop.Controllers
                 {
                     await _accountService.LogoutAsync();
                     return RedirectToAction("Login", "Account");
-                }           
+                }
                 else
                     return View("Error", new ErrorViewModel { Errors = conf_ch_em_res.Errors });
             }
@@ -244,14 +242,14 @@ namespace Shop.Controllers
         }
 
 
-        
 
 
 
 
 
-        // TODO :FACEBOOK LOGIN PRIVACY AND TERMS LINK ERRORS
-        
+
+       
+
         public IActionResult ExternalLogin(string provider, string returnUrl)
         {
             var returnUri = returnUrl ?? Url.Content("~/");
@@ -268,7 +266,7 @@ namespace Shop.Controllers
             if (info == null)
                 return RedirectToAction("Login");
 
-            
+
 
             string? userName = info.Principal.FindFirst(ClaimTypes.Name)?.Value.Split(' ')[0];
             string? userSurname = info.Principal.FindFirst(ClaimTypes.Surname)?.Value;
@@ -292,7 +290,7 @@ namespace Shop.Controllers
                 UserName = vm.UserName,
                 PhoneNumber = vm.PhoneNumber
             });
-            
+
             if (externalLogin_Result.ResultCode == ResultCodes.Success)
             {
                 if (string.IsNullOrEmpty(vm.ReturnUrl))
@@ -315,5 +313,5 @@ namespace Shop.Controllers
 
 
     }
-    
+
 }

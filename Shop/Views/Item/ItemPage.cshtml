@@ -6,6 +6,7 @@
 @inject IViewLocalizer Localizer;
 @section Styles {
     <title>@Model.Item.Name</title>
+
 }
 <div class="pagetitle">
         <h1>@Model.Item.Name</h1>
@@ -21,31 +22,35 @@
         <div class="col-md-4">
             @if (Model.Item.Photos != null && Model.Item.Photos.Count() > 0)
             {
-                @for (int i = 0; i < Model.Item.Photos.Count(); i++)
-                {
-                    <div id="carouselExampleIndicators" class="carousel" data-bs-ride="carousel">
-                        <div class="carousel-indicators">
-                            if (i == 0) {
-                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" class="active" aria-label="Slide @i" aria-current="true"></button>
-                            }
-                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" aria-label="Slide @i" class=""></button>
+                <div id="carouselExampleIndicators" class="carousel" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-label="Slide 1" aria-current="true"></button>
+                        @for (int i = 1; i < Model.Item.Photos.Count(); i++) {
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i"  aria-label="Slide @(i+1)" ></button>
+                        }
                     </div>
                     <div class="carousel-inner">
-                        <div class="carousel-item carousel-item-next carousel-item-start">
-                            <img src="@string.Format(Model.Item.Photos.ElementAt(i).FileName)" class="img img-fluid rounded d-block w-100" alt="...">
-                        </div> 
+                        <div class="carousel-item  active show">
+                            <img class="img img-fluid rounded d-block w-100" src="@string.Format("\\ItemPhotos\\"+Model.Item.Photos.ElementAt(0).FileName)" alt="First slide">
+                        </div>
+                        @for (int i = 1; i < Model.Item.Photos.Count(); i++)
+                        {
+                            <div class="carousel-item">
+                                <img class="img img-fluid rounded d-block w-100" src="@string.Format("\\ItemPhotos\\"+Model.Item.Photos.ElementAt(i).FileName)" alt="@string.Format(i+"nth slide")">
+                            </div>
+                        }
                     </div>
-                    
+
                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">@Localizer["Previous"]</span>
+                        <span class="visually-hidden">Previous</span>
                     </button>
                     <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">@Localizer["Next"]</span>
+                        <span class="visually-hidden">Next</span>
                     </button>
-                    </div>
-                }
+
+                </div>
             } else {
                 <img class="img img-fluid rounded-1" src="https://www.elegantthemes.com/blog/wp-content/uploads/2020/02/000-404.png?w=1024" />
             }
@@ -126,7 +131,20 @@
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title">@Localizer["Specifications"]</h3>
-                    brand - apple
+                    @if (Model.Item.NumberCriteriaValues != null)
+                    {
+                        @foreach (var item in Model.Item.NumberCriteriaValues.GroupBy(x => x.CriteriaName))
+                        {
+                            <p><b>@item.Key:</b> @string.Join(", ", item.Select(x => x.Value))</p>
+                        }
+                    }
+                    @if (Model.Item.StringCriteriaValues != null)
+                    {
+                        @foreach (var item in Model.Item.StringCriteriaValues.GroupBy(x => x.CriteriaName))
+                        {
+                            <p><b>@item.Key:</b> @string.Join(", ", item.Select(x => x.Value))</p>
+                        }
+                    }
                 </div>
             </div>
         </div>
@@ -154,3 +172,4 @@
         </div>
     </div>
 </section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

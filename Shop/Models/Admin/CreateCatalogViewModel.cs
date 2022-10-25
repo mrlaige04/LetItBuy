@@ -1,5 +1,4 @@
-﻿using Shop.DAL.Data.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Shop.Models
 {
@@ -10,9 +9,9 @@ namespace Shop.Models
         public List<NumberFormData>? numbers { get; set; }
         public List<string>? shoto { get; set; }
         public List<StringFormData>? strings { get; set; }
-        
+
     }
-    public record NumberFormData (string name, List<double> values);
+    public record NumberFormData(string name, List<double> values);
     public record StringFormData(string name, List<string> values);
-    
+
 }

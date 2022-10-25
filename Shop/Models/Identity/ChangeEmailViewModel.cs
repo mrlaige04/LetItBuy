@@ -12,6 +12,6 @@ namespace Shop.UI.Models.Identity
         [EmailAddress]
         public string NewEmail { get; set; }
 
-        
+
     }
 }

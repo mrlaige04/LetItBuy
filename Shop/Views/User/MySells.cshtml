@@ -27,9 +27,9 @@
                                 <h3 class="text-center">Status: @sell.Status</h3>
                                 <div class="row" style="justify-content:space-evenly;">
                                     @if(sell.Status == OrderStatus.Created) {
-                                        <a class="btn btn-dark col-5" asp-controller="Item" asp-action="ConfirmSell" asp-route-id="@sell.SellID">Confirm</a>
+                                        <a class="btn btn-dark col-5" asp-controller="Item" asp-action="ConfirmSell" asp-route-id="@sell.OrderID">Confirm</a>
                                     } else if (sell.Status == OrderStatus.Confirmed) {
-                                        <form asp-action="AddDeliveryInfo" asp-controller="Item" asp-route-id="@sell.SellID" method="post">
+                                        <form asp-action="AddDeliveryInfo" asp-controller="Item" asp-route-id="@sell.OrderID" method="post">
                                             <button type="button" class="btn btn-dark mb-3" data-bs-toggle="modal" data-bs-target="#verticalycentered">
                                                 Add Delivery Info
                                             </button>
@@ -55,9 +55,9 @@
                                         </form>
                                     } 
                                     @if(sell.Status != OrderStatus.Canceled) {
-                                        <a asp-route-returnUri="@string.Format( Context.Request.Path + Context.Request.QueryString )" asp-controller="Item" asp-action="CancelSell" asp-route-id="@sell.SellID" class="btn btn-dark col-5">Cancel <i class="bi bi-x"></i></a>
+                                        <a asp-route-returnUri="@string.Format( Context.Request.Path + Context.Request.QueryString )" asp-controller="Item" asp-action="CancelSell" asp-route-id="@sell.OrderID" class="btn btn-dark col-5">Cancel <i class="bi bi-x"></i></a>
                                     }
-                                    <a asp-controller="Item" asp-action="DeleteSell" asp-route-id="@sell.SellID" class="btn btn-dark col-5 mt-2">Delete<i class="bi bi-trash"></i></a>
+                                    <a asp-controller="Item" asp-action="DeleteSell" asp-route-id="@sell.OrderID" class="btn btn-dark col-5 mt-2">Delete<i class="bi bi-trash"></i></a>
                                 </div>
                             </div>
                         </div>

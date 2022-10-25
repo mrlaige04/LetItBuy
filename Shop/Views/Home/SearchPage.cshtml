@@ -21,7 +21,7 @@
             <div class="card-body">
                 <h5 class="card-title">@Localizer["Enterquery"]</h5>
                 <div class="filter">
-                    <form asp-controller="Home" asp-action="Index" method="get">
+                    <form asp-controller="Home" asp-action="Index" method="post" enctype="application/x-www-form-urlencoded">
                         <input asp-for="@Model.CategoryID" value="@Model.Category?.Id" type="text" name="CategoryID" class="d-none"/>
                         <input asp-for="@Model.Filter.CategoryID" value="@Model.Category?.Id" type="text" class="d-none" />
                         <div class="col mb-3">
@@ -55,7 +55,7 @@
                                                 @foreach (var numGroup in Model.Category.NumberCriterias)
                                                 {
                                                     <div class="numGroup col-md-3">
-                                                        <select multiple class="form-select" id="@numGroup.key.CriteriaName">
+                                                        <select multiple name="@numGroup.key.CriteriaID" class="form-select">
                                                             <option selected disabled>@numGroup.key.CriteriaName</option>
                                                             @foreach (var num in numGroup.value)
                                                             {
@@ -69,8 +69,8 @@
                                             {
                                                 @foreach (var strGroup in Model.Category.StringCriterias)
                                                 {
-                                                     <div class="numGroup col-md-3 mt-3">
-                                                        <select multiple class="form-select" id="@strGroup.key.CriteriaName">
+                                                     <div class="numGroup col-md-3 mt-3 mb-3">
+                                                        <select multiple class="form-select" name="@strGroup.key.CriteriaID">
                                                             <option selected disabled>@strGroup.key.CriteriaName</option>
                                                             @foreach (var num in strGroup.value)
                                                             {

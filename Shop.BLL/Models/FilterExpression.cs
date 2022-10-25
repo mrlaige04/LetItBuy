@@ -6,7 +6,7 @@
         public decimal maxPrice { get; set; } = decimal.MaxValue;
 
         public IEnumerable<FilterValue> FilterValues { get; set; }
-        
+
 
         public string GetValue(string name)
         {

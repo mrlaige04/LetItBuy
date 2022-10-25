@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Shop.DAL.Data.EF;
 using Shop.DAL.Data.Entities;
 using Shop.Models;
 using Shop.Models.Admin;
-using Shop.Models.UserModels;
 
 namespace Shop.Controllers
 {
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -26,7 +23,7 @@ namespace Shop.Controllers
             _roleManager = roleManager;
             _db = dBContext;
             _signInManager = signInManager;
-            
+
         }
 
         [HttpGet]
@@ -34,15 +31,15 @@ namespace Shop.Controllers
         {
             return View("AdminPanel");
         }
-        
-        
+
+
 
         [HttpGet]
         public IActionResult CreateCategory()
         {
             return View(new CreateCatalogViewModel()
             {
-                
+
             });
         }
 
@@ -55,14 +52,14 @@ namespace Shop.Controllers
         //    {
         //        return View(model);
         //    }
-            
+
         //    var category = new Category()
         //    {
         //        Id = Guid.NewGuid(),
         //        Name = model.Name,
         //        NumberCriterias = new List<NumberCriteria>(),
         //        StringCriterias = new List<StringCriteria>(),
-               
+
         //    };
 
         //    if (model.numbers != null)
@@ -93,7 +90,7 @@ namespace Shop.Controllers
         //        }
         //    }
 
-            
+
 
         //    //try
         //    //{
@@ -129,11 +126,12 @@ namespace Shop.Controllers
             {
                 var category = _db.Categories.FirstOrDefault(x => x.Id.ToString() == id);
                 try
-                {    
-                    _db.Categories.Remove(category);                 
+                {
+                    _db.Categories.Remove(category);
                     await _db.SaveChangesAsync();
                     return RedirectToAction("ManageCategories");
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     return BadRequest(e.Message);
                 }
@@ -141,9 +139,9 @@ namespace Shop.Controllers
             else return BadRequest("Invalid id");
         }
 
-        
 
-        
+
+
 
         [HttpGet]
         public IActionResult ManageCategories()
@@ -164,7 +162,7 @@ namespace Shop.Controllers
             var users = _userManager.Users.Skip(0).Take(10).ToList();
             return View("Users", users);
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> AddAdmin(AddAdminViewModel addAdminViewModel)
         {
@@ -211,7 +209,7 @@ namespace Shop.Controllers
             }
             else
             {
-                ModelState.AddModelError("", "Incorrect data");      
+                ModelState.AddModelError("", "Incorrect data");
                 return BadRequest("Incorrect data");
             }
         }

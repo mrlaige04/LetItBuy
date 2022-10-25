@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Shop.BLL.Services
+﻿namespace Shop.BLL.Services
 {
     public class AdminService
     {

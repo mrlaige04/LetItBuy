@@ -14,7 +14,7 @@ namespace Shop.DAL.Data.Entities
         public string PostNumber { get; set; }
         public string PostAddress { get; set; }
         public string? TrackNumber { get; set; }
-        public Order Sell { get; set; }
-        public Guid SellID { get; set; }
+        public Order Order { get; set; }
+        public Guid OrderID { get; set; }
     }
 }

@@ -39,7 +39,7 @@ namespace Shop.Controllers
             }
             return View("GetWelcomePage", "Home");
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> DeleteRole(string id)
         {

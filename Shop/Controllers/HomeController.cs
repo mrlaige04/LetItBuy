@@ -1,17 +1,16 @@
-﻿using Microsoft.AspNetCore.Localization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Shop.BLL.DTO;
 using Shop.BLL.Services;
 using Shop.DAL.Data.EF;
 using Shop.DAL.Data.Entities;
 using Shop.Models.ViewDTO;
 using Shop.UI.Models.ViewDTO;
 using System.Security.Claims;
-
-using AutoMapper;
-using Shop.BLL.DTO;
-using AutoMapper.Configuration.Annotations;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 
 namespace Shop.Controllers
 {
@@ -23,10 +22,10 @@ namespace Shop.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private FilterService filterService { get; set; }
         public HomeController(
-            ICustomEmailSender sender, 
-            ApplicationDBContext db, 
-            FilterService filterService, 
-            IMapper mapper, 
+            ICustomEmailSender sender,
+            ApplicationDBContext db,
+            FilterService filterService,
+            IMapper mapper,
             UserManager<ApplicationUser> userManager
         )
         {
@@ -48,20 +47,51 @@ namespace Shop.Controllers
 
             return LocalRedirect(returnUrl);
         }
-        
+
         [HttpGet]
         public IActionResult GetWelcomePage() => View("WelcomePage");
-        
+
 
 
         [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> Index(SearchViewModel search) // TODO : FILTRATION BY FILTER DTO, PAGINATION, SORTING
         {
+            var category = await _db.Categories
+                .Include(x=>x.NumberCriteriasValues)
+                .Include(x=>x.StringCriteriasValues)
+                .FirstOrDefaultAsync(x => x.Id == search.CategoryID);
+
+            var req = Request;
+
+            var numCritsIDS = category?.NumberCriteriasValues?.Select(x => x.CriteriaID).Distinct();
+            var strCritsIDS = category?.StringCriteriasValues?.Select(x => x.CriteriaID).Distinct();
+
+            if (numCritsIDS != null)
+            {
+                foreach (var numCritID in numCritsIDS)
+                {
+                    var valuesIDS = Request.Form[numCritID.ToString()].ToList();
+                    if (valuesIDS!=null&&valuesIDS.Count()>0)
+                        search.Filter.NumberFilters?.Add(new NumberFilterCriteriaModel(numCritID, valuesIDS));
+                }
+            }
+            
+            if (strCritsIDS != null)
+            {
+                foreach (var numCritID in strCritsIDS)
+                {
+                    var valuesIDS = Request.Form[numCritID.ToString()].ToList();
+                    if (valuesIDS != null && valuesIDS.Count() > 0)
+                        search.Filter.StringFilters?.Add(new StringFilterCriteriaModel(numCritID, valuesIDS));
+                }
+            }
+            
+            
             var items = await filterService.Filter(search.Filter);
-            var categories = await _db.Categories.Include(x=>x.NumberCriteriasValues)
-                    .Include(x=>x.StringCriteriasValues)
-                    .ToListAsync();
-            return View("Index", categories);
+            search.Category = _mapper.Map<CategoryDTO>(category);
+            search.items = await items.ToListAsync();
+            return View("SearchPage", search);
         }
 
 
@@ -80,14 +110,14 @@ namespace Shop.Controllers
                 .Include(x => x.NumberCriteriasValues)
                 .Include(x => x.StringCriteriasValues)
                 .FirstOrDefaultAsync(x => x.Id == categoryId);
-            
+
             if (category == null) return NotFound("Category not found");
             var categotyDTO = _mapper.Map<Category, CategoryDTO>(category);
             var items = _db.Items.Where(x => x.Category_Id == categoryId);
-            
 
-            
-            return View("SearchPage", new SearchViewModel() { items = items.ToList(), Category = categotyDTO, Filter = new FilterDTO()  });
+
+
+            return View("SearchPage", new SearchViewModel() { items = items.ToList(), Category = categotyDTO, Filter = new FilterDTO() });
         }
 
         [HttpGet]
@@ -98,8 +128,8 @@ namespace Shop.Controllers
         public async Task<IActionResult> AllItems()
         {
             var items = await _db.Items
-                .Include(x=>x.NumberCriteriaValues)
-                .Include(x=>x.StringCriteriaValues)
+                .Include(x => x.NumberCriteriaValues)
+                .Include(x => x.StringCriteriaValues)
                 .ToListAsync();
             return View("Allitems", items);
         }
@@ -112,14 +142,14 @@ namespace Shop.Controllers
             if (item == null) return RedirectToAction("NotFoundPage", "Home");
 
             var sell = _mapper.Map<BuyViewModel, Order>(model);
-            sell.SellID = Guid.NewGuid();
+            sell.OrderID = Guid.NewGuid();
             sell.DeliveryInfo = _mapper.Map<BuyViewModel, DeliveryInfo>(model);
             sell.DeliveryInfo.DeliveryID = Guid.NewGuid();
-            sell.DeliveryInfo.Sell = sell;
-            sell.DeliveryInfo.SellID = sell.SellID;   
+            sell.DeliveryInfo.Order = sell;
+            sell.DeliveryInfo.OrderID = sell.OrderID;
             sell.Status = OrderStatus.Created;
             sell.ItemName = item.Name;
-            
+
             if (User.Identity.IsAuthenticated)
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -131,7 +161,8 @@ namespace Shop.Controllers
                 await _db.Sells.AddAsync(sell);
                 await _db.SaveChangesAsync();
                 return RedirectToAction("GetWelcomePage");
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, e.Message);
             }
@@ -147,21 +178,38 @@ namespace Shop.Controllers
             var category = await _db.Categories
                 .Include(x => x.NumberCriteriasValues)
                 .Include(x => x.StringCriteriasValues)
-                .FirstOrDefaultAsync(x=>x.Id == categoryId);
+                .FirstOrDefaultAsync(x => x.Id == categoryId);
 
             if (category == null) return NotFound("Category not found");
 
             var numCrits = category.NumberCriteriasValues
-                                .DistinctBy(x => x.CriteriaName)
-                                .Select(x => x.CriteriaName)
-                                .ToList();
-            var strCrits = category.StringCriteriasValues
-                                .DistinctBy(x => x.CriteriaName)
-                                .Select(x => x.CriteriaName)
-                                .ToList();
+                                .DistinctBy(x => x.CriteriaID)
+                                .Select(x => new { Name = x.CriteriaName, Multiple = x.multiple, CriteriaID = x.CriteriaID })
+                                .Select(x => new NumberCriteriaDTO
+                                {
+                                    Name = x.Name,
+                                    Multiple = x.Multiple,
+                                    CriteriaID = x.CriteriaID,
+                                    Values =
+                                    category.NumberCriteriasValues.Where(y => y.CriteriaID == x.CriteriaID).Select(z => new NumberValueId(z.Value, z.ValueID)).OrderBy(o => o.value)
+                                }).ToList();
 
-            return Json(new CategoryCriterias (numCrits,strCrits));
+
+            var strCrits = category.StringCriteriasValues
+                                .DistinctBy(x => x.CriteriaID)
+                                .Select(x => new { Name = x.CriteriaName, Multiple = x.multiple, CriteriaID = x.CriteriaID })
+                                .Select(x => new StringCriteriaDTO
+                                {
+                                    Name = x.Name,
+                                    Multiple = x.Multiple,
+                                    CriteriaID = x.CriteriaID,
+                                    Values =
+                                    category.StringCriteriasValues.Where(y => y.CriteriaID == x.CriteriaID).Select(z => new StringValueId(z.Value, z.ValueID)).OrderBy(o => o.value)
+                                }).ToList();
+            string json = JsonConvert.SerializeObject(new { numCrits = numCrits, strCrits = strCrits });
+
+            return Ok(json);
         }
     }
-    public record CategoryCriterias ( List<string> numCriterias, List<string> strCriteriass );
+    //public record CategoryCriterias(List<string> numCriterias, List<string> strCriteriass);
 }

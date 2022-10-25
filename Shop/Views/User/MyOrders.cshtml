@@ -20,9 +20,9 @@
                     </div>
                     @if (order.Status != OrderStatus.Canceled)
                     {
-                        <a asp-route-returnUri="@string.Format( Context.Request.Path + Context.Request.QueryString )" asp-controller="Item" asp-action="CancelSell" asp-route-id="@order.SellID" class="btn btn-dark col-12 mb-3">Cancel order</a>
+                        <a asp-route-returnUri="@string.Format( Context.Request.Path + Context.Request.QueryString )" asp-controller="Item" asp-action="CancelSell" asp-route-id="@order.OrderID" class="btn btn-dark col-12 mb-3">Cancel order</a>
                     }
-                    <a asp-route-returnUri="@string.Format( Context.Request.Path + Context.Request.QueryString )" asp-controller="Item" asp-action="DeleteSell" asp-route-id="@order.SellID" class="btn btn-dark col-12 mb-3">Delete<i class="bi bi-trash"></i></a>
+                    <a asp-route-returnUri="@string.Format( Context.Request.Path + Context.Request.QueryString )" asp-controller="Item" asp-action="DeleteSell" asp-route-id="@order.OrderID" class="btn btn-dark col-12 mb-3">Delete<i class="bi bi-trash"></i></a>
                 </div>
             </div>
         }

@@ -1,11 +1,9 @@
 ﻿using Bogus;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Newtonsoft.Json;
 using Shop.BLL.Models;
 using Shop.BLL.Services.Interfaces;
-using Shop.Core.Classes;
 using Shop.DAL.Data.EF;
 using Shop.DAL.Data.Entities;
 
@@ -23,26 +21,26 @@ namespace Shop.BLL.Services
 
         public void Dispose()
         {
-            
+
         }
 
         public async Task InitializeAsync()
         {
             List<Category> Categories = new List<Category>();
             List<AddModel>? addModels = null!;
-            
+
             using (StreamReader sr = new StreamReader("bdinitializedata.json"))
             {
                 string text = await sr.ReadToEndAsync();
                 addModels = JsonConvert.DeserializeObject<List<AddModel>>(text);
             }
-            if (await _db.Categories.FirstOrDefaultAsync(x => x.Name == "Phone") != null 
-                && await _db.Categories.FirstOrDefaultAsync(x=>x.Name=="Laptops") != null) return;
+            if (await _db.Categories.FirstOrDefaultAsync(x => x.Name == "Phone") != null
+                && await _db.Categories.FirstOrDefaultAsync(x => x.Name == "Laptops") != null) return;
             if (addModels != null)
             {
                 Parallel.ForEach(addModels, item =>
                 {
-                    
+
                     Category cat = new Category
                     {
                         Name = item.CategoryName,
@@ -50,7 +48,7 @@ namespace Shop.BLL.Services
                         NumberCriteriasValues = new List<NumberCriteriaValue>(),
                         StringCriteriasValues = new List<StringCriteriaValue>()
                     };
-                   
+
                     foreach (var x in item.NumberCriterias)
                     {
                         Guid criteriaID = Guid.NewGuid();
@@ -89,13 +87,13 @@ namespace Shop.BLL.Services
                     }
                     Categories.Add(cat);
                 });
-                
+
             }
 
-            
+
 
             var users = new Faker<ApplicationUser>()
-                .RuleFor(x=>x.Id,f=>f.Random.Guid())
+                .RuleFor(x => x.Id, f => f.Random.Guid())
                 .RuleFor(x => x.AboutMe, f => f.Lorem.Sentence())
                 .RuleFor(x => x.UserName, f => f.Internet.UserName())
                 .RuleFor(x => x.Email, f => f.Internet.Email())
@@ -105,18 +103,18 @@ namespace Shop.BLL.Services
 
             await _db.Users.AddRangeAsync(users);
             await _db.SaveChangesAsync();
-            
+
             var phones = new Faker<Item>()
                 .RuleFor(x => x.Name, f => f.Commerce.ProductName())
                 .RuleFor(x => x.Description, f => f.Commerce.ProductDescription())
                 .RuleFor(x => x.Price, f => f.Random.Decimal(0, 99999))
                 .RuleFor(x => x.ID, f => Guid.NewGuid())
                 .RuleFor(x => x.Category_Id, f => Categories[0].Id)
-                .RuleFor(x=>x.CategoryName, f => Categories[0].Name)
-                .RuleFor(x=>x.IsNew , f=>f.Random.Bool())
-                .RuleFor(x=>x.Currency, f=>Currency.UAH)
-                .RuleFor(x=>x.OwnerUser,f=>_db.Users.First(x=>x.Email=="multishopannounce@gmail.com"))
-                .RuleFor(x=>x.NumberCriteriaValues,f=>
+                .RuleFor(x => x.CategoryName, f => Categories[0].Name)
+                .RuleFor(x => x.IsNew, f => f.Random.Bool())
+                .RuleFor(x => x.Currency, f => Currency.UAH)
+                .RuleFor(x => x.OwnerUser, f => _db.Users.First(x => x.Email == "multishopannounce@gmail.com"))
+                .RuleFor(x => x.NumberCriteriaValues, f =>
                 {
                     return new List<NumberCriteriaValue>()
                     {
@@ -167,9 +165,9 @@ namespace Shop.BLL.Services
                 .RuleFor(x => x.Category_Id, f => Categories[1].Id)
                 .RuleFor(x => x.CategoryName, f => Categories[1].Name)
                 .RuleFor(x => x.IsNew, f => f.Random.Bool())
-                .RuleFor(x => x.Currency, f => Currency.USD)
-                .RuleFor(x => x.OwnerUser, f => _db.Users.First(x=>x.Email=="sabfasvf2b@gmail.com"))
-                .RuleFor(x=>x.NumberCriteriaValues, f=>
+                .RuleFor(x => x.Currency, f => Currency.UAH)
+                .RuleFor(x => x.OwnerUser, f => _db.Users.First(x => x.Email == "sabfasvf2b@gmail.com"))
+                .RuleFor(x => x.NumberCriteriaValues, f =>
                 {
                     return new List<NumberCriteriaValue>()
                     {
@@ -184,7 +182,7 @@ namespace Shop.BLL.Services
                         f.PickRandom(Categories[1].NumberCriteriasValues.Where(x=>x.CriteriaName=="HDD"))
                     };
                 })
-                .RuleFor(x=>x.StringCriteriaValues, f=>
+                .RuleFor(x => x.StringCriteriaValues, f =>
                 {
                     return new List<StringCriteriaValue>()
                     {
@@ -198,9 +196,9 @@ namespace Shop.BLL.Services
                 })
                 .Generate(50);
 
-            
 
-            
+
+
 
             await _db.Categories.AddRangeAsync(Categories);
             await _db.Items.AddRangeAsync(phones);
