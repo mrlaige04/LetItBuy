@@ -12,6 +12,10 @@
     "mssql3": {
       "type": "mssql",
       "connectionId": "ConnectionStrings:AzureDB"
+    },
+    "mssql4": {
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:AzureSql"
     }
   }
 }
