@@ -35,6 +35,7 @@ namespace Shop.UI.Controllers
                     .Include(x => x.OwnerUser).FirstOrDefaultAsync(x => x.ID.ToString() == itemId.ToString());//await itemApiClient.Get(itemId);
                 if (item == null) return RedirectToAction("NotFoundPage", "Home");
                 var itemDTO = _mapper.Map<ItemDTO>(item);
+                itemDTO.IsYours = User.Identity.IsAuthenticated && User.FindFirstValue(ClaimTypes.NameIdentifier) == item.OwnerUser.Id.ToString();
                 return View("ItemPage", new ItemViewModel() { Item = itemDTO });
             }
             else

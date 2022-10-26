@@ -16,7 +16,7 @@ namespace Shop.BLL.DTO
         public string CategoryName { get; set; }
         public ICollection<NumberCriteriaValue> NumberCriteriaValues { get; set; } = null!;
         public ICollection<StringCriteriaValue> StringCriteriaValues { get; set; } = null!;
-
+        public bool IsYours { get; set; }
         public bool IsNew { get; set; }
     }
 }
