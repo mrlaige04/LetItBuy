@@ -348,3 +348,13 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Mail Sender
+mailsenderdata.txt
+
+#UserPhotos
+./wwwroot/UserPhotos/
+
+
+# Secrets json
+secrets.json

@@ -1,0 +1,213 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Shop.Models.UserModels;
+@using Shop.Models;
+@model Shop.Models.UserModels.ProfileViewModel;
+@inject IViewLocalizer Localizer
+@{
+    
+}
+
+@if (Model != null) {
+    <div class="pagetitle">
+      <h1>@Localizer["Profile"]</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">@Localizer["Home"]</a></li>
+          <li class="breadcrumb-item">@Localizer["Users"]</li>
+          <li class="breadcrumb-item active">@Localizer["Profile"]</li>
+        </ol>
+      </nav>
+    </div>
+    <!-- End Page Title -->
+    <section class="section profile">
+      <div class="row">
+        <div class="col-xl-4">
+
+          <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+              
+              <img src="" alt="Profile" class="rounded-circle">
+              <h2>@Model.UserName</h2>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-xl-8">
+
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">@Localizer["Overview"]</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">@Localizer["Edit Profile"]</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">@Localizer["Settings"]</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">@Localizer["Change Password"]</button>
+                </li>
+
+              </ul>
+              <div class="tab-content pt-2">
+
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                  <h5 class="card-title">@Localizer["About me"]</h5>
+                  <p class="small fst-italic">@Model.AboutMe</p>
+
+                  <h5 class="card-title">@Localizer["Profile Details"]</h5>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">@Localizer["Id"]</div>
+                    <div class="col-lg-9 col-md-8">@Model.Id</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">@Localizer["UserName"]</div>
+                    <div class="col-lg-9 col-md-8">@Model.UserName</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">@Localizer["Email"]</div>
+                    <div class="col-lg-9 col-md-8">@Model.Email</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">@Localizer["PhoneNumber"]</div>
+                    <div class="col-lg-9 col-md-8">@Model.PhoneNumber</div>
+                  </div>
+
+                  
+
+                </div>
+
+                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+
+                  <!-- Profile Edit Form -->
+                  <form asp-controller="User" asp-action="EditProfile" method="post">
+                    <div class="row mb-3">
+                      <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">@Localizer["Profile Image"]</label>
+                      <div class="col-md-8 col-lg-9">
+                        @if(!string.IsNullOrEmpty(Model.ImageUrl)) {<img src="@string.Format("\\UserPhotos\\" + Model.ImageUrl)"/>}
+                        <div class="pt-2">
+                          <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#setphoto">
+                            <i class="bi bi-upload"></i>
+                          </button>
+                          <div class="modal fade" id="setphoto" tabindex="-1" aria-hidden="true" style="display: none;">
+                            <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title">Set profile photo</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                
+                                    <div class="modal-body">
+                                      <input asp-for="@Model.ImageUrl" type="file" accept=".jpg,.jpeg,.png" class="form-control" id="profileImage" name="profileImage">
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Upload</button>
+                                    </div>
+                                
+                              </div>
+                            </div>
+                          </div>
+                          <a asp-controller="User" asp-action="DeleteImagePhoto" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">@Localizer["UserName"]</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input asp-for="@Model.EditProfile.UserName" name="UserName" type="text" class="form-control" id="fullName" value="@Model.UserName">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="about" class="col-md-4 col-lg-3 col-form-label">@Localizer["About me"]</label>
+                      <div class="col-md-8 col-lg-9">
+                        <textarea asp-for="@Model.EditProfile.AboutMe" placeholder="@Model.AboutMe" name="AboutMe" class="form-control" id="about" style="height: 100px">@Model.AboutMe</textarea>
+                      </div>
+                    </div>
+
+                    
+
+                    <div class="row mb-3">
+                      <label for="Phone" class="col-md-4 col-lg-3 col-form-label">@Localizer["Phone"]</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input asp-for="@Model.EditProfile.PhoneNumber" name="PhoneNumber" type="text" class="form-control" id="Phone" value="@Model.PhoneNumber">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="Email" class="col-md-4 col-lg-3 col-form-label">@Localizer["Email"]</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="Email" asp-for="@Model.EditProfile.Email" type="email" class="form-control" id="Email" value="@Model.Email">
+                      </div>
+                    </div>
+
+                    
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">@Localizer["Save Changes"]</button>
+                    </div>
+                  </form><!-- End Profile Edit Form -->
+
+                </div>
+
+                
+
+                <div class="tab-pane fade pt-3" id="profile-change-password">
+                  <!-- Change Password Form -->
+
+                  <form id="changePasswordForm" asp-controller="Account" asp-action="ChangePassword" method="post">
+                      
+                    <div class="row mb-3">
+                      <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">@Localizer["Current Password"]</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input asp-for="@Model.ChangePassword.OldPassword" name="OldPassword" type="password" class="form-control" id="currentPassword">
+                      </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                      <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">@Localizer["New Password"]</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input asp-for="@Model.ChangePassword.NewPassword" name="NewPassword" type="password" class="form-control" id="newPassword">
+                      </div>
+                    </div>
+                    
+                    
+                    <div class="row mb-3">
+                      <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">@Localizer["Re-enter New Password"]</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input asp-for="@Model.ChangePassword.ConfirmPassword" name="ConfirmPassword" type="password" class="form-control" id="renewPassword">
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button onclick="changePassword()" class="btn btn-primary">@Localizer["Change Password"]</button>
+                    </div>
+                  </form><!-- End Change Password Form -->
+
+                </div>
+
+              </div><!-- End Bordered Tabs -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    
+}

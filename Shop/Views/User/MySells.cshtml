@@ -1,0 +1,69 @@
+﻿@using Shop.DAL.Data.Entities
+@model List<Order>;
+
+@section Styles {
+    <title>My sells</title>
+}
+
+<div class="row" style="justify-content:space-evenly;">
+    @if(Model != null) {
+        @foreach (var sell in Model)
+        {
+            <div class="card col-5">
+                <div class="card-body mt-3">
+                    <a class="card-title" asp-controller="Item" asp-action="GetItem" asp-route-id="@sell.ItemID">@sell.ItemName (@sell.ItemID)</a>
+                    <div class="card-main ">
+                        <div class="row">
+                            <div class="col-5">
+                                <h4>Buyer info:</h4>
+                                <p>Name: @sell.DeliveryInfo.Name</p>
+                                <p>Last name: @sell.DeliveryInfo.LastName</p>
+                                <a href="tel:+390959304">Number: @sell.DeliveryInfo.PhoneNumber</a>
+                                <p>Deliver to city: @sell.DeliveryInfo.City</p>
+                                <p>Deliver by '@sell.DeliveryInfo.PostName' POST</p>
+                                <p>Branch : #@sell.DeliveryInfo.PostNumber, @sell.DeliveryInfo.PostAddress street</p>
+                            </div>
+                            <div class="col-7">
+                                <h3 class="text-center">Status: @sell.Status</h3>
+                                <div class="row" style="justify-content:space-evenly;">
+                                    @if(sell.Status == OrderStatus.Created) {
+                                        <a class="btn btn-dark col-5" asp-controller="Item" asp-action="ConfirmSell" asp-route-id="@sell.OrderID">Confirm</a>
+                                    } else if (sell.Status == OrderStatus.Confirmed) {
+                                        <form asp-action="AddDeliveryInfo" asp-controller="Item" asp-route-id="@sell.OrderID" method="post">
+                                            <button type="button" class="btn btn-dark mb-3" data-bs-toggle="modal" data-bs-target="#verticalycentered">
+                                                Add Delivery Info
+                                            </button>
+                                            <div class="modal fade" id="verticalycentered" tabindex="-1" aria-hidden="true" style="display: none;">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Delivery info</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="form-group">
+                                                                <input type="text" name="tracknumber" class="form-control" placeholder="Track number" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    } 
+                                    @if(sell.Status != OrderStatus.Canceled) {
+                                        <a asp-route-returnUri="@string.Format( Context.Request.Path + Context.Request.QueryString )" asp-controller="Item" asp-action="CancelSell" asp-route-id="@sell.OrderID" class="btn btn-dark col-5">Cancel <i class="bi bi-x"></i></a>
+                                    }
+                                    <a asp-controller="Item" asp-action="DeleteSell" asp-route-id="@sell.OrderID" class="btn btn-dark col-5 mt-2">Delete<i class="bi bi-trash"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    } 
+</div>

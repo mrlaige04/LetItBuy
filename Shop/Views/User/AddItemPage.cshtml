@@ -1,0 +1,152 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Shop.BLL.Services
+@using Shop.DAL.Data.EF
+@using Shop.DAL.Data.Entities
+
+@using Shop.Models.UserModels
+
+@model ItemAddViewModel;
+@inject IViewLocalizer Localizer;
+@inject CategoryService CategoryService;
+@inject ApplicationDBContext db;
+@{
+    var curs = @Html.GetEnumSelectList(typeof(Currency));
+
+    
+    var categories = CategoryService.GetCategories().Select(x=>new SelectListItem
+    {
+        Text = x.Name,
+        Value = x.Id.ToString()
+    });
+}
+<form asp-action="AddItem" asp-controller="User" method="post" enctype="multipart/form-data">
+    
+
+
+            <div class="form-group">
+                <label for="itemName">@Localizer["ItemName"]</label>
+                <input asp-for="Name" type="text" class="form-control" required id="itemName">
+            </div>
+    
+            <div class="form-group">
+                <label asp-for="CategoryID" for="category"></label>
+                <select id="categorySelectID" asp-for="CategoryID" class="form-select categorySelect" asp-items="@categories">
+                    <option hidden disabled selected> -- select category -- </option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="itemName">@Localizer["ItemPrice"]</label>
+                <div class="item-group d-flex flex-row">
+                    <input asp-for="Price" min="0" type="number" class="form-control" required id="itemName">
+                    <select asp-for="Currency" asp-items="curs" class="input-group-text"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="itemName">@Localizer["ItemDescrip"]</label>
+                <input asp-for="Description" type="text" class="form-control" required id="itemName">
+            </div>
+            <div class="form-group">
+              <label for="formFile"  class="form-label mt-4">@Localizer["SelectItemImage"]</label>
+              <input class="form-control" multiple name="photos" type="file" id="itemImage">
+            </div>
+            
+            <div class="form-check">
+                
+                @Html.CheckBoxFor(x=>x.IsNew, new {
+                    @class = "form-check-input",
+                    @id = "isNew"
+                }) @Html.LabelFor(x=>x.IsNew, "Is new", new {
+                    @class = "form-check-label",
+                    @for = "isNew"
+                })
+            </div>
+           
+        
+        
+            <div class="col-6" id="containernumberCrits">
+      
+            </div>
+            <div class="col-6" id="containerstringCrits">
+            </div>
+
+
+        
+
+
+
+    <div class="d-grid gap-2 mt-3">
+        <button class="btn btn-lg btn-primary" type="submit">@Localizer["AddItem"]</button>                  
+    </div>
+</form>
+
+
+<script>
+    var containernumberCrits = document.getElementById("containernumberCrits");
+    var containerstringCrits = document.getElementById("containerstringCrits");
+
+    function loadCriterias(categoryId) {
+
+        var url = "/Home/GetCriterias?categoryId=" + categoryId;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                containerstringCrits.innerHTML = "";
+                containernumberCrits.innerHTML = "";
+                data.numCrits.forEach(function (item) {
+                    var select = document.createElement("select");
+                    select.classList.add("form-select");
+                    select.classList.add("mb-3");
+                    select.name = item.CriteriaID;
+                    select.setAttribute("required", "required");
+                    if (item.Multiple == true) {
+                        select.setAttribute("multiple", "multiple");
+                    }
+                    var defaultdisabled = document.createElement("option");
+                    defaultdisabled.setAttribute("disabled","disabled");
+                    defaultdisabled.setAttribute("selected", "selected");
+                    defaultdisabled.innerHTML = `${item.Name}`;
+                    select.appendChild(defaultdisabled);
+                    item.Values.forEach(function(value) {
+                        var option = document.createElement("option");
+                        option.setAttribute("value", value.valueid);
+                        option.innerHTML = value.value;
+                        select.appendChild(option);
+                    });
+                    containernumberCrits.appendChild(select);
+                });
+                data.strCrits.forEach(function (item) {
+                    var select = document.createElement("select");
+                    select.classList.add("form-select");
+                    select.classList.add("mb-3");
+                    select.name = item.CriteriaID;
+                    select.setAttribute("required", "required");
+                    if (item.Multiple == true) {
+                        select.setAttribute("multiple", "multiple");
+                    }
+                    var defaultdisabled = document.createElement("option");
+                    defaultdisabled.setAttribute("disabled", "disabled");
+                    defaultdisabled.setAttribute("selected", "selected");
+                    defaultdisabled.innerHTML = `${item.Name}`;
+                    select.appendChild(defaultdisabled);
+                    item.Values.forEach(function (value) {
+                        var option = document.createElement("option");
+                        option.setAttribute("value", value.valueid);
+                        option.innerHTML = value.value;
+                        select.appendChild(option);
+                    });
+                    containerstringCrits.appendChild(select);
+                });
+            });
+    }
+    var select = document.getElementsByClassName("categorySelect")[0];
+    document.getElementsByClassName("categorySelect")[0].onchange = function (x) {
+        loadCriterias(x.target.value);
+    }
+    document.addEventListener("DOMContentLoaded", ready);
+    function ready() {
+        loadCriterias(document.getElementById("categorySelectID").value);
+    }
+
+</script>
+    
