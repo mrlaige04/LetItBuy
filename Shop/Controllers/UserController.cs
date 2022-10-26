@@ -59,74 +59,14 @@ namespace Shop.Controllers
             user.PhoneNumber = editModel.PhoneNumber;
             user.UserName = editModel.UserName;
 
-            var photo = editModel.Image;
-            if (photo != null) {
-                var ext = photo.FileName.Substring(photo.FileName.LastIndexOf('.'));
-                var path = string.Format(_webHost.WebRootPath + "\\UserPhotos\\" + user.Id + ext);
-                using (var str = new FileStream(Path.Combine(_webHost.WebRootPath, "\\UserPhotos\\", photo.FileName), FileMode.Create))
-                {
-                    await str.CopyToAsync(photo.OpenReadStream());
-                }
-                user.ImageURL = user.Id + ext;
-            }
+           
             await _userManager.UpdateAsync(user);
             return View("MyProfile");
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> SetProfilePhoto(IFormFile photo)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.GetUserAsync(User);
+       
 
-                if (user == null)
-                {
-                    ModelState.AddModelError("", "No user found");
-                    return RedirectToAction("Logout", "Account");
-                }
-                var ext = photo.FileName.Substring(photo.FileName.LastIndexOf('.'));
-                var path = string.Format(_webHost.WebRootPath + "\\UserPhotos\\" + user.Id + ext);
-                using (var str = new FileStream(Path.Combine(_webHost.WebRootPath, "\\UserPhotos\\", photo.FileName), FileMode.Create))
-                {
-                    await str.CopyToAsync(photo.OpenReadStream());
-                }
-                try
-                {
-                    user.ImageURL = user.Id + ext;
-                    _db.Users.Update(user);
-                    await _db.SaveChangesAsync();
-                    return Ok();
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("", e.Message);
-                }
-            }
-            return RedirectToAction("GetProfile");
-        }
-
-        [HttpPost]
-        [HttpDelete]
-        [HttpGet]
-        public async Task<IActionResult> DeleteImagePhoto()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            System.IO.File.Delete(string.Format("..\\UserPhotos\\" + user.ImageURL));
-            user.ImageURL = null;
-            try
-            {
-                _db.Users.Update(user);
-                await _db.SaveChangesAsync();
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                ModelState.AddModelError("", e.Message);
-            }
-            return RedirectToAction("GetProfile");
-        }
 
         [HttpGet] public IActionResult AddItemPage() => View();
 
@@ -213,7 +153,7 @@ namespace Shop.Controllers
                 {
                     await _db.Items.AddAsync(item);
                     await _db.SaveChangesAsync();
-                    return Ok();
+                    return RedirectToAction("MyItems", "User");
                 }
                 catch (Exception e)
                 {
@@ -221,7 +161,7 @@ namespace Shop.Controllers
                     return BadRequest(ModelState);
                 }
             }
-            else return View("AddItemPage", viewItem);
+            else return RedirectToAction("MyItems", "User");
         }
 
 

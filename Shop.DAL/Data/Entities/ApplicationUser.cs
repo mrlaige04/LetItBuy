@@ -9,7 +9,6 @@ namespace Shop.DAL.Data.Entities
     {
         public ICollection<Item>? Items { get; set; }
 
-        public string? ImageURL { get; set; }
 
         public string? AboutMe { get; set; }
 

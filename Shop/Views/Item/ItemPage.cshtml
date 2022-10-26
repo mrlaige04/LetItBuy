@@ -64,7 +64,10 @@
                         <p>@Model.Item.Description</p>
                         @Localizer["State"]: @if (Model.Item.IsNew) { <b>@Localizer["NEW"]</b> } else {<b>@Localizer["USED"]</b>}
                         <p class="display-6"><b>@Model.Item.Price @Model.Item.Currency</b></p>
-                        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#verticalycentered">@Localizer["Buy"] <i class="bi bi-shop"></i></button>
+                        @if (!Model.Item.IsYours)
+                        {
+                            <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#verticalycentered">@Localizer["Buy"] <i class="bi bi-shop"></i></button>
+                        }
                         <div class="modal fade" id="verticalycentered" tabindex="-1">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">

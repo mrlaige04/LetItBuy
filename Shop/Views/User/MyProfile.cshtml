@@ -94,37 +94,7 @@
 
                   <!-- Profile Edit Form -->
                   <form asp-controller="User" asp-action="EditProfile" method="post">
-                    <div class="row mb-3">
-                      <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">@Localizer["Profile Image"]</label>
-                      <div class="col-md-8 col-lg-9">
-                        @if(!string.IsNullOrEmpty(Model.ImageUrl)) {<img src="@string.Format("\\UserPhotos\\" + Model.ImageUrl)"/>}
-                        <div class="pt-2">
-                          <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#setphoto">
-                            <i class="bi bi-upload"></i>
-                          </button>
-                          <div class="modal fade" id="setphoto" tabindex="-1" aria-hidden="true" style="display: none;">
-                            <div class="modal-dialog modal-dialog-centered">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h5 class="modal-title">Set profile photo</h5>
-                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                
-                                    <div class="modal-body">
-                                      <input asp-for="@Model.ImageUrl" type="file" accept=".jpg,.jpeg,.png" class="form-control" id="profileImage" name="profileImage">
-                                    </div>
-                                    <div class="modal-footer">
-                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Upload</button>
-                                    </div>
-                                
-                              </div>
-                            </div>
-                          </div>
-                          <a asp-controller="User" asp-action="DeleteImagePhoto" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
-                        </div>
-                      </div>
-                    </div>
+                    
 
                     <div class="row mb-3">
                       <label for="fullName" class="col-md-4 col-lg-3 col-form-label">@Localizer["UserName"]</label>

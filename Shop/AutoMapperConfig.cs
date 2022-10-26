@@ -12,6 +12,7 @@ namespace Shop.UI
         {
             CreateMap<ApplicationUser, UserDTO>();
             CreateMap<Item, ItemDTO>();
+                
             CreateMap<ApplicationUser, ProfileViewModel>();
 
             CreateMap<NumberCriteriaValue, NumberCriteriaViewModel>();
