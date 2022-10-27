@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>d5b86b31-4544-4a53-8f1c-2fd90f15056e</UserSecretsId>
+    <IncludeSymbols>False</IncludeSymbols>
   </PropertyGroup>
 
   <ItemGroup>
@@ -73,6 +74,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="node_modules\" />
     <Folder Include="Resources\SharedResource\" />
     <Folder Include="wwwroot\ItemPhotos\" />
   </ItemGroup>
