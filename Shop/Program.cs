@@ -27,7 +27,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 // DB and Identity
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
-    options.UseSqlServer(builder.Configuration["Azure:DbString"], b => b.MigrationsAssembly("Shop.UI")));
+    options.UseSqlServer("Server=tcp:shopuidbserver.database.windows.net,1433;Initial Catalog=Shop.UI_db;Persist Security Info=False;User ID=Laige;Password=Admin123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;", b => b.MigrationsAssembly("Shop.UI")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 {

@@ -21,7 +21,7 @@
     },
     "resourceName": {
       "type": "string",
-      "defaultValue": "ShopUI20221027102002",
+      "defaultValue": "letitbuy",
       "metadata": {
         "description": "Name of the main resource to be created by this template."
       }
