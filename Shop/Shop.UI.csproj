@@ -20,12 +20,6 @@
     <Content Remove="wwwroot\favicon.ico" />
   </ItemGroup>
 
- 
-
-  <ItemGroup>
-    <Content Include="node_modules\%40yaireo\tagify\src\tagify.css" />
-  </ItemGroup>
-
   <ItemGroup>
     
     <None Include="wwwroot\favicon.ico">
@@ -85,7 +79,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shop.BLL\Shop.BLL.csproj" />
-    <ProjectReference Include="..\Shop.Core\Shop.Core.csproj" />
     <ProjectReference Include="..\Shop.DAL\Shop.DAL.csproj" />
   </ItemGroup>
 

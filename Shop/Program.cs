@@ -27,7 +27,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 // DB and Identity
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Shop.UI")));
+    options.UseSqlServer(builder.Configuration["Azure:DbString"], b => b.MigrationsAssembly("Shop.UI")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 {
@@ -121,14 +121,7 @@ builder.Configuration.AddJsonFile("admininitialize.json");
 var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
-app.UseFileServer(new FileServerOptions()
-{
-    FileProvider = new PhysicalFileProvider(
-                    Path.Combine(builder.Environment.ContentRootPath, "node_modules")
-                ),
-    RequestPath = "/node_modules",
-    EnableDirectoryBrowsing = false
-});
+
 
 
 /// Default initialize

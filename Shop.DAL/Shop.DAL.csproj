@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shop.Core\Shop.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Data\Entities\Interfaces\" />
   </ItemGroup>
 
