@@ -46,13 +46,14 @@
                                 <th>
                                     id
                                 </th>
-                                <th>
+                                <td>
                                     email
-                                </th>
-                                <th>
+                                </td>
+                                <td>
                                     username
-                                </th>
-                                <th>edit</th>
+                                </td>
+                                <td>edit</td>
+                                <td>delete</td>
                             </tr>
                         </thead>
                         
@@ -68,6 +69,7 @@
                                             <th>@user.UserName</th>
                                             <td>
                                                 <a asp-controller="Admin" asp-action="EditUser" asp-route-userID="@user.Id">edit</a>
+                                                
                                             </td>
                                         </tr>
                                     }
@@ -79,7 +81,9 @@
                                             <th>@user.UserName</th>
                                             <td>
                                                 <a asp-controller="Admin" asp-action="EditUser" asp-route-userID="@user.Id">edit</a>
+                                               
                                             </td>
+                                            <td> <a asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@user.Id">Delete</a></td>
                                         </tr>
                                     }
                                 }

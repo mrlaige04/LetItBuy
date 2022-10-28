@@ -62,7 +62,7 @@ namespace Shop.BLL.Services
         public async Task<ServicesResultModel> DeleteItemAsync(ApplicationUser user, Guid itemId)
         {
             if (user == null) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "User not found" } };
-            var itemFromDb = await _db.Items.FirstOrDefaultAsync(i => i.ID == itemId);
+            var itemFromDb = await _db.Items.FirstOrDefaultAsync(i => i.ID.ToString() == itemId.ToString());
             if (itemFromDb == null) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "Item not found" } };
             if (itemFromDb.OwnerID != user.Id) return new ServicesResultModel() { ResultCode = ResultCodes.Fail, Errors = new List<string> { "You can't delete this item" } };
             try
