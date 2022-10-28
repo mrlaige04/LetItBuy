@@ -57,10 +57,19 @@ namespace Shop.UI.Controllers
         }
 
         [HttpPost]
+        [HttpGet]
         [HttpDelete]
-        public async Task<IActionResult> Delete()
+        public async Task<IActionResult> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            if (id != Guid.Empty)
+            {
+                var item = await _db.Items.FirstOrDefaultAsync(x => x.ID == id);
+                if (item != null) _db.Items.Remove(item);
+                else return NotFound("Item was not found");
+                await _db.SaveChangesAsync();
+                return RedirectToAction("MyItems", "User");
+            }
+            else return BadRequest("Invalid id");
         }
 
         [HttpGet]

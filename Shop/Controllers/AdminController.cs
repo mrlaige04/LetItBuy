@@ -193,17 +193,17 @@ namespace Shop.Controllers
                 return View(addAdminViewModel);
             }
         }
-
-        public async Task<IActionResult> DeleteUser(string email)
+        
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
             if (ModelState.IsValid)
             {
-                if (email == _config["Admin:Email"])
+                if (id.ToString() == _config["Admin:Email"])
                 {
                     ModelState.AddModelError("", "You can't delete admin");
                     return RedirectToAction("GetAllUsers");
                 }
-                var user = await _userManager.FindByEmailAsync(email);
+                var user = await _userManager.FindByIdAsync(id.ToString());
                 if (user != null) await _userManager.DeleteAsync(user);
                 return RedirectToAction("GetAllUsers");
             }

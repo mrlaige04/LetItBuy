@@ -30,7 +30,7 @@ try
 
 // DB and Identity
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
-    options.UseSqlServer(builder.Configuration["Azure:DbString"], b => b.MigrationsAssembly("Shop.UI")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Shop.UI")));
 } catch (Exception e)
 {
     
