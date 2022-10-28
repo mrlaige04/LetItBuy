@@ -38,7 +38,7 @@
             <div class="form-group">
                 <label for="itemName">@Localizer["ItemPrice"]</label>
                 <div class="item-group d-flex flex-row">
-                    <input asp-for="Price" min="0" type="number" class="form-control" required id="itemName">
+                    <input asp-for="Price" min="0" max="999999999" type="number" class="form-control" required id="itemName">
                     <select asp-for="Currency" asp-items="curs" class="input-group-text"></select>
                 </div>
             </div>

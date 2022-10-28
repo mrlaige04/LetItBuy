@@ -90,7 +90,15 @@ namespace Shop.Controllers
             
             var items = await filterService.Filter(search.Filter);
             search.Category = _mapper.Map<CategoryDTO>(category);
-            search.items = await items.ToListAsync();
+            try
+            {
+                search.items = await items.ToListAsync();
+            } catch (Exception e)
+            {
+                ModelState.AddModelError("", e.Message);
+
+            }
+            
             return View("SearchPage", search);
         }
 

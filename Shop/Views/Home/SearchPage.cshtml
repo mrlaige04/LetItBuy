@@ -46,7 +46,7 @@
                                             <div class="row mb-3">
                                                 <label for="inputNumber" class="col-sm-2 col-form-label">@Localizer["Maxprice"]</label>
                                                 <div class="col-sm-10">
-                                                    <input value="@Model.Filter.maxPrice" asp-for="@Model.Filter.maxPrice" min="1" type="number" class="form-control">
+                                                    <input value="@Model.Filter.maxPrice" max="@(decimal.MaxValue-2)" asp-for="@Model.Filter.maxPrice" min="1" type="number" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -96,10 +96,7 @@
         </div>
         
         @if(Model.items != null) {
-            <div class="col-md-4  mb-3">
-                <a href="">@Localizer["Name"] <i class="bi bi-arrow-up"></i></a>
-                <a href="">@Localizer["Price"] <i class="bi bi-arrow-down"></i></a>
-            </div>
+            
             @foreach (var item in Model.items) {
                 <div class="card mb-3">
                     <div class="row g-0 mt-3">
