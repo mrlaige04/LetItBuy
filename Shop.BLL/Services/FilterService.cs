@@ -24,10 +24,17 @@ namespace Shop.BLL.Services
             {
                 items = items.Where(x => x.Name.ToLower().Contains(dto.query.ToLower()));
             }
-            if (dto.minPrice != 0 && dto.maxPrice != decimal.MaxValue)
+            try
             {
-                items = items.Where(x => x.Price >= dto.minPrice && x.Price <= dto.maxPrice);
+                if (dto.minPrice <= dto.maxPrice)
+                {
+                    items = items.Where(x => x.Price >= dto.minPrice && x.Price < dto.maxPrice-1);
+                }
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
+            
             
             
             if (dto.CategoryID == null) return items;

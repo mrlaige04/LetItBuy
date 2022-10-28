@@ -3,7 +3,7 @@
     public class FilterDTO
     {
         public decimal minPrice { get; set; } = 0;
-        public decimal maxPrice { get; set; } = decimal.MaxValue;
+        public decimal maxPrice { get; set; } = 999999999;
         public string query { get; set; }
         public Guid? CategoryID { get; set; }
 

@@ -9,7 +9,7 @@ namespace Shop.Models.UserModels
         public string Name { get; set; }
         public string? Description { get; set; }
         [Required]
-        [Range(0, 1000000)]
+        [Range(0, 999999999)]
         public decimal Price { get; set; }
 
         [Required]
