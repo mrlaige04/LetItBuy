@@ -12,6 +12,7 @@ namespace Shop.DAL.Data.EF
         {
             Database.EnsureCreated();
         }
+
         public DbSet<ApplicationUser> Users { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Item> Items { get; set; } = null!;
@@ -22,6 +23,7 @@ namespace Shop.DAL.Data.EF
 
         public DbSet<NumberCriteriaValue> NumberCriteriaValues { get; set; } = null!;
         public DbSet<StringCriteriaValue> StringCriteriaValues { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
