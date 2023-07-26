@@ -13,7 +13,6 @@ namespace Shop.DAL.Data.EF
             Database.EnsureCreated();
         }
 
-        public DbSet<ApplicationUser> Users { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Item> Items { get; set; } = null!;
         public DbSet<Order> Sells { get; set; } = null!;
