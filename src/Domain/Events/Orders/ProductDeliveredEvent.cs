@@ -1,8 +1,8 @@
 ﻿namespace Domain.Events;
-public class ProductDeleted : BaseEvent
+public class ProductDeliveredEvent : BaseEvent
 {
     public Product Product { get; }
-    public ProductDeleted(Product product)
+    public ProductDeliveredEvent(Product product)
     {
         Product = product;
     }
