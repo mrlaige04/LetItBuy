@@ -360,8 +360,8 @@ mailsenderdata.txt
 secrets.json
 
 # Old project files
-./Shop/
-./Shop.BLL/
-./Shop.Core/
-./Shop.DAL/
-./LetItBuy_API/
+Shop/
+Shop.BLL/
+Shop.Core/
+Shop.DAL/
+LetItBuy_API/
