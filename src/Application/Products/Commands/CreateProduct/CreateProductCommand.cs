@@ -1,14 +1,16 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Entities;
 using Domain.Events;
+using Domain.Exceptions;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Products.Commands.CreateProduct;
 
-public record PhotoDTO (string Base64Image);
+public record PhotoDTO (string Img);
 public class CreateProductCommand : IRequest
 {
+    public Guid UserID { get; set; }
     public Guid CategoryID { get; init; }
     public string Title { get; init; } = null!;
     public string? Description { get; init; } 
@@ -19,20 +21,18 @@ public class CreateProductCommand : IRequest
 
 public class CreateTodoItemCommandHandler : IRequestHandler<CreateProductCommand>
 {
-    public CreateTodoItemCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUser)
+    public CreateTodoItemCommandHandler(IApplicationDbContext dbContext)
     {
         DbContext = dbContext;
-        CurrentUser = currentUser;
     }
 
     public IApplicationDbContext DbContext { get; }
-    public ICurrentUserService CurrentUser { get; }
 
     public async Task Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
-        var user = CurrentUser.UserID;
+        var user = await DbContext.AppUsers.FirstOrDefaultAsync(u => u.Id == request.UserID, cancellationToken);
 
-        if (user == Guid.Empty) throw new UnauthorizedAccessException();
+        if (user is null) throw new NotFoundException(nameof(user), request.UserID);
 
         var entity = new Product()
         {
@@ -47,13 +47,13 @@ public class CreateTodoItemCommandHandler : IRequestHandler<CreateProductCommand
         {
             entity.Photos = request.Photos.Select(x => new ProductPhoto()
             {
-                Base64Image = x.Base64Image
+                Base64Image = x.Img
             }).ToList();
         }
 
         entity.AddDomainEvent(new ProductCreatedEvent(entity));
 
-        DbContext.Products.Add(entity);
+        user.Products.Add(entity);
 
         await DbContext.SaveChangesAsync(cancellationToken);
     }

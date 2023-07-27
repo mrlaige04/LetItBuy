@@ -13,5 +13,4 @@ public class Product : BaseAuditableEntity
     public Category Category { get; set; } = null!;
 
     public Guid UserID { get; set; }
-    public BaseUser User { get; set; } = null!;
 }

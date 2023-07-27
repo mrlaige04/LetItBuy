@@ -8,8 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Cart\" />
-    <Folder Include="Products\Commands\DeleteProduct\" />
-    <Folder Include="Products\Commands\EditProduct\" />
     <Folder Include="Products\EventHandlers\" />
     <Folder Include="Products\Queries\" />
   </ItemGroup>

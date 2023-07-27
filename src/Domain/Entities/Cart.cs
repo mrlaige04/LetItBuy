@@ -6,7 +6,4 @@ public class Cart : BaseAuditableEntity
     {
         Products = new List<Product>();
     }
-
-    public Guid UserID { get; set; }
-    public BaseUser User { get; set; } = null!;
 }
